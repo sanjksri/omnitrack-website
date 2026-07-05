@@ -238,7 +238,9 @@
                 <h3 style="margin-bottom: 8px; font-size: 1.2rem; display: flex; align-items: center; gap: 12px;">
                     <i class="fa-solid fa-circle-question" style="color: var(--primary);"></i> What about user privacy?
                 </h3>
-                <p style="margin: 0; color: var(--text-muted);">We take privacy very seriously. We require explicit consent from all tracked individuals before any location data is logged, ensuring complete transparency and compliance.</p>
+                <p style="margin: 0; color: var(--text-muted); line-height: 1.6;">
+                    Since this is a dedicated device tracking application, location tracking is unavoidable when active. However, to safeguard your identity, <strong>no personal information</strong> (such as names, phone numbers, or personal IDs) is collected or stored, meaning there is zero risk of personal profile misuse. Furthermore, explicit consent must be provided by checking the consent checkbox before location tracking begins, and drivers can stop tracking at any time.
+                </p>
             </div>
 
             <div class="feature-card glass-panel reveal" style="text-align: left; padding: 24px; transition-delay: 0.2s;">
@@ -278,18 +280,10 @@
 
             <div class="feature-card glass-panel reveal" style="text-align: left; padding: 24px; transition-delay: 0.7s;">
                 <h3 style="margin-bottom: 8px; font-size: 1.2rem; display: flex; align-items: center; gap: 12px;">
-                    <i class="fa-solid fa-circle-question" style="color: var(--primary);"></i> Why does tracking stop sometimes when minimized?
+                    <i class="fa-solid fa-circle-question" style="color: var(--primary);"></i> Web App vs. Native Android App?
                 </h3>
                 <p style="margin: 0; color: var(--text-muted); line-height: 1.6;">
-                    While the app works fine even when the PWA is not installed, due to battery saving settings on Android, location logging may stop because of inactivity. For continuous tracking, the PWA should be installed on the phone, and the following setting must be applied:
-                    <br><br>
-                    <strong>Set Chrome to "Unrestricted" Battery</strong><br>
-                    Because the PWA relies on Chrome's engine, you must disable battery optimization for Chrome.
-                    <br><br>
-                    • Go to <strong>Settings > Apps > See all apps</strong>.<br>
-                    • Find and tap on <strong>Chrome</strong> (or whatever browser you used to install the PWA).<br>
-                    • Tap <strong>Battery</strong>.<br>
-                    • Change the setting from "Optimized" to <strong>Unrestricted</strong>. (This stops Android from killing the PWA to save power).
+                    If drivers are willing to keep the web application open on their screen during transit, there is no need to download the Android app. However, if they need to minimize the browser, run other utilities, or keep their screen turned off, they must download and install the dedicated Android App (APK) from their driver portal to prevent tracking from pausing.
                 </p>
             </div>
         </div>
