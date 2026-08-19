@@ -107,47 +107,58 @@ class BackgroundLocationService {
         return;
       }
 
+      Position? position;
+
       try {
-        final position = await Geolocator.getCurrentPosition(
+        position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high,
-          timeLimit: const Duration(seconds: 10),
+          timeLimit: const Duration(seconds: 8),
         );
-
-        // Save latest coordinates in SharedPreferences
-        await prefs.setDouble('lastLatitude', position.latitude);
-        await prefs.setDouble('lastLongitude', position.longitude);
-        await prefs.setString('lastUpdatedIso', DateTime.now().toIso8601String());
-
-        // Transmit location payload to Firestore /locations/log-{trackingId}-{timestamp} every 30s
-        await FirebaseService.pushLocation(
-          trackingId: trackingId,
-          passcode: passcode,
-          latitude: position.latitude,
-          longitude: position.longitude,
-        );
-
-        // Update foreground notification status
-        if (service is AndroidServiceInstance) {
-          flutterLocalNotificationsPlugin.show(
-            notificationId,
-            'easyomnitracker Active',
-            'Transmitting location every 30s: ${position.latitude.toStringAsFixed(4)}°, ${position.longitude.toStringAsFixed(4)}°',
-            const NotificationDetails(
-              android: AndroidNotificationDetails(
-                notificationChannelId,
-                'easyomnitracker Foreground Service',
-                icon: 'ic_launcher',
-                ongoing: true,
-              ),
-            ),
-          );
-        }
       } catch (e) {
-        debugPrint('Error getting background position: $e');
+        debugPrint('getCurrentPosition timeout/error, falling back to lastKnownPosition: $e');
+      }
+
+      // Fallback to last known position if current position fetch timed out
+      position ??= await Geolocator.getLastKnownPosition();
+
+      if (position != null) {
+        try {
+          // Save latest coordinates in SharedPreferences
+          await prefs.setDouble('lastLatitude', position.latitude);
+          await prefs.setDouble('lastLongitude', position.longitude);
+          await prefs.setString('lastUpdatedIso', DateTime.now().toIso8601String());
+
+          // Transmit location payload to Firestore /locations/log-{trackingId}-{timestamp} every 30s
+          await FirebaseService.pushLocation(
+            trackingId: trackingId,
+            passcode: passcode,
+            latitude: position.latitude,
+            longitude: position.longitude,
+          );
+
+          // Update foreground notification status
+          if (service is AndroidServiceInstance) {
+            flutterLocalNotificationsPlugin.show(
+              notificationId,
+              'easyomnitracker Active',
+              'Transmitting location every 30s: ${position.latitude.toStringAsFixed(4)}°, ${position.longitude.toStringAsFixed(4)}°',
+              const NotificationDetails(
+                android: AndroidNotificationDetails(
+                  notificationChannelId,
+                  'easyomnitracker Foreground Service',
+                  icon: 'ic_launcher',
+                  ongoing: true,
+                ),
+              ),
+            );
+          }
+        } catch (e) {
+          debugPrint('Error pushing location to Firebase: $e');
+        }
       }
     }
 
-    // Execute immediately on start
+    // Execute immediately on service startup
     await fetchAndPushLocation();
 
     // Background timer to get and transmit location every 30 seconds

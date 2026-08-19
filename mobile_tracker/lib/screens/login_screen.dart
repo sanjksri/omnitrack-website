@@ -63,6 +63,11 @@ class _LoginScreenState extends State<LoginScreen> {
       await Permission.locationAlways.request();
     }
 
+    // Request Ignore Battery Optimizations to prevent Android Doze mode throttling
+    if (await Permission.ignoreBatteryOptimizations.isDenied) {
+      await Permission.ignoreBatteryOptimizations.request();
+    }
+
     // Verify Tracking ID and Passcode combination in Firestore /trackers/{trackingId}
     final loginResult = await FirebaseService.loginDriver(
       trackingId: trackingId,
@@ -95,19 +100,27 @@ class _LoginScreenState extends State<LoginScreen> {
 
     // Capture initial position and push to Firestore immediately
     try {
-      final position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-      );
-      await prefs.setDouble('lastLatitude', position.latitude);
-      await prefs.setDouble('lastLongitude', position.longitude);
-      await prefs.setString('lastUpdatedIso', DateTime.now().toIso8601String());
+      Position? position;
+      try {
+        position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high,
+          timeLimit: const Duration(seconds: 8),
+        );
+      } catch (_) {}
+      position ??= await Geolocator.getLastKnownPosition();
 
-      await FirebaseService.pushLocation(
-        trackingId: trackingId,
-        passcode: passcode,
-        latitude: position.latitude,
-        longitude: position.longitude,
-      );
+      if (position != null) {
+        await prefs.setDouble('lastLatitude', position.latitude);
+        await prefs.setDouble('lastLongitude', position.longitude);
+        await prefs.setString('lastUpdatedIso', DateTime.now().toIso8601String());
+
+        await FirebaseService.pushLocation(
+          trackingId: trackingId,
+          passcode: passcode,
+          latitude: position.latitude,
+          longitude: position.longitude,
+        );
+      }
     } catch (e) {
       debugPrint('Initial position push note: $e');
     }
