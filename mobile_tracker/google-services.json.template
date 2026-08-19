@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "958789325862",
+    "project_id": "fleetmonitor-2026",
+    "storage_bucket": "fleetmonitor-2026.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:958789325862:android:f7910845c25bf1357642e7",
+        "android_client_info": {
+          "package_name": "com.easyomnitracker.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDppix9b8EZ6rwN1IxxpTGdJIlAUVToTlQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
