@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../constants/app_colors.dart';
+import '../services/background_location_service.dart';
 import '../services/firebase_service.dart';
 import 'tracking_dashboard_screen.dart';
 
@@ -67,24 +69,52 @@ class _LoginScreenState extends State<LoginScreen> {
       passcode: passcode,
     );
 
-    setState(() {
-      _isLoading = false;
-    });
-
     if (loginResult['success'] != true) {
       setState(() {
+        _isLoading = false;
         _errorMessage = loginResult['message'] ?? 'Invalid Tracking ID or Passcode.';
       });
       return;
     }
 
-    // Store persistent session
+    // Store persistent session and activate tracking immediately
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('trackingId', trackingId);
     await prefs.setString('passcode', passcode);
     await prefs.setBool('consentGiven', true);
     await prefs.setBool('isLoggedOut', false);
-    await prefs.setBool('isPaused', true);
+    await prefs.setBool('isPaused', false); // MUST be false to run location service
+
+    // Start background tracking service
+    await BackgroundLocationService.startTracking();
+    await FirebaseService.updateStatus(
+      trackingId: trackingId,
+      passcode: passcode,
+      status: 'Running',
+    );
+
+    // Capture initial position and push to Firestore immediately
+    try {
+      final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+      await prefs.setDouble('lastLatitude', position.latitude);
+      await prefs.setDouble('lastLongitude', position.longitude);
+      await prefs.setString('lastUpdatedIso', DateTime.now().toIso8601String());
+
+      await FirebaseService.pushLocation(
+        trackingId: trackingId,
+        passcode: passcode,
+        latitude: position.latitude,
+        longitude: position.longitude,
+      );
+    } catch (e) {
+      debugPrint('Initial position push note: $e');
+    }
+
+    setState(() {
+      _isLoading = false;
+    });
 
     if (!mounted) return;
 

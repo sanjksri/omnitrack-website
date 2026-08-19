@@ -95,8 +95,7 @@ class BackgroundLocationService {
       service.stopSelf();
     });
 
-    // Background timer to get and transmit location every 30 seconds
-    Timer.periodic(const Duration(seconds: 30), (timer) async {
+    Future<void> fetchAndPushLocation() async {
       final prefs = await SharedPreferences.getInstance();
       final trackingId = prefs.getString('trackingId');
       final passcode = prefs.getString('passcode') ?? '';
@@ -105,7 +104,6 @@ class BackgroundLocationService {
 
       if (isLoggedOut || isPaused || trackingId == null || trackingId.isEmpty) {
         service.stopSelf();
-        timer.cancel();
         return;
       }
 
@@ -147,6 +145,25 @@ class BackgroundLocationService {
       } catch (e) {
         debugPrint('Error getting background position: $e');
       }
+    }
+
+    // Execute immediately on start
+    await fetchAndPushLocation();
+
+    // Background timer to get and transmit location every 30 seconds
+    Timer.periodic(const Duration(seconds: 30), (timer) async {
+      final prefs = await SharedPreferences.getInstance();
+      final isLoggedOut = prefs.getBool('isLoggedOut') ?? false;
+      final isPaused = prefs.getBool('isPaused') ?? false;
+      final trackingId = prefs.getString('trackingId');
+
+      if (isLoggedOut || isPaused || trackingId == null || trackingId.isEmpty) {
+        service.stopSelf();
+        timer.cancel();
+        return;
+      }
+
+      await fetchAndPushLocation();
     });
   }
 }
