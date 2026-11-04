@@ -9,9 +9,25 @@
     /* ---------- Header: scrolled state + mobile menu ---------- */
     const header = $('[data-header]');
     if (header) {
-        const onScroll = () => header.classList.toggle('is-scrolled', window.scrollY > 8);
+        // Scrolled state plus a 2px reading-progress line along the header's bottom edge (one write per frame)
+        const bar = $('[data-progress]', header);
+        let queued = false;
+        const onScroll = () => {
+            if (queued) return;
+            queued = true;
+            requestAnimationFrame(() => {
+                queued = false;
+                const y = window.scrollY;
+                header.classList.toggle('is-scrolled', y > 8);
+                if (bar) {
+                    const max = document.documentElement.scrollHeight - window.innerHeight;
+                    bar.style.transform = `scaleX(${max > 0 ? Math.min(1, y / max).toFixed(4) : 0})`;
+                }
+            });
+        };
         onScroll();
         window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', onScroll, { passive: true });
     }
 
     const toggle = $('[data-menu-toggle]');
@@ -78,8 +94,12 @@
     }
 
     /* ---------- Scroll reveals ---------- */
-    const fadeTargets = $$('.table-wrap, .price-sheet, .terms, .apk, .phone, .faq-list');
-    fadeTargets.forEach((el) => el.setAttribute('data-fade', ''));
+    // One reveal rhythm: a section's head settles first, its main content follows 80ms later
+    const fadeTargets = $$('main .section-head, .table-wrap, .sc-frame, .trust-copy, .trust-demo, .price-sheet, .terms, .apk, .faq-list');
+    fadeTargets.forEach((el) => {
+        el.setAttribute('data-fade', '');
+        if (!el.matches('.section-head, .trust-copy')) el.style.setProperty('--d', '.08s');
+    });
 
     const io = 'IntersectionObserver' in window ? new IntersectionObserver((entries, obs) => {
         entries.forEach((entry) => {
@@ -692,17 +712,31 @@
         // The counts can also be typed; anything outside the limits settles to the nearest allowed value
         $$('[data-field]', calc).forEach((input) => {
             const k = input.dataset.field;
+            const row = input.closest('.calc-row');
+            let flagTimer = 0;
+            // An out-of-range entry marks the field and its "1 to N" hint; it stays marked briefly after settling
+            const flag = (on, linger) => {
+                clearTimeout(flagTimer);
+                input.setAttribute('aria-invalid', String(on && !linger));
+                row.classList.toggle('is-flagged', on);
+                if (on && linger) flagTimer = setTimeout(() => row.classList.remove('is-flagged'), 1800);
+            };
             const commit = () => {
                 const n = parseInt(input.value, 10);
+                const out = !Number.isNaN(n) && clamp(k, n) !== n;
                 if (!Number.isNaN(n)) state[k] = clamp(k, n);
                 input.value = state[k];
+                if (out) flag(true, true);
+                else input.setAttribute('aria-invalid', 'false');
                 render();
             };
             input.addEventListener('input', () => {
                 const digits = input.value.replace(/\D/g, '');
                 if (digits !== input.value) input.value = digits;
                 const n = parseInt(digits, 10);
-                if (!Number.isNaN(n) && n >= limits[k][0] && n <= limits[k][1]) { state[k] = n; render(); }
+                const ok = !Number.isNaN(n) && n >= limits[k][0] && n <= limits[k][1];
+                flag(!Number.isNaN(n) && !ok, false);
+                if (ok) { state[k] = n; render(); }
             });
             input.addEventListener('change', commit);
             input.addEventListener('blur', commit);
