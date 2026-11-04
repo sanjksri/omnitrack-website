@@ -156,7 +156,7 @@
                 }
             });
             if (focus) tab.focus();
-            tab.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+            tabsRoot.dispatchEvent(new CustomEvent('tabchange', { detail: { tab } }));
         };
         tabs.forEach((tab, i) => {
             tab.addEventListener('click', () => select(tab));
@@ -170,7 +170,7 @@
             });
         });
         $$('.panel', tabsRoot).forEach((p) => p.addEventListener('animationend', (e) => {
-            if (e.target === p.querySelector('.panel-copy')) p.classList.remove('is-entering');
+            if (e.target === p) p.classList.remove('is-entering');
         }));
 
         const openFromHash = () => {
@@ -183,6 +183,313 @@
         };
         openFromHash();
         window.addEventListener('hashchange', openFromHash);
+    }
+
+    /* ---------- Product showcase: console views driven by the feature tabs ---------- */
+    const showcase = $('[data-showcase]');
+    if (showcase) initShowcase(showcase);
+
+    function initShowcase(root) {
+        const tablist = $('.sc-tabs', root);
+        const ind = $('[data-tab-ind]', root);
+        const motionBtn = $('[data-sc-motion]', root);
+        const motionLabel = $('[data-sc-motion-label]', root);
+        const state = { visible: false, paused: false, view: 'tab-live' };
+
+        // Sliding sheet behind the selected tab
+        const placeInd = (instant) => {
+            const sel = $('[aria-selected="true"]', tablist);
+            if (!sel || !ind) return;
+            if (instant) ind.style.transition = 'none';
+            ind.style.width = sel.offsetWidth + 'px';
+            ind.style.height = sel.offsetHeight + 'px';
+            ind.style.transform = `translate(${sel.offsetLeft}px, ${sel.offsetTop}px)`;
+            if (instant) { void ind.offsetWidth; ind.style.transition = ''; }
+        };
+        if (ind) {
+            placeInd(true);
+            tablist.classList.add('has-ind');
+            if ('ResizeObserver' in window) new ResizeObserver(() => placeInd(true)).observe(tablist);
+        }
+
+        // The window's own view switcher mirrors the tabs (pointer convenience; the tabs stay the keyboard path)
+        $$('[data-crumb]', root).forEach((c) => c.addEventListener('click', () => {
+            const t = document.getElementById(c.dataset.crumb);
+            if (t) t.click();
+        }));
+
+        const live = createLiveMap($('[data-live]', root));
+        const hist = createHistory($('[data-history]', root));
+
+        const sync = () => {
+            const run = state.visible && !state.paused && !document.hidden && !reduceMotion.matches && state.view === 'tab-live';
+            if (live) live.run(run);
+        };
+
+        const applyView = (id, animate) => {
+            state.view = id;
+            placeInd(!animate);
+            $$('[data-copy-for]', root).forEach((c) => {
+                const on = c.dataset.copyFor === id;
+                c.hidden = !on;
+                if (on && animate) { c.classList.remove('is-entering'); void c.offsetWidth; c.classList.add('is-entering'); }
+            });
+            $$('[data-crumb]', root).forEach((c) => c.classList.toggle('is-on', c.dataset.crumb === id));
+            if (id === 'tab-history' && hist) hist.enter();
+            sync();
+        };
+        root.addEventListener('tabchange', (e) => applyView(e.detail.tab.id, true));
+        $$('[data-copy-for]', root).forEach((c) => c.addEventListener('animationend', () => c.classList.remove('is-entering')));
+
+        if (motionBtn) {
+            motionBtn.addEventListener('click', () => {
+                state.paused = !state.paused;
+                motionBtn.setAttribute('aria-pressed', String(state.paused));
+                motionLabel.textContent = state.paused ? 'Play the demo' : 'Pause the demo';
+                sync();
+            });
+        }
+        document.addEventListener('visibilitychange', sync);
+        if (reduceMotion.addEventListener) reduceMotion.addEventListener('change', sync);
+        if ('IntersectionObserver' in window) {
+            new IntersectionObserver(([entry]) => { state.visible = entry.isIntersecting; sync(); }, { threshold: 0.15 }).observe($('.sc-window', root));
+        } else {
+            state.visible = true;
+        }
+        // The tabs may already have switched (the #analytics link) before this ran
+        const current = $('[role="tab"][aria-selected="true"]', root);
+        applyView(current ? current.id : 'tab-live', false);
+    }
+
+    // Sample live map: two vehicles report a position every 2.4 s and glide to it; the selected one drops pings.
+    function createLiveMap(panel) {
+        if (!panel) return null;
+        const svgNS = 'http://www.w3.org/2000/svg';
+        const svg = $('[data-map]', panel);
+        const pingLayer = $('[data-pings]', svg);
+        const fitBtn = $('[data-fit]', panel);
+        const followBtn = $('[data-follow]', panel);
+        const followName = $('[data-follow-name]', panel);
+        const dock = $('[data-dock]', panel);
+        const field = (k) => $(`[data-v="${k}"]`, dock);
+        const FULL = { x: 0, y: 0, w: 640, h: 400 };
+        const TICK = 1200; // ms; vehicles alternate, so each one reports every 2.4 s
+
+        const D = {
+            van04: { name: 'Van 04', state: 'moving', label: 'Moving', id: '100015', today: 21.4, kmh: 42, s: 120, step: 26, km: 0.028, trail: 180, loop: true },
+            truck01: { name: 'Truck 01', state: 'moving', label: 'Moving', id: '100016', today: 64.8, kmh: 58, s: 200, step: 38, km: 0.039, trail: 150, loop: false },
+            bike02: { name: 'Bike 02', state: 'idle', label: 'Idle', id: '100017', today: 9.6, kmh: 0, fixed: [300, 268] },
+            phoneA: { name: 'Sales phone A', state: 'paused', label: 'Paused', id: '100018', today: 3.2, kmh: null, seen: 'at 09:42', fixed: [520, 150] },
+        };
+        Object.keys(D).forEach((k) => {
+            const d = D[k];
+            d.marker = $(`[data-marker="${k}"]`, svg);
+            d.dir = d.marker ? $('.mk-dir', d.marker) : null;
+            d.path = $(`[data-path="${k}"]`, svg);
+            d.trailEl = $(`[data-trail="${k}"]`, svg);
+            d.meta = $(`[data-meta="${k}"]`, panel);
+            d.len = d.path ? d.path.getTotalLength() : 0;
+            d.lastAt = performance.now();
+            d.n = 0;
+        });
+
+        const S = { sel: 'van04', follow: false, vb: { ...FULL }, running: false, timer: 0, seenTimer: 0, raf: 0, glides: [], flip: false };
+
+        const pos = (d) => {
+            if (d.fixed) return { x: d.fixed[0], y: d.fixed[1], a: 0 };
+            const at = (v) => d.path.getPointAtLength(d.loop ? ((v % d.len) + d.len) % d.len : Math.max(0, Math.min(d.len, v)));
+            const p = at(d.s), a = at(d.s - 1.5), b = at(d.s + 1.5);
+            return { x: p.x, y: p.y, a: Math.atan2(b.y - a.y, b.x - a.x) * 180 / Math.PI + 90 };
+        };
+        const trailD = (d) => {
+            const pts = [];
+            const from = d.loop ? d.s - d.trail : Math.max(0, d.s - d.trail);
+            for (let v = from; v < d.s; v += 6) pts.push(d.path.getPointAtLength(d.loop ? ((v % d.len) + d.len) % d.len : v));
+            pts.push(d.path.getPointAtLength(d.loop ? ((d.s % d.len) + d.len) % d.len : d.s));
+            return 'M' + pts.map((p) => `${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(' L');
+        };
+
+        const zoom = () => FULL.w / S.vb.w;
+        // On a narrow map the drawing shrinks; markers grow back so they stay legible and tappable
+        let unit = 1;
+        const measure = () => { unit = Math.max(1, 520 / (svg.clientWidth || 520)); };
+        measure();
+        if ('ResizeObserver' in window) new ResizeObserver(() => { measure(); placeAll(); }).observe(svg);
+        const placeMarker = (d) => {
+            if (!d.marker) return;
+            const p = pos(d);
+            d.marker.setAttribute('transform', `translate(${p.x.toFixed(1)} ${p.y.toFixed(1)}) scale(${(unit / zoom()).toFixed(3)})`);
+            if (d.dir) d.dir.setAttribute('transform', `rotate(${p.a.toFixed(1)})`);
+            if (d.trailEl) d.trailEl.setAttribute('d', trailD(d));
+        };
+        const placeAll = () => Object.values(D).forEach(placeMarker);
+
+        // View box: whole town, or a closer window that keeps the selected device centred
+        const followBox = () => {
+            const p = pos(D[S.sel]);
+            const w = 360, h = 225;
+            return { x: Math.max(0, Math.min(FULL.w - w, p.x - w / 2)), y: Math.max(0, Math.min(FULL.h - h, p.y - h / 2)), w, h };
+        };
+        const setVB = (b) => { S.vb = b; svg.setAttribute('viewBox', `${b.x.toFixed(1)} ${b.y.toFixed(1)} ${b.w.toFixed(1)} ${b.h.toFixed(1)}`); placeAll(); };
+        let vbAnim = 0;
+        const tweenVB = (to) => {
+            cancelAnimationFrame(vbAnim);
+            if (reduceMotion.matches) { setVB(to); return; }
+            const from = { ...S.vb }, t0 = performance.now(), dur = 700;
+            const step = (now) => {
+                const t = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - t, 3);
+                setVB({ x: from.x + (to.x - from.x) * e, y: from.y + (to.y - from.y) * e, w: from.w + (to.w - from.w) * e, h: from.h + (to.h - from.h) * e });
+                vbAnim = t < 1 ? requestAnimationFrame(step) : 0;
+            };
+            vbAnim = requestAnimationFrame(step);
+        };
+        const setFollow = (on) => {
+            S.follow = on;
+            followBtn.setAttribute('aria-pressed', String(on));
+            fitBtn.setAttribute('aria-pressed', String(!on));
+            tweenVB(on ? followBox() : { ...FULL });
+        };
+        fitBtn.addEventListener('click', () => setFollow(false));
+        followBtn.addEventListener('click', () => setFollow(!S.follow));
+
+        const ago = (d) => {
+            if (d.seen) return d.seen;
+            const sec = Math.round((performance.now() - d.lastAt) / 1000);
+            return sec < 1 ? 'now' : `${sec}s ago`;
+        };
+        const renderDock = () => {
+            const d = D[S.sel];
+            field('name').textContent = d.name;
+            const st = field('status');
+            st.dataset.state = d.state;
+            st.textContent = d.label;
+            field('speed').textContent = d.kmh == null ? '–' : `${d.kmh} km/h`;
+            field('today').textContent = `${d.today.toFixed(2)} km`;
+            field('seen').textContent = ago(d);
+            field('id').textContent = d.id;
+        };
+
+        const select = (key) => {
+            S.sel = key;
+            $$('[data-select]', panel).forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.select === key)));
+            Object.keys(D).forEach((k) => { if (D[k].marker) D[k].marker.classList.toggle('is-selected', k === key); });
+            const m = D[key].marker;
+            if (m) m.parentNode.appendChild(m);
+            followName.textContent = D[key].name;
+            pingLayer.textContent = '';
+            renderDock();
+            if (S.follow) tweenVB(followBox());
+        };
+        $$('[data-select]', panel).forEach((b) => b.addEventListener('click', () => select(b.dataset.select)));
+        Object.keys(D).forEach((k) => { if (D[k].marker) D[k].marker.addEventListener('click', () => select(k)); });
+
+        const dropPing = (d) => {
+            const p = pos(d);
+            const ring = document.createElementNS(svgNS, 'circle');
+            ring.setAttribute('class', 'ping-ring');
+            ring.setAttribute('cx', p.x); ring.setAttribute('cy', p.y); ring.setAttribute('r', 5);
+            const dot = document.createElementNS(svgNS, 'circle');
+            dot.setAttribute('class', 'ping');
+            dot.setAttribute('cx', p.x); dot.setAttribute('cy', p.y); dot.setAttribute('r', 3.4);
+            pingLayer.append(ring, dot);
+            if (ring.animate) {
+                ring.animate([{ r: 5, opacity: 0.9 }, { r: 18, opacity: 0 }], { duration: 1200, easing: 'cubic-bezier(.16,1,.3,1)' })
+                    .finished.then(() => ring.parentNode && ring.parentNode.removeChild(ring), () => {});
+            }
+            const dots = $$('.ping', pingLayer);
+            dots.forEach((el, i) => { el.style.opacity = String(Math.max(0.2, 1 - (dots.length - 1 - i) * 0.2)); });
+            if (dots.length > 5) dots[0].parentNode.removeChild(dots[0]);
+            if (d.marker && d.marker.animate) {
+                d.marker.querySelector('.mk-halo').animate([{ transform: 'scale(.6)', opacity: 0.45 }, { transform: 'scale(1.6)', opacity: 0 }], { duration: 1200, easing: 'cubic-bezier(.16,1,.3,1)' });
+            }
+        };
+
+        // One position report: the marker glides to its new fix, and the readouts update when it lands
+        const report = (key) => {
+            const d = D[key];
+            d.n += 1;
+            let to = d.s + d.step;
+            if (!d.loop && to > d.len) { d.s = 0; placeMarker(d); return; } // left the map: re-enter from the far edge, unseen
+            if (d.loop && to > d.len) { d.s -= d.len; to -= d.len; }
+            S.glides.push({ d, from: d.s, to, t0: performance.now(), dur: 900, key });
+            if (!S.raf) S.raf = requestAnimationFrame(frame);
+        };
+        const land = (g) => {
+            const d = g.d;
+            d.lastAt = performance.now();
+            d.today += d.km;
+            d.kmh = Math.round((g.key === 'van04' ? 42 : 58) + Math.sin(d.n * 0.9) * (g.key === 'van04' ? 4 : 3));
+            if (d.meta) d.meta.textContent = `Moving · ${d.kmh} km/h`;
+            if (g.key === S.sel) { dropPing(d); renderDock(); }
+        };
+        const frame = (now) => {
+            S.glides = S.glides.filter((g) => {
+                const t = Math.min(1, (now - g.t0) / g.dur), e = 1 - Math.pow(1 - t, 3);
+                g.d.s = g.from + (g.to - g.from) * e;
+                placeMarker(g.d);
+                if (t === 1) { land(g); return false; }
+                return true;
+            });
+            if (S.follow && !vbAnim) setVB(followBox());
+            S.raf = S.glides.length ? requestAnimationFrame(frame) : 0;
+        };
+
+        const tick = () => { S.flip = !S.flip; report(S.flip ? 'van04' : 'truck01'); };
+        const run = (on) => {
+            if (on === S.running) return;
+            S.running = on;
+            clearInterval(S.timer); clearInterval(S.seenTimer);
+            if (on) {
+                const now = performance.now();
+                Object.values(D).forEach((d) => { d.lastAt = now; });
+                S.timer = setInterval(tick, TICK);
+                S.seenTimer = setInterval(() => { field('seen').textContent = ago(D[S.sel]); }, 1000);
+            }
+        };
+
+        placeAll();
+        select('van04');
+        return { run };
+    }
+
+    // Sample route history: picking a trip highlights it, redraws it and replays the van along it once
+    function createHistory(panel) {
+        if (!panel) return null;
+        const svg = $('[data-hist-map]', panel);
+        const lines = $$('[data-tripline]', svg);
+        const firstStop = $('.stop-end', svg);
+        const play = $('[data-play]', svg);
+        const controls = $$('[data-trip]', panel).filter((el) => el.tagName === 'BUTTON');
+        const facts = $('[data-trip-facts]', panel);
+        const T = [
+            { dist: '38.2 km', moving: '1h 34m', idle: '18m', speed: '24 / 58 km/h' },
+            { dist: '24.6 km', moving: '1h 22m', idle: '48m', speed: '18 / 46 km/h' },
+            { dist: '17.9 km', moving: '1h 05m', idle: '27m', speed: '17 / 41 km/h' },
+        ];
+        let cur = 0, raf = 0;
+
+        const show = (i, animate) => {
+            cur = i;
+            controls.forEach((c) => c.setAttribute('aria-pressed', String(+c.dataset.trip === i)));
+            lines.forEach((l, k) => l.classList.toggle('is-on', k === i));
+            const line = lines[i];
+            svg.insertBefore(line, firstStop);
+            Object.keys(T[i]).forEach((k) => { $(`[data-t="${k}"]`, facts).textContent = T[i][k]; });
+            const len = line.getTotalLength();
+            cancelAnimationFrame(raf);
+            const at = (v) => { const p = line.getPointAtLength(v); play.setAttribute('transform', `translate(${p.x.toFixed(1)} ${p.y.toFixed(1)})`); };
+            if (!animate || reduceMotion.matches || !line.animate) { at(len); return; }
+            line.animate([{ strokeDasharray: `${len}`, strokeDashoffset: len }, { strokeDasharray: `${len}`, strokeDashoffset: 0 }], { duration: 1100, easing: 'cubic-bezier(.65,0,.35,1)' });
+            const t0 = performance.now();
+            const step = (now) => {
+                const t = Math.min(1, (now - t0) / 1100), e = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+                at(len * e);
+                if (t < 1) raf = requestAnimationFrame(step);
+            };
+            raf = requestAnimationFrame(step);
+        };
+        controls.forEach((c) => c.addEventListener('click', () => show(+c.dataset.trip, true)));
+        return { enter: () => requestAnimationFrame(() => show(cur, true)) };
     }
 
     /* ---------- Pricing calculator ---------- */

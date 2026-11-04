@@ -42,6 +42,42 @@
         <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3.5 6.5 8.5 6.5 8.5-6.5"/></symbol>
         <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></symbol>
         <symbol id="i-send" viewBox="0 0 24 24"><path d="M21 3 10 14M21 3l-7 18-4-7-7-4 18-7z"/></symbol>
+        <symbol id="town-map" viewBox="0 0 640 400">
+            <rect width="640" height="400" fill="var(--map-land)"/>
+            <path d="M-10 381 C 120 360, 230 398, 350 384 S 560 358, 650 374" fill="none" stroke="var(--map-water)" stroke-width="20" stroke-linecap="round"/>
+            <g fill="var(--map-block)">
+                <rect x="12" y="10" width="86" height="34" rx="4"/><rect x="12" y="52" width="86" height="28" rx="4"/>
+                <rect x="122" y="10" width="78" height="70" rx="4"/><rect x="208" y="10" width="80" height="70" rx="4"/>
+                <rect x="312" y="10" width="146" height="32" rx="4"/><rect x="312" y="50" width="70" height="30" rx="4"/><rect x="390" y="50" width="68" height="30" rx="4"/>
+                <rect x="482" y="10" width="146" height="70" rx="4"/>
+                <rect x="12" y="102" width="86" height="48" rx="4"/><rect x="12" y="158" width="86" height="40" rx="4"/>
+                <rect x="312" y="102" width="146" height="44" rx="4"/><rect x="312" y="154" width="146" height="44" rx="4"/>
+                <rect x="482" y="102" width="68" height="96" rx="4"/><rect x="558" y="102" width="70" height="96" rx="4"/>
+                <rect x="12" y="222" width="86" height="96" rx="4"/>
+                <rect x="122" y="222" width="80" height="44" rx="4"/><rect x="122" y="274" width="80" height="44" rx="4"/><rect x="210" y="222" width="78" height="96" rx="4"/>
+                <rect x="312" y="222" width="146" height="96" rx="4"/>
+            </g>
+            <rect x="122" y="102" width="166" height="96" rx="4" fill="var(--map-park)"/>
+            <rect x="482" y="222" width="146" height="96" rx="4" fill="var(--map-park)"/>
+            <g fill="#c3d6c4">
+                <circle cx="150" cy="128" r="5"/><circle cx="176" cy="164" r="6"/><circle cx="232" cy="124" r="5"/><circle cx="258" cy="172" r="6"/><circle cx="206" cy="150" r="4"/>
+                <circle cx="512" cy="250" r="5"/><circle cx="560" cy="286" r="6"/><circle cx="600" cy="244" r="5"/>
+            </g>
+            <g fill="none" stroke="var(--map-casing)" stroke-width="12">
+                <path d="M110 -10 V410M300 -10 V410M470 -10 V410M-10 90 H650M-10 210 H650"/>
+            </g>
+            <path d="M-10 330 H650" fill="none" stroke="var(--map-casing)" stroke-width="18"/>
+            <g fill="none" stroke="#fff" stroke-width="8.5">
+                <path d="M110 -10 V410M300 -10 V410M470 -10 V410M-10 90 H650M-10 210 H650"/>
+            </g>
+            <path d="M-10 330 H650" fill="none" stroke="#fff" stroke-width="14"/>
+            <path d="M-10 330 H650" fill="none" stroke="var(--map-casing)" stroke-width="1" stroke-dasharray="10 12"/>
+            <g class="map-minor" fill="var(--map-label)" font-family="Mukta, sans-serif" font-size="11" font-weight="500">
+                <text x="385" y="84" text-anchor="middle">Market Road</text>
+                <text x="572" y="352" text-anchor="middle">Highway</text>
+                <text x="205" y="155" text-anchor="middle" fill="#6f8a74">Park</text>
+            </g>
+        </symbol>
     </svg>
 
     <a class="skip-link" href="#main">Skip to content</a>
@@ -267,116 +303,216 @@
 
         <!-- Console features -->
         <section class="section features" id="features">
-            <div class="container">
+            <div class="container showcase" data-tabs data-showcase>
                 <div class="section-head">
                     <h2>What you get in the console</h2>
                     <p>One place to watch, look back and report on every vehicle and field phone you track.</p>
                 </div>
-
-                <div class="explorer" data-tabs>
-                    <div class="explorer-tabs" role="tablist" aria-label="Console features">
-                        <button class="tab" type="button" role="tab" id="tab-live" aria-controls="panel-live" aria-selected="true">
+                <div class="sc-side">
+                    <div class="sc-tabs" role="tablist" aria-label="Console features" aria-orientation="vertical">
+                        <span class="sc-tab-ind" aria-hidden="true" data-tab-ind></span>
+                        <button class="tab" type="button" role="tab" id="tab-live" aria-controls="panel-live" aria-selected="true" aria-describedby="copy-live">
                             <svg class="icon" aria-hidden="true"><use href="#i-map"/></svg>
                             <span><strong>Live map</strong><small>Every device, right now</small></span>
                         </button>
-                        <button class="tab" type="button" role="tab" id="tab-history" aria-controls="panel-history" aria-selected="false" tabindex="-1">
+                        <button class="tab" type="button" role="tab" id="tab-history" aria-controls="panel-history" aria-selected="false" aria-describedby="copy-history" tabindex="-1">
                             <svg class="icon" aria-hidden="true"><use href="#i-history"/></svg>
                             <span><strong>Route history</strong><small>Any day, split into trips</small></span>
                         </button>
-                        <button class="tab" type="button" role="tab" id="tab-reports" aria-controls="panel-reports" aria-selected="false" tabindex="-1">
+                        <button class="tab" type="button" role="tab" id="tab-reports" aria-controls="panel-reports" aria-selected="false" aria-describedby="copy-reports" tabindex="-1">
                             <svg class="icon" aria-hidden="true"><use href="#i-report"/></svg>
                             <span><strong>Trip reports</strong><small>Distance, speed, idle time</small></span>
                         </button>
-                        <button class="tab" type="button" role="tab" id="tab-account" aria-controls="panel-account" aria-selected="false" tabindex="-1">
+                        <button class="tab" type="button" role="tab" id="tab-account" aria-controls="panel-account" aria-selected="false" aria-describedby="copy-account" tabindex="-1">
                             <svg class="icon" aria-hidden="true"><use href="#i-account"/></svg>
                             <span><strong>Account and data</strong><small>Gmail sign-in, 6 months kept</small></span>
                         </button>
                     </div>
 
-                    <div class="explorer-panels">
-                        <div class="panel" role="tabpanel" id="panel-live" aria-labelledby="tab-live" tabindex="0">
-                            <div class="panel-copy">
-                                <h3>See every active device on one live map</h3>
-                                <p>Moving, idle or paused, each device shows its latest position. Zoom to fit the whole fleet, or follow one vehicle as it moves.</p>
-                            </div>
-                            <div class="panel-visual">
-                                <ul class="device-list">
-                                    <li><span class="dev-dot is-moving"></span><span class="dev-name">Van 04</span><span class="dev-meta">Moving · 42 km/h</span></li>
-                                    <li><span class="dev-dot is-moving"></span><span class="dev-name">Truck 01</span><span class="dev-meta">Moving · 58 km/h</span></li>
-                                    <li><span class="dev-dot is-idle"></span><span class="dev-name">Bike 02</span><span class="dev-meta">Idle · 12 min</span></li>
-                                    <li><span class="dev-dot is-paused"></span><span class="dev-name">Sales phone A</span><span class="dev-meta">Paused by driver</span></li>
-                                </ul>
-                                <div class="chip-row"><span class="chip">Zoom to fit all</span><span class="chip chip-on">Follow Van 04</span></div>
-                                <p class="sample-note">Sample data</p>
-                            </div>
+                    <div class="sc-copy">
+                        <div class="sc-copy-item" id="copy-live" data-copy-for="tab-live">
+                            <h3>See every active device on one live map</h3>
+                            <p>Moving, idle or paused, each device shows its latest position. Zoom to fit the whole fleet, or follow one vehicle as it moves.</p>
                         </div>
-
-                        <div class="panel" role="tabpanel" id="panel-history" aria-labelledby="tab-history" tabindex="0" hidden>
-                            <div class="panel-copy">
-                                <h3>Scrub back through any day</h3>
-                                <p>Pick a date range and the route history is split into separate trips automatically. A new trip starts whenever the device has been idle for more than 5 minutes.</p>
-                            </div>
-                            <div class="panel-visual">
-                                <div class="chip-row"><span class="chip">Today</span><span class="chip chip-on">Yesterday</span><span class="chip">Last 7 days</span></div>
-                                <div class="timeline" aria-hidden="true">
-                                    <div class="tl-axis"><span>06:00</span><span>10:00</span><span>14:00</span><span>18:00</span><span>22:00</span></div>
-                                    <div class="tl-track">
-                                        <span class="tl-seg" style="--a:12%;--b:24%"></span>
-                                        <span class="tl-seg" style="--a:28%;--b:41%"></span>
-                                        <span class="tl-seg" style="--a:52%;--b:61%"></span>
-                                        <span class="tl-seg" style="--a:66%;--b:82%"></span>
-                                    </div>
-                                </div>
-                                <ul class="trip-list">
-                                    <li><span class="mono">Trip 1</span><span>08:10 to 10:02</span><span class="mono">38.2 km</span></li>
-                                    <li><span class="mono">Trip 2</span><span>10:46 to 12:56</span><span class="mono">24.6 km</span></li>
-                                    <li><span class="mono">Trip 3</span><span>14:20 to 15:52</span><span class="mono">17.9 km</span></li>
-                                </ul>
-                                <p class="sample-note">Sample data</p>
-                            </div>
+                        <div class="sc-copy-item" id="copy-history" data-copy-for="tab-history" hidden>
+                            <h3>Scrub back through any day</h3>
+                            <p>Pick a date range and the route history is split into separate trips automatically. A new trip starts whenever the device has been idle for more than 5 minutes.</p>
                         </div>
-
-                        <div class="panel panel-stack" role="tabpanel" id="panel-reports" aria-labelledby="tab-reports" tabindex="0" hidden>
-                            <span id="analytics" class="anchor-alias"></span>
-                            <div class="panel-copy">
-                                <h3>Trip reports, calculated for you</h3>
-                                <p>For each trip you get total distance, moving hours, idle time, and average and top speed. Download it as CSV to work with in Excel or your own tools.</p>
-                            </div>
-                            <div class="panel-visual">
-                                <div class="report">
-                                    <table>
-                                        <thead><tr><th scope="col">Trip</th><th scope="col">Distance</th><th scope="col">Moving</th><th scope="col">Idle</th><th scope="col">Avg</th><th scope="col">Top</th></tr></thead>
-                                        <tbody>
-                                            <tr><th scope="row">Trip 1</th><td><span data-count="38.2" data-dec="1">38.2</span> km</td><td>1h 34m</td><td>18m</td><td><span data-count="24">24</span> km/h</td><td><span data-count="58">58</span> km/h</td></tr>
-                                            <tr><th scope="row">Trip 2</th><td><span data-count="24.6" data-dec="1">24.6</span> km</td><td>1h 22m</td><td>48m</td><td><span data-count="18">18</span> km/h</td><td><span data-count="46">46</span> km/h</td></tr>
-                                            <tr><th scope="row">Trip 3</th><td><span data-count="17.9" data-dec="1">17.9</span> km</td><td>1h 05m</td><td>27m</td><td><span data-count="17">17</span> km/h</td><td><span data-count="41">41</span> km/h</td></tr>
-                                        </tbody>
-                                    </table>
-                                    <div class="report-foot">
-                                        <span class="sample-note">Sample report · Van 04</span>
-                                        <span class="chip chip-file"><svg class="icon" aria-hidden="true"><use href="#i-file"/></svg>Export CSV</span>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="sc-copy-item" id="copy-reports" data-copy-for="tab-reports" hidden>
+                            <h3>Trip reports, calculated for you</h3>
+                            <p>For each trip you get total distance, moving hours, idle time, and average and top speed. Download it as CSV to work with in Excel or your own tools.</p>
                         </div>
-
-                        <div class="panel" role="tabpanel" id="panel-account" aria-labelledby="tab-account" tabindex="0" hidden>
-                            <div class="panel-copy">
-                                <h3>One Gmail ID runs the whole account</h3>
-                                <p>No enterprise sign-up forms. Your tracking history is kept on our servers for 6 months, then cleared automatically to keep things fast. Download anything you want to keep as CSV before then.</p>
-                            </div>
-                            <div class="panel-visual">
-                                <div class="retention" aria-hidden="true">
-                                    <div class="ret-head"><span>Kept for 6 months</span><span class="mono">then cleared</span></div>
-                                    <div class="ret-bars">
-                                        <span>M1</span><span>M2</span><span>M3</span><span>M4</span><span>M5</span><span>M6</span><span class="ret-out">M7</span>
-                                    </div>
-                                </div>
-                                <div class="gsign"><svg class="icon" aria-hidden="true"><use href="#i-mail"/></svg><span>Sign in with Gmail</span></div>
-                            </div>
+                        <div class="sc-copy-item" id="copy-account" data-copy-for="tab-account" hidden>
+                            <h3>One Gmail ID runs the whole account</h3>
+                            <p>No enterprise sign-up forms. Your tracking history is kept on our servers for 6 months, then cleared automatically to keep things fast. Download anything you want to keep as CSV before then.</p>
                         </div>
                     </div>
                 </div>
+
+                <figure class="sc-frame">
+                    <div class="sc-window">
+                    <div class="sc-bar">
+                        <span class="sc-app"><img src="assets/mark.png" alt="" width="14" height="17">Console</span>
+                        <span class="sc-crumbs" aria-hidden="true">
+                            <span data-crumb="tab-live" class="is-on">Live map</span>
+                            <span data-crumb="tab-history">History</span>
+                            <span data-crumb="tab-reports">Reports</span>
+                            <span data-crumb="tab-account">Account</span>
+                        </span>
+                        <span class="sim-tag sc-sample">Sample data</span>
+                        <button class="sc-motion" type="button" data-sc-motion aria-pressed="false">
+                            <svg class="icon icon-pause" aria-hidden="true"><use href="#i-pause"/></svg>
+                            <svg class="icon icon-play" aria-hidden="true"><use href="#i-play"/></svg>
+                            <span class="sr-only" data-sc-motion-label>Pause the demo</span>
+                        </button>
+                    </div>
+
+                    <div class="sc-panels">
+                        <!-- Live map -->
+                        <div class="panel sc-view sc-live" role="tabpanel" id="panel-live" aria-labelledby="tab-live" tabindex="0" data-live>
+                            <div class="sc-list">
+                                <div class="sc-list-head"><span>Devices</span><span class="mono">4</span></div>
+                                <ul class="sc-devices">
+                                    <li><button class="sc-dev" type="button" data-select="van04" aria-pressed="true"><span class="dev-dot is-moving"></span><span class="sc-dev-name">Van 04</span><span class="sc-dev-meta" data-meta="van04">Moving · 42 km/h</span></button></li>
+                                    <li><button class="sc-dev" type="button" data-select="truck01" aria-pressed="false"><span class="dev-dot is-moving"></span><span class="sc-dev-name">Truck 01</span><span class="sc-dev-meta" data-meta="truck01">Moving · 58 km/h</span></button></li>
+                                    <li><button class="sc-dev" type="button" data-select="bike02" aria-pressed="false"><span class="dev-dot is-idle"></span><span class="sc-dev-name">Bike 02</span><span class="sc-dev-meta">Idle · 12 min</span></button></li>
+                                    <li><button class="sc-dev" type="button" data-select="phoneA" aria-pressed="false"><span class="dev-dot is-paused"></span><span class="sc-dev-name">Sales phone A</span><span class="sc-dev-meta">Paused by driver</span></button></li>
+                                </ul>
+                            </div>
+                            <div class="sc-main">
+                                <div class="sc-map">
+                                    <svg viewBox="0 0 640 400" preserveAspectRatio="xMidYMid slice" role="img" aria-labelledby="sc-live-title" data-map>
+                                        <title id="sc-live-title">Sample live map: Van 04 and Truck 01 moving, Bike 02 idle, Sales phone A paused.</title>
+                                        <use href="#town-map" width="640" height="400"/>
+                                        <path class="sc-geo" data-path="van04" d="M110 196 V104 Q110 90 124 90 H456 Q470 90 470 104 V196 Q470 210 456 210 H124 Q110 210 110 196 Z"/>
+                                        <path class="sc-geo" data-path="truck01" d="M-60 330 H700"/>
+                                        <path class="route-done sc-trail-soft" data-trail="truck01" d="M0 0"/>
+                                        <path class="route-done" data-trail="van04" d="M0 0"/>
+                                        <g class="pings" data-pings></g>
+                                        <g class="sc-mk" data-marker="phoneA" data-state="paused" transform="translate(520 150)"><circle class="mk-halo" r="15"/><circle class="mk-dot" r="6.5"/><text class="mk-label mk-label-l" x="-13" y="4.5">Sales phone A</text></g>
+                                        <g class="sc-mk" data-marker="bike02" data-state="idle" transform="translate(300 268)"><circle class="mk-halo" r="15"/><circle class="mk-dot" r="6.5"/><text class="mk-label" x="13" y="4.5">Bike 02</text></g>
+                                        <g class="sc-mk" data-marker="truck01" data-state="moving" transform="translate(140 330)"><circle class="mk-halo" r="15"/><path class="mk-dir" d="M-4.5 -8.5 L0 -15 L4.5 -8.5Z"/><circle class="mk-dot" r="6.5"/><text class="mk-label" x="10" y="-12">Truck 01</text></g>
+                                        <g class="sc-mk is-selected" data-marker="van04" data-state="moving" transform="translate(110 150)"><circle class="mk-halo" r="15"/><path class="mk-dir" d="M-4.5 -8.5 L0 -15 L4.5 -8.5Z"/><circle class="mk-dot" r="6.5"/><text class="mk-label" x="17" y="4.5">Van 04</text></g>
+                                    </svg>
+                                    <div class="sc-map-tools">
+                                        <button class="map-btn" type="button" data-fit aria-pressed="true">Fit all</button>
+                                        <button class="map-btn" type="button" data-follow aria-pressed="false">Follow <span data-follow-name>Van 04</span></button>
+                                    </div>
+                                </div>
+                                <div class="sc-dock" data-dock>
+                                    <div class="sc-dock-head">
+                                        <strong data-v="name">Van 04</strong>
+                                        <span class="status" data-state="moving" data-v="status">Moving</span>
+                                    </div>
+                                    <dl class="sc-facts">
+                                        <div><dt>Speed</dt><dd class="mono" data-v="speed">42 km/h</dd></div>
+                                        <div><dt>Today</dt><dd class="mono" data-v="today">21.40 km</dd></div>
+                                        <div><dt>Last update</dt><dd class="mono" data-v="seen">now</dd></div>
+                                        <div><dt>Tracking ID</dt><dd class="mono" data-v="id">100015</dd></div>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Route history -->
+                        <div class="panel sc-view sc-history" role="tabpanel" id="panel-history" aria-labelledby="tab-history" tabindex="0" hidden data-history>
+                            <div class="sc-list">
+                                <div class="sc-list-head"><span>Van 04</span><span class="mono">3 trips</span></div>
+                                <div class="sc-range" role="group" aria-label="Date range (sample)"><span class="chip">Today</span><span class="chip chip-on">Yesterday</span><span class="chip">7 days</span></div>
+                                <ul class="sc-trips">
+                                    <li><button class="sc-trip" type="button" data-trip="0" aria-pressed="true"><span class="sc-trip-n">Trip 1</span><span class="sc-trip-t mono">08:10 to 10:02</span><span class="sc-trip-d mono">38.2 km</span></button></li>
+                                    <li><button class="sc-trip" type="button" data-trip="1" aria-pressed="false"><span class="sc-trip-n">Trip 2</span><span class="sc-trip-t mono">10:46 to 12:56</span><span class="sc-trip-d mono">24.6 km</span></button></li>
+                                    <li><button class="sc-trip" type="button" data-trip="2" aria-pressed="false"><span class="sc-trip-n">Trip 3</span><span class="sc-trip-t mono">14:20 to 15:52</span><span class="sc-trip-d mono">17.9 km</span></button></li>
+                                </ul>
+                            </div>
+                            <div class="sc-main">
+                                <div class="sc-map">
+                                    <svg viewBox="0 0 640 400" preserveAspectRatio="xMidYMid slice" role="img" aria-labelledby="sc-hist-title" data-hist-map>
+                                        <title id="sc-hist-title">Sample route history for Van 04 yesterday: three trips, with idle stops of 44 minutes and 1 hour 24 minutes between them.</title>
+                                        <use href="#town-map" width="640" height="400"/>
+                                        <path class="sc-tripline" data-tripline="0" d="M110 330 V104 Q110 90 124 90 H470"/>
+                                        <path class="sc-tripline" data-tripline="1" d="M470 90 V316 Q470 330 456 330 H314 Q300 330 300 316 V270"/>
+                                        <path class="sc-tripline" data-tripline="2" d="M300 270 V224 Q300 210 286 210 H124 Q110 210 110 224 V330"/>
+                                        <circle class="stop-end" cx="110" cy="330" r="6"/>
+                                        <circle class="stop-dot" cx="470" cy="90" r="6"/>
+                                        <circle class="stop-dot" cx="300" cy="270" r="6"/>
+                                        <g class="sc-stop-tag" transform="translate(484 72)"><g class="tag-in"><rect width="78" height="20" rx="10"/><text x="39" y="14">Idle 44 min</text></g></g>
+                                        <g class="sc-stop-tag" transform="translate(314 252)"><g class="tag-in"><rect width="84" height="20" rx="10"/><text x="42" y="14">Idle 1h 24m</text></g></g>
+                                        <g class="sc-play" data-play transform="translate(110 330)"><circle class="mk-halo" r="14"/><circle class="mk-dot" r="6"/></g>
+                                    </svg>
+                                </div>
+                                <div class="sc-dock sc-dock-history">
+                                    <div class="timeline">
+                                        <div class="tl-axis" aria-hidden="true"><span>06:00</span><span>10:00</span><span>14:00</span><span>18:00</span><span>22:00</span></div>
+                                        <div class="tl-track">
+                                            <button class="tl-seg" type="button" data-trip="0" style="--a:13.54%;--b:25.21%" aria-label="Trip 1, 08:10 to 10:02"></button>
+                                            <button class="tl-seg" type="button" data-trip="1" style="--a:29.79%;--b:43.33%" aria-label="Trip 2, 10:46 to 12:56"></button>
+                                            <button class="tl-seg" type="button" data-trip="2" style="--a:52.08%;--b:61.67%" aria-label="Trip 3, 14:20 to 15:52"></button>
+                                        </div>
+                                    </div>
+                                    <dl class="sc-facts" data-trip-facts>
+                                        <div><dt>Distance</dt><dd class="mono" data-t="dist">38.2 km</dd></div>
+                                        <div><dt>Moving</dt><dd class="mono" data-t="moving">1h 34m</dd></div>
+                                        <div><dt>Idle</dt><dd class="mono" data-t="idle">18m</dd></div>
+                                        <div><dt>Avg / top</dt><dd class="mono" data-t="speed">24 / 58 km/h</dd></div>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Trip reports -->
+                        <div class="panel sc-view sc-reports" role="tabpanel" id="panel-reports" aria-labelledby="tab-reports" tabindex="0" hidden>
+                            <span id="analytics" class="anchor-alias"></span>
+                            <div class="sc-view-head">
+                                <div><strong>Trip report</strong><span>Van 04 · Yesterday</span></div>
+                                <span class="chip chip-file"><svg class="icon" aria-hidden="true"><use href="#i-file"/></svg>Export CSV</span>
+                            </div>
+                            <div class="report">
+                                <table>
+                                    <caption class="sr-only">Sample trip report for Van 04, yesterday</caption>
+                                    <thead><tr><th scope="col">Trip</th><th scope="col">Time</th><th scope="col">Distance</th><th scope="col">Moving</th><th scope="col">Idle</th><th scope="col">Avg</th><th scope="col">Top</th></tr></thead>
+                                    <tbody>
+                                        <tr><th scope="row">Trip 1</th><td>08:10–10:02</td><td><span class="rp-bar" style="--w:100%"></span><span data-count="38.2" data-dec="1">38.2</span> km</td><td>1h 34m</td><td>18m</td><td><span data-count="24">24</span> km/h</td><td><span data-count="58">58</span> km/h</td></tr>
+                                        <tr><th scope="row">Trip 2</th><td>10:46–12:56</td><td><span class="rp-bar" style="--w:64.4%"></span><span data-count="24.6" data-dec="1">24.6</span> km</td><td>1h 22m</td><td>48m</td><td><span data-count="18">18</span> km/h</td><td><span data-count="46">46</span> km/h</td></tr>
+                                        <tr><th scope="row">Trip 3</th><td>14:20–15:52</td><td><span class="rp-bar" style="--w:46.9%"></span><span data-count="17.9" data-dec="1">17.9</span> km</td><td>1h 05m</td><td>27m</td><td><span data-count="17">17</span> km/h</td><td><span data-count="41">41</span> km/h</td></tr>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr><th scope="row">Day</th><td>08:10–15:52</td><td><span data-count="80.7" data-dec="1">80.7</span> km</td><td>4h 01m</td><td>1h 33m</td><td>20 km/h</td><td>58 km/h</td></tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                            <p class="sc-note">Trips split wherever the device was idle for more than 5 minutes.</p>
+                        </div>
+
+                        <!-- Account and data -->
+                        <div class="panel sc-view sc-account" role="tabpanel" id="panel-account" aria-labelledby="tab-account" tabindex="0" hidden>
+                            <div class="sc-acc">
+                                <div class="sc-acc-row">
+                                    <span class="sc-acc-ico"><svg class="icon" aria-hidden="true"><use href="#i-mail"/></svg></span>
+                                    <span><strong>Signed in with Gmail</strong><small>One Gmail ID for the whole account</small></span>
+                                </div>
+                                <div class="sc-acc-devices">
+                                    <div class="sc-list-head"><span>Tracking IDs</span><span class="mono">4</span></div>
+                                    <ul>
+                                        <li><span class="mono">100015</span><span>Van 04</span><span class="mono sc-pass">••••</span><span class="chip">Change passcode</span></li>
+                                        <li><span class="mono">100016</span><span>Truck 01</span><span class="mono sc-pass">••••</span><span class="chip">Change passcode</span></li>
+                                        <li><span class="mono">100017</span><span>Bike 02</span><span class="mono sc-pass">••••</span><span class="chip">Change passcode</span></li>
+                                        <li><span class="mono">100018</span><span>Sales phone A</span><span class="mono sc-pass">••••</span><span class="chip">Change passcode</span></li>
+                                    </ul>
+                                    <p class="sc-note">Changing a passcode revokes access for anyone still using the old one.</p>
+                                </div>
+                            </div>
+                            <div class="retention">
+                                <div class="ret-head"><span>Kept for 6 months</span><span class="mono">then cleared</span></div>
+                                <div class="ret-bars" aria-hidden="true">
+                                    <span>M1</span><span>M2</span><span>M3</span><span>M4</span><span>M5</span><span>M6</span><span class="ret-out">M7</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                    <figcaption class="sc-caption">Interactive illustration with sample data, not a live feed. Your console shows your own devices.</figcaption>
+                </figure>
             </div>
         </section>
 
