@@ -275,8 +275,27 @@
         const toggleLabel = $('[data-motion-label]', stage);
         const phone = $('[data-sim]', stage);
         const clockEl = $('[data-clock]', stage);
-        const sim = phone ? createSim(phone) : null;
-        const state = { visible: true, paused: false };
+        const saveData = !!(navigator.connection && navigator.connection.saveData);
+        const state = { visible: true, paused: false, filmOk: !!video && !saveData };
+
+        // Poster fallback: any load or playback failure leaves the still frame in place.
+        const usePoster = () => {
+            state.filmOk = false;
+            stage.classList.add('is-poster');
+            if (video) { video.pause(); video.removeAttribute('autoplay'); }
+        };
+        if (video) {
+            if (saveData) { video.preload = 'none'; usePoster(); }
+            const sources = $$('source', video);
+            if (sources.length) sources[sources.length - 1].addEventListener('error', usePoster);
+            video.addEventListener('error', usePoster);
+            if (reduceMotion.matches) { video.removeAttribute('autoplay'); video.pause(); }
+        }
+
+        // The phone's trip runs on the film's own timeline, so the marker moves only while
+        // the van in the film is moving (and stalls with it if the video buffers).
+        const filmClock = () => (state.filmOk && !reduceMotion.matches ? video : null);
+        const sim = phone ? createSim(phone, filmClock) : null;
 
         const tickClock = () => {
             if (clockEl) clockEl.textContent = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false });
@@ -286,39 +305,38 @@
 
         const sync = () => {
             const run = state.visible && !state.paused && !document.hidden;
-            if (sim) (run ? sim.start : sim.stop)();
-            if (video) {
-                if (run && !reduceMotion.matches) {
+            if (video && state.filmOk && !reduceMotion.matches) {
+                if (run) {
                     const p = video.play();
-                    if (p && p.catch) p.catch(() => {});
+                    if (p && p.catch) p.catch(usePoster);
                 } else {
                     video.pause();
                 }
             }
+            if (sim) (run ? sim.start : sim.stop)();
         };
 
-        if (video && reduceMotion.matches) { video.removeAttribute('autoplay'); video.pause(); }
-
-        toggleBtn?.addEventListener('click', () => {
-            state.paused = !state.paused;
-            toggleBtn.setAttribute('aria-pressed', String(state.paused));
-            toggleLabel.textContent = state.paused ? 'Play animations' : 'Pause animations';
-            sync();
-        });
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', () => {
+                state.paused = !state.paused;
+                toggleBtn.setAttribute('aria-pressed', String(state.paused));
+                toggleLabel.textContent = state.paused ? 'Play animations' : 'Pause animations';
+                sync();
+            });
+        }
         document.addEventListener('visibilitychange', sync);
-        reduceMotion.addEventListener?.('change', () => { sim?.stop(); sync(); });
+        if (reduceMotion.addEventListener) reduceMotion.addEventListener('change', () => { if (sim) sim.stop(); sync(); });
         if ('IntersectionObserver' in window) {
             new IntersectionObserver(([entry]) => { state.visible = entry.isIntersecting; sync(); }, { threshold: 0.05 }).observe(stage);
         }
         sync();
     }
 
-    function createSim(root) {
+    function createSim(root, getFilm) {
         const svgNS = 'http://www.w3.org/2000/svg';
         const route = $('[data-route-line]', root);
         const van = $('[data-van]', root);
         const pingLayer = $('[data-pings]', root);
-        const statusEl = $('[data-status]', root);
         const speedEl = $('[data-speed]', root);
         const distEl = $('[data-dist]', root);
         const lastEl = $('[data-last]', root);
@@ -333,23 +351,21 @@
             segs.push({ x0, y0, x1, y1, len, start: total, angle: Math.atan2(y1 - y0, x1 - x0) * 180 / Math.PI });
             total += len;
         }
-        const corners = segs.slice(1).map((g) => g.start);
-        const stopIdx = parseInt(root.dataset.stop || '0', 10);
-        const STOP_AT = stopIdx > 0 ? segs[stopIdx].start : -1;
+        const LOOP = parseFloat(root.dataset.loop || '8');            // film loop length, seconds
+        const TRIP = LOOP * parseInt(root.dataset.loops || '3', 10);  // one map trip = whole film loops
         const TRIP_KM = parseFloat(root.dataset.km || '5');
-        const MAX_SPEED = total / 7.5;
-        const PING_EVERY = 1.4;
+        const KMH = parseFloat(root.dataset.kmh || '43');            // matches the film's road speed
+        const PING_EVERY = 1.6;
 
         route.style.strokeDasharray = `${total} ${total}`;
 
-        const S = { d: 0, phase: 'drive', phaseT: 0, sincePing: 0, lastPingAt: performance.now(), heading: segs[0].angle, kmh: 0, running: false };
+        const S = { elapsed: 0, trip: -1, pingN: -1, lastPingAt: performance.now(), heading: segs[0].angle, lastVT: null, running: false };
 
         const posAt = (d) => {
             const g = segs.find((s) => d <= s.start + s.len) || segs[segs.length - 1];
             const t = Math.max(0, Math.min(1, (d - g.start) / g.len));
             return { x: g.x0 + (g.x1 - g.x0) * t, y: g.y0 + (g.y1 - g.y0) * t, angle: g.angle };
         };
-        const setStatus = (st, text) => { statusEl.dataset.state = st; statusEl.textContent = text; };
 
         const dropPing = (x, y) => {
             const ring = document.createElementNS(svgNS, 'circle');
@@ -359,79 +375,63 @@
             dot.setAttribute('class', 'ping');
             dot.setAttribute('cx', x); dot.setAttribute('cy', y); dot.setAttribute('r', 3.2);
             pingLayer.append(ring, dot);
+            const drop = () => ring.parentNode && ring.parentNode.removeChild(ring);
             if (!reduceMotion.matches && ring.animate) {
                 ring.animate([{ r: 4, opacity: 0.9 }, { r: 14, opacity: 0 }], { duration: 1100, easing: 'cubic-bezier(.16,1,.3,1)' })
-                    .finished.then(() => ring.remove()).catch(() => ring.remove());
+                    .finished.then(drop, drop);
             } else {
-                ring.remove();
+                drop();
             }
             const dots = pingLayer.querySelectorAll('.ping');
-            dots.forEach((p, i) => { p.style.opacity = String(Math.max(0.25, 1 - (dots.length - 1 - i) * 0.08)); });
+            dots.forEach((p, i) => { p.style.opacity = String(Math.max(0.25, 1 - (dots.length - 1 - i) * 0.07)); });
             S.lastPingAt = performance.now();
         };
 
-        const resetTrip = () => {
-            Object.assign(S, { d: 0, phase: 'drive', phaseT: 0, sincePing: 0, heading: segs[0].angle });
-            pingLayer.replaceChildren();
-            setStatus('moving', 'Moving');
-            dropPing(pts[0][0], pts[0][1]);
+        // Advance by the film's playhead when it is playing; by wall time otherwise.
+        const advance = (dt) => {
+            const film = getFilm();
+            if (!film) { S.lastVT = null; return dt; }
+            const vt = film.currentTime;
+            if (S.lastVT == null) { S.lastVT = vt; return 0; }
+            let dv = vt - S.lastVT;
+            if (dv < -LOOP / 2) dv += film.duration || LOOP;   // the loop wrapped
+            S.lastVT = vt;
+            return Math.max(0, Math.min(dv, 0.25));
         };
 
-        const draw = () => {
-            const p = posAt(S.d);
+        const update = (dt) => {
+            S.elapsed += dt;
+            const trip = Math.floor(S.elapsed / TRIP);
+            const tt = S.elapsed - trip * TRIP;
+            const d = (tt / TRIP) * total;
+            if (trip !== S.trip) {
+                S.trip = trip; S.pingN = 0;
+                pingLayer.replaceChildren();
+                S.heading = segs[0].angle;
+                dropPing(pts[0][0], pts[0][1]);
+            }
+            const n = Math.floor(tt / PING_EVERY);
+            if (n > S.pingN) { S.pingN = n; const q = posAt(d); dropPing(q.x, q.y); }
+
+            const p = posAt(d);
+            const target = posAt(Math.min(total - 0.01, d + 0.01)).angle;
+            const diff = ((target - S.heading + 540) % 360) - 180;
+            S.heading += reduceMotion.matches ? diff : diff * Math.min(1, dt * 10);
+            const kmh = KMH + Math.sin((tt % LOOP) / LOOP * Math.PI * 2) * 2;
+
             van.setAttribute('transform', `translate(${p.x.toFixed(2)} ${p.y.toFixed(2)}) rotate(${S.heading.toFixed(1)})`);
-            route.style.strokeDashoffset = String(total - S.d);
-            speedEl.textContent = String(Math.round(S.kmh));
-            distEl.textContent = (S.d / total * TRIP_KM).toFixed(1);
+            route.style.strokeDashoffset = String(total - d);
+            speedEl.textContent = String(Math.round(kmh));
+            distEl.textContent = (d / total * TRIP_KM).toFixed(1);
             const ago = Math.max(0, Math.round((performance.now() - S.lastPingAt) / 1000));
             lastEl.textContent = ago < 1 ? 'now' : `${ago}s ago`;
-        };
-
-        const step = (dt) => {
-            S.phaseT += dt;
-            if (S.phase === 'drive') {
-                const next = corners.find((c) => c > S.d);
-                const toCorner = next != null ? next - S.d : Infinity;
-                const fromCorner = S.d - (corners.filter((c) => c <= S.d).pop() ?? -Infinity);
-                const toStop = (S.d < STOP_AT ? STOP_AT : total) - S.d;
-                const near = Math.min(toCorner, fromCorner, toStop * 0.8);
-                const factor = Math.max(0.3, Math.min(1, near / (total / 18)));
-                const accel = Math.min(1, S.phaseT / 1.2);
-                S.kmh = 14 + 34 * factor * accel + Math.sin(S.d / 9) * 2;
-                const before = S.d;
-                S.d = Math.min(total, S.d + MAX_SPEED * factor * (0.35 + 0.65 * accel) * dt);
-                if (STOP_AT > 0 && before < STOP_AT && S.d >= STOP_AT) {
-                    Object.assign(S, { d: STOP_AT, phase: 'idle', phaseT: 0, kmh: 0 });
-                    setStatus('idle', 'Idle');
-                    dropPing(pts[stopIdx][0], pts[stopIdx][1]);
-                } else if (S.d >= total) {
-                    Object.assign(S, { phase: 'arrived', phaseT: 0, kmh: 0 });
-                    setStatus('arrived', 'Arrived');
-                    dropPing(pts[pts.length - 1][0], pts[pts.length - 1][1]);
-                } else if ((S.sincePing += dt) >= PING_EVERY) {
-                    S.sincePing = 0;
-                    const p = posAt(S.d);
-                    dropPing(p.x, p.y);
-                }
-            } else if (S.phase === 'idle') {
-                statusEl.textContent = `Idle · 0:${String(Math.floor(S.phaseT)).padStart(2, '0')}`;
-                if (S.phaseT > 3.2) {
-                    Object.assign(S, { phase: 'drive', phaseT: 0, sincePing: 0 });
-                    setStatus('moving', 'Moving');
-                }
-            } else if (S.phase === 'arrived' && S.phaseT > 3.5) {
-                resetTrip();
-            }
-            const target = posAt(Math.min(total - 0.01, S.d + 0.01)).angle;
-            const diff = ((target - S.heading + 540) % 360) - 180;
-            S.heading += reduceMotion.matches ? diff : diff * Math.min(1, dt * 9);
         };
 
         let raf = 0, last = 0, interval = 0, stoppedAt = 0;
         const frame = (now) => {
             const dt = Math.min(0.05, (now - last) / 1000);
             last = now;
-            step(dt); draw();
+            update(advance(dt));
             raf = requestAnimationFrame(frame);
         };
         const start = () => {
@@ -439,7 +439,7 @@
             S.running = true;
             if (stoppedAt) S.lastPingAt += performance.now() - stoppedAt;
             root.classList.add('is-running');
-            if (reduceMotion.matches) interval = setInterval(() => { step(PING_EVERY); draw(); }, 1400);
+            if (reduceMotion.matches) interval = setInterval(() => update(PING_EVERY), 1600);
             else { last = performance.now(); raf = requestAnimationFrame(frame); }
         };
         const stop = () => {
@@ -450,8 +450,7 @@
             clearInterval(interval);
         };
 
-        resetTrip();
-        draw();
+        update(0);
         return { start, stop };
     }
 })();

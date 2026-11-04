@@ -632,7 +632,7 @@
         "name": "shadow-3",
         "displayName": "Float",
         "value": "0 2px 6px rgba(20, 33, 26, .06), 0 28px 60px -20px rgba(20, 33, 26, .28)",
-        "purpose": "The hero console only."
+        "purpose": "Reserved; currently unused."
       },
       {
         "name": "btn-primary",
@@ -657,6 +657,12 @@
         "displayName": "Menu sheet",
         "value": "0 24px 40px -24px rgba(20, 33, 26, .25)",
         "purpose": "Mobile nav drop-down sheet."
+      },
+      {
+        "name": "shadow-phone",
+        "displayName": "Phone",
+        "value": "0 0 0 1px rgba(253, 252, 249, .16), 0 2px 4px rgba(20, 33, 26, .18), 0 30px 60px -20px rgba(20, 33, 26, .5)",
+        "purpose": "The hero phone only; the light hairline holds its edge over the dark film."
       }
     ],
     "motion": [
@@ -816,12 +822,12 @@
       "css": ".ds-card { background: var(--stone-0); border: 1px solid var(--stone-200); border-radius: var(--r-xl); box-shadow: var(--shadow-2); padding: clamp(24px, 3.5vw, 40px); font-family: var(--font-body); color: var(--ink); max-width: 420px; } .ds-price { display: flex; align-items: center; gap: 16px; margin-bottom: 8px; } .ds-price-now { font-family: var(--font-display); font-weight: 700; font-size: clamp(3.5rem, 6vw, 4.75rem); line-height: 1; letter-spacing: -0.04em; color: var(--forest-800); } .ds-price-unit { color: var(--ink-2); font-weight: 500; } .ds-note { color: var(--ink-3); font-size: .9375rem; margin: 0 0 24px; } .ds-points { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; } .ds-points li { display: flex; gap: 12px; align-items: flex-start; } .ds-points svg { flex: none; width: 18px; height: 18px; margin-top: 3px; fill: none; stroke: var(--forest-600); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }"
     },
     {
-      "name": "Telemetry Card",
+      "name": "Hero Phone",
       "kind": "custom",
-      "refersTo": "console",
-      "description": "Signature: the console footer readout. Label type over mono figures with small units, beside a mono ping log whose event rows turn amber-800.",
-      "html": "<div class=\"ds-console\"><div class=\"ds-tm\"><div class=\"ds-tm-head\"><span>Van 04</span><span class=\"ds-tm-status\">Moving</span></div><dl><div><dt>Speed</dt><dd>46 <small>km/h</small></dd></div><div><dt>Trip</dt><dd>1.6 <small>km</small></dd></div><div><dt>Last ping</dt><dd>now</dd></div></dl></div><ol class=\"ds-log\"><li><time>08:19:56</time><span>26.9190° N, 75.7747° E</span></li><li class=\"ds-log-ev\">Stopped at Stop 1</li><li><time>08:19:53</time><span>26.9166° N, 75.7685° E</span></li></ol></div>",
-      "css": ".ds-console { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); background: var(--stone-0); border: 1px solid var(--stone-200); border-radius: var(--r-l); box-shadow: var(--shadow-3); overflow: hidden; font-family: var(--font-body); color: var(--ink); max-width: 620px; } .ds-tm { padding: 14px 16px; border-right: 1px solid var(--stone-200); } .ds-tm-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-weight: 600; font-size: .9375rem; } .ds-tm-status { display: inline-flex; align-items: center; gap: 6px; font-size: .75rem; padding: 2px 8px 2px 7px; border-radius: 999px; color: var(--forest-700); background: var(--forest-50); } .ds-tm-status::before { content: \"\"; width: 6px; height: 6px; border-radius: 50%; background: currentColor; } .ds-tm dl { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 0; } .ds-tm dt { font-size: .6875rem; color: var(--ink-3); font-weight: 500; } .ds-tm dd { margin: 0; font-family: var(--font-mono); font-size: .9375rem; font-weight: 500; font-variant-numeric: tabular-nums; white-space: nowrap; } .ds-tm dd small { font-size: .6875rem; color: var(--ink-3); } .ds-log { list-style: none; margin: 0; padding: 12px 16px 8px; } .ds-log li { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 12px; padding: 4px 0; border-top: 1px solid var(--stone-100); font-family: var(--font-mono); font-size: .6875rem; font-variant-numeric: tabular-nums; color: var(--ink-2); } .ds-log li:first-child { border-top: 0; } .ds-log time { color: var(--ink-3); } .ds-log .ds-log-ev { display: block; color: var(--amber-800); font-family: var(--font-body); font-weight: 600; font-size: .75rem; }"
+      "refersTo": "hero-phone",
+      "description": "Signature: the foreground phone on the hero film. Forest-950 device with a stone hairline and the Phone shadow; stone-0 screen with clock and blinking amber GPS dot, \"Van 04\" and a Moving pill, the drawn map, a Simulated trip tag and mono readouts. Its marker runs on the film's playhead.",
+      "html": "<div class=\"ds-phone\"><div class=\"ds-screen\"><div class=\"ds-bar\"><span>09:41</span><span class=\"ds-gps\"><i></i>GPS</span></div><div class=\"ds-head\"><b>Van 04</b><span class=\"ds-pill\">Moving</span></div><div class=\"ds-map\"><svg viewBox=\"0 0 240 150\"><rect width=\"240\" height=\"150\" fill=\"#eceae1\"/><path d=\"M0 70H240M128 0V150\" stroke=\"#fff\" stroke-width=\"8\"/><path d=\"M20 70H128V20\" fill=\"none\" stroke=\"#c48a2c\" stroke-width=\"4.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><circle cx=\"128\" cy=\"20\" r=\"6\" fill=\"#fff\" stroke=\"#1d4a36\" stroke-width=\"2.5\"/></svg><span class=\"ds-tag\">Simulated trip</span></div><dl class=\"ds-stats\"><div><dt>Speed</dt><dd>43 <small>km/h</small></dd></div><div><dt>Trip</dt><dd>1.8 <small>km</small></dd></div></dl></div></div>",
+      "css": ".ds-phone { width: 214px; font-size: 13.8px; padding: .6em; border-radius: 2.6em; background: var(--forest-950); box-shadow: 0 0 0 1px rgba(253,252,249,.16), 0 2px 4px rgba(20,33,26,.18), 0 30px 60px -20px rgba(20,33,26,.5); font-family: var(--font-body); } .ds-screen { background: var(--stone-0); border-radius: 2.05em; overflow: hidden; } .ds-bar { display: flex; justify-content: space-between; padding: .95em 1.3em .3em; font-size: .8em; font-weight: 600; color: var(--ink); } .ds-gps { display: inline-flex; align-items: center; gap: .4em; color: var(--forest-700); } .ds-gps i { width: .6em; height: .6em; border-radius: 50%; background: var(--amber-500); } .ds-head { display: flex; justify-content: space-between; align-items: center; padding: .35em 1em .6em; } .ds-head b { font-family: var(--font-display); font-size: 1.1em; letter-spacing: -0.02em; } .ds-pill { font-size: .78em; font-weight: 600; padding: 2px 8px; border-radius: 999px; color: var(--forest-700); background: var(--forest-50); } .ds-map { position: relative; border-block: 1px solid var(--stone-200); } .ds-map svg { display: block; width: 100%; height: auto; } .ds-tag { position: absolute; left: .6em; bottom: .6em; font-size: 11px; font-weight: 600; color: var(--amber-800); background: var(--amber-50); border: 1px solid var(--amber-200); padding: .15em .6em; border-radius: 999px; } .ds-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: .3em; padding: .7em 1em 1.1em; margin: 0; } .ds-stats dt { font-size: .8em; color: var(--ink-3); } .ds-stats dd { margin: 0; font-family: var(--font-mono); font-size: .92em; font-variant-numeric: tabular-nums; } .ds-stats small { font-size: .74em; color: var(--ink-3); }"
     }
   ],
   "narrative": {
@@ -873,7 +879,7 @@
       },
       {
         "name": "The One Float Rule",
-        "body": "The Float shadow belongs to the hero console, the page's focal object. Nothing else is lifted that far.",
+        "body": "Only the hero phone is lifted that far (Phone shadow). Nothing else floats.",
         "section": "elevation"
       }
     ],
@@ -897,7 +903,7 @@
       "**Don't** use uppercase or letterspaced labels, eyebrows or kickers above headings.",
       "**Don't** use pure black, cold greys or blue-tinted shadows; ink is green-black (#14211a) and neutrals are warm stone.",
       "**Don't** use an icon font, raster icons, or mixed stroke styles.",
-      "**Don't** give the Float shadow to anything other than the hero console.",
+      "**Don't** give the Float shadow to anything other than the hero phone.",
       "**Don't** introduce a build step, a framework or a script dependency; the site is static HTML, CSS and JS on GitHub Pages with Google Fonts as its only external asset."
     ]
   }

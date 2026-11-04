@@ -271,7 +271,7 @@ The build is static HTML, CSS and JS with no build step and no dependencies beyo
 - Forest green for type emphasis, primary actions and the one full-bleed consent field.
 - Amber appears only where something is live or idle (plus focus and selection). Paused is neutral grey.
 - Grotesk display, humanist body, monospace only for telemetry and figures.
-- One focal animation (the hero trip); every other motion explains a change of state.
+- One focal sequence (the hero film and the phone trip it drives); every other motion explains a change of state.
 - Every simulated or sample visual says so on its face.
 
 ## Colors
@@ -307,7 +307,7 @@ A warm, low-chroma palette: stone neutrals and a green-black ink as the ground, 
 - **Sheet White** (white): fields, chat bubble, lists and tables nested inside a well, and text on forest.
 - **Paused Grey** (paused, with stone-400 on dark grounds): every paused state, in the console device list and on the driver phone.
 - **Footer Mist** (footer-text): body text on the forest-950 footer.
-- **Map set** (map-land, map-block, map-park, map-water, map-casing, map-label): the drawn city in the hero console. Land and blocks are warm stone, the park a pale sage, the river a grey-teal. Use this set for any future map illustration.
+- **Map set** (map-land, map-block, map-park, map-water, map-casing, map-label): the drawn city on the hero phone's map. Land and blocks are warm stone, the park a pale sage, the river a grey-teal. Use this set for any future map illustration.
 
 ### Named Rules
 **The Amber Means Live Rule.** Amber marks something happening now: the route trail, the van halo, GPS pings, the Idle status, the "Simulated trip" chip and new-log flashes. Its only other uses are the keyboard focus ring and text selection. It never fills a button, colours a link or heading, or decorates a section.
@@ -355,22 +355,23 @@ The privacy page is a reading layout: a 240px sticky table of contents beside a 
 
 ## Elevation & Depth
 
-Depth is mostly tonal and drawn: stone-50 page, stone-0 paper panels, stone-100 inset wells, white sheets nested inside wells, each edge marked by a 1px warm hairline. Shadows are a supporting layer, always tinted with the ink green (rgba(20, 33, 26, …)) rather than black, and soft enough that the hairline still does the separating. Elevation rises with importance: inline UI is nearly flat, cards lift gently, and only the hero console floats.
+Depth is mostly tonal and drawn: stone-50 page, stone-0 paper panels, stone-100 inset wells, white sheets nested inside wells, each edge marked by a 1px warm hairline. Shadows are a supporting layer, always tinted with the ink green (rgba(20, 33, 26, …)) rather than black, and soft enough that the hairline still does the separating. Elevation rises with importance: inline UI is nearly flat, cards lift gently, and only the hero phone floats.
 
 ### Shadow Vocabulary
 - **Rest** (`box-shadow: 0 1px 2px rgba(20,33,26,.06), 0 1px 1px rgba(20,33,26,.03)`): secondary buttons, selected tab, comparison table frame, APK card, chat bubble.
 - **Lift** (`box-shadow: 0 1px 2px rgba(20,33,26,.05), 0 10px 28px -10px rgba(20,33,26,.16)`): the feature panel frame and the price card.
-- **Float** (`box-shadow: 0 2px 6px rgba(20,33,26,.06), 0 28px 60px -20px rgba(20,33,26,.28)`): the hero console only.
+- **Float** (`box-shadow: 0 2px 6px rgba(20,33,26,.06), 0 28px 60px -20px rgba(20,33,26,.28)`): reserved; currently unused.
+- **Phone** (`--shadow-phone: 0 0 0 1px rgba(253,252,249,.16), 0 2px 4px rgba(20,33,26,.18), 0 30px 60px -20px rgba(20,33,26,.5)`): the hero phone only. The light hairline holds its edge where it crosses the dark film.
 - **Primary press** (`box-shadow: 0 1px 0 rgba(255,255,255,.08) inset, 0 1px 2px rgba(11,29,21,.25)`; hover `0 8px 20px -8px rgba(11,29,21,.5)`): primary buttons, giving them a pressed-ink edge that grows into a soft drop on hover.
 
 ### Named Rules
 **The Hairline First Rule.** Separate with a 1px stone-200 border before reaching for a shadow; a shadow never stands in for a missing border.
 
-**The One Float Rule.** The Float shadow belongs to the hero console, the page's focal object. Nothing else is lifted that far.
+**The One Float Rule.** Only the hero phone is lifted that far (Phone shadow). Nothing else floats.
 
 ## Shapes
 
-Gently rounded, never pillowy. Radii step from 4px (checkboxes, inline code, timeline bars) to 6px (buttons, fields, stepper, nav hovers), 10px (tabs, nested lists and tables, mobile console), 14px (console, wells, notices) and 20px (cards and the feature frame). Pills (999px) are reserved for status and filter chips. The phone mock is the one exception, with device-true 40px and 30px corners. The chat bubble in the setup steps carries a single 4px tail corner (14px 14px 14px 4px). Borders are always 1px solid hairlines; the only dashed line is the empty, already-flushed month in the retention strip, and dotted strokes appear only as the planned route on the map.
+Gently rounded, never pillowy. Radii step from 4px (checkboxes, inline code, timeline bars) to 6px (buttons, fields, stepper, nav hovers), 10px (tabs, nested lists and tables), 14px (wells, notices, the film on phones) and 20px (cards and the feature frame). Pills (999px) are reserved for status and filter chips. Device mocks are the one exception: the consent phone uses 40px and 30px corners, the hero phone 2.6em and 2.05em (about 36px and 29px at desktop size), and phone-only literals (the notch at black 55%, the GPS pulse in amber-500 alpha) live only inside them. The chat bubble in the setup steps carries a single 4px tail corner (14px 14px 14px 4px). Borders are always 1px solid hairlines; the only dashed line is the empty, already-flushed month in the retention strip, and dotted strokes appear only as the planned route on the map.
 
 Icons come from one authored inline SVG sprite: 24px viewBox, stroke-only, 1.75 stroke width (2 to 3 at small sizes and in buttons), round caps and joins, drawn in currentColor. There is no icon font and no raster icon.
 
@@ -392,7 +393,7 @@ Confident, compact, ink-heavy: a dark green slab with white type.
 ### Cards / Containers
 - **Corner Style:** 20px for cards (price card, calculator, APK block, feature frame); 14px for the console, wells and notices.
 - **Background:** paper (stone-0) for raised cards; forest-50 with a forest-100 border for the calculator and the privacy notice; stone-100 for inset wells that hold product UI; white for sheets nested inside a well.
-- **Shadow Strategy:** Rest for inline cards, Lift for the price card and feature frame, Float for the console only (see Elevation & Depth).
+- **Shadow Strategy:** Rest for inline cards, Lift for the price card and feature frame, Phone for the hero phone only (see Elevation & Depth).
 - **Border:** 1px stone-200 on every container.
 - **Internal Padding:** fluid clamp(24px, 3.5vw, 40px) for cards; 18px for wells; 14px for nested sheets.
 
@@ -411,7 +412,7 @@ Confident, compact, ink-heavy: a dark green slab with white type.
 A vertical tab list beside one framed panel. Tabs are 10px-radius rows with a 22px icon, a Mukta 600 title and an ink-3 one-liner; the selected tab becomes a paper sheet with a hairline and Rest shadow, and its icon turns forest-600. Panels enter with a 10px rise and fade (0.5s), staggering copy and visual by 60ms; rows and bars inside stagger by 50 to 80ms. Below 960px tabs become a 2-column grid with titles only.
 
 ### Live Console (signature)
-The hero's console window: a paper frame (14px radius, Float shadow) with a bar holding the map icon, "Live map", the "Simulated trip" tag and a 34px pause/play icon button. Below it, the drawn SVG city map in the map set; the planned route is a dotted forest-600 line, the driven trail a 5px amber-500 stroke, stops are white dots ringed in forest-700, and the van is forest-800 with a pulsing amber-400 halo. The footer splits 5 : 7 into a telemetry card (name, status pill, three mono readouts with small units) and a ping log of mono rows (time, coordinates, speed) where event rows switch to amber-800 Mukta 600 and new rows drop in over an amber-50 flash.
+The hero's visual stage, to the right of the copy on desktop and stacked below it on tablet and phone. It has two layers. The film is one large rounded frame (20px radius, Lift shadow, 10:9 on desktop, 16:10 on tablet, 4:5 on phones) playing a rendered dusk-highway loop (assets/hero-highway.webm/.mp4, 8 s, about 330 KB each, poster jpg as the CSS background and the fallback). It carries no text, only a stone pause/play chip in its top-right corner that pauses the film and the phone together. The phone is a forest-950 device (radius 2.6em around a 2.05em screen, a 1px stone hairline and the Phone shadow, side buttons drawn in forest-900) that overlaps the film's lower-left corner on desktop and tablet and its lower-right on phones, about three quarters of the film's height. Its stone-0 screen holds a status bar (clock, blinking amber GPS dot), "Van 04" with a Moving pill, the drawn SVG map in the map set (dotted forest-600 planned route, 4.5px amber-500 driven trail, stops as white dots ringed in forest-700, the van marker in forest-800 with a pulsing amber-400 halo, amber pings), a "Simulated trip" tag and mono readouts (speed, trip; last ping above phone width). The marker runs on the film's playhead: it moves only while the film plays, stalls with it, and one trip spans three film loops. The van in the film carries the fleet number 04 so the two layers read as one vehicle. Text sizes inside the phone never drop below about 10.5px.
 
 Motion: a requestAnimationFrame loop drives the van along the route, eases into corners and stops, drops a ping every 1.4s of driving, idles about 3s at the stop (status turns amber "Idle · 0:0n"), then resumes and loops on arrival. It stops when the console is offscreen, when the tab is hidden, and when the pause button is pressed. Under reduced motion it advances in discrete 1.4s steps with no continuous travel, no ping ring and no heading interpolation.
 
@@ -440,11 +441,11 @@ Native details elements divided by stone-200 hairlines. Questions use Title Smal
 
 ### Don't:
 - **Don't** use amber on buttons, links, headings, icons at rest, or as a decorative accent.
-- **Don't** add a second focal animation; the hero trip is the only continuous motion on a page.
+- **Don't** add continuous motion outside the hero; the film loop and the phone trip it drives are the only things that keep moving, and they share one pause control.
 - **Don't** use mono for headings, prose, labels or buttons.
 - **Don't** track display type tighter than -0.04em.
 - **Don't** use uppercase or letterspaced labels, eyebrows or kickers above headings.
 - **Don't** use pure black, cold greys or blue-tinted shadows; ink is green-black (#14211a) and neutrals are warm stone.
 - **Don't** use an icon font, raster icons, or mixed stroke styles.
-- **Don't** give the Float shadow to anything other than the hero console.
+- **Don't** give the Phone or Float shadow to anything other than the hero phone.
 - **Don't** introduce a build step, a framework or a script dependency; the site is static HTML, CSS and JS on GitHub Pages with Google Fonts as its only external asset.

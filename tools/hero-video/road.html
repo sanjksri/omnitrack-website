@@ -140,7 +140,7 @@ function draw(t) {
   }
 
   // van (rear view), left lane
-  const vz = 15 + Math.sin(ph * TAU * 2) * 0.35;
+  const vz = 11.5 + Math.sin(ph * TAU * 2) * 0.3;
   const vlat = -1.85 + Math.sin(ph * TAU * 3) * 0.05;
   const [vx, vy] = proj(vlat, vz);
   const s = F / vz;
@@ -175,6 +175,11 @@ function draw(t) {
   // brand stripe in forest
   x.fillStyle = '#1d4a36';
   x.fillRect(bx, by + vh * 0.5, vw, vh * 0.06);
+  // fleet number on the right rear door: matches "Van 04" on the phone
+  x.fillStyle = '#1d4a36';
+  x.font = `700 ${Math.round(vh * 0.11)}px "Arial", sans-serif`;
+  x.textAlign = 'center'; x.textBaseline = 'middle';
+  x.fillText('04', bx + vw * 0.725, by + vh * 0.43);
   // bumper
   x.fillStyle = '#2a2f2c';
   x.fillRect(bx - vw * 0.01, by + vh * 0.8, vw * 1.02, vh * 0.1);
