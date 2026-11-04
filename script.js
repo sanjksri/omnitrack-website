@@ -346,8 +346,17 @@
 
         // The corridor matches the film: the road meanders on the same 8 s rhythm
         // (one bend per 96 m at the film's 12 m/s), and the map pans 1 unit per metre.
-        const SPEED = parseFloat(root.dataset.mps || '12');   // metres per second
+        const SPEED = parseFloat(root.dataset.mps || '12');   // mean metres per second (the film's road speed)
+        const SURGE = parseFloat(root.dataset.surge || '1.6'); // the film van accelerates and eases off by this much
+        const LOOP = parseFloat(root.dataset.loop || '8');     // film loop, seconds
         const BEND = parseFloat(root.dataset.bend || '96');     // metres per bend cycle
+        const K = SURGE * LOOP / (2 * Math.PI);
+        // Exactly the film's motion model: distance and speed of the van at film time ft.
+        const vanDist = (ft) => {
+            const n = Math.floor(ft / LOOP), tt = ft - n * LOOP;
+            return n * SPEED * LOOP + SPEED * tt + K * (1 - Math.cos(2 * Math.PI * tt / LOOP));
+        };
+        const vanSpeed = (ft) => SPEED + SURGE * Math.sin(2 * Math.PI * (ft % LOOP) / LOOP);
         const AMP = 3.2, CX = 120, TILE = 480, VAN_Y = 210;
         const PING_EVERY = 1.6;
         const roadX = (s) => CX + AMP * Math.sin(2 * Math.PI * s / BEND);
@@ -392,7 +401,7 @@
             const film = getFilm();
             if (!film) { S.lastVT = null; return dt; }
             const vt = film.currentTime;
-            if (S.lastVT == null) { S.lastVT = vt; return 0; }
+            if (S.lastVT == null) { S.lastVT = vt; if (!S.synced) { S.synced = true; S.t = vt; S.lastPingT = vt; } return 0; }
             let dv = vt - S.lastVT;
             if (dv < -2) dv += film.duration || 8;   // the loop wrapped
             S.lastVT = vt;
@@ -409,7 +418,7 @@
             trail.setAttribute('d', linePts(Math.max(0, S.s - 260), S.s));
             plan.setAttribute('d', linePts(S.s, S.s + 240));
             van.setAttribute('transform', `translate(${roadX(S.s).toFixed(2)} ${VAN_Y}) rotate(${headingAt(S.s).toFixed(1)})`);
-            speedEl.textContent = String(Math.round(SPEED * 3.6));
+            speedEl.textContent = String(Math.round(vanSpeed(S.t) * 3.6));
             const km = S.s / 1000;
             distEl.textContent = km < 10 ? km.toFixed(2) : km.toFixed(1);
             const ago = Math.max(0, Math.round((performance.now() - S.lastPingAt) / 1000));
@@ -418,7 +427,7 @@
 
         const update = (dt) => {
             S.t += dt;
-            S.s += SPEED * dt;
+            S.s = vanDist(S.t);
             if (S.t - S.lastPingT >= PING_EVERY) { S.lastPingT = S.t; dropPing(S.s); }
             draw();
         };

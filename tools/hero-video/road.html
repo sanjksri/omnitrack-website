@@ -4,7 +4,17 @@
 const c = document.getElementById('c'), x = c.getContext('2d');
 const W = c.width, H = c.height;
 const T = 8;              // loop seconds
-const SPEED = 12;         // m/s -> 96 m per loop
+const SPEED = 12;         // mean m/s -> 96 m per loop
+const SURGE = 1.6;        // m/s swing: the van accelerates, then eases off, once per loop
+const LAG = 0.9;          // camera car follows the van's speed changes with a lag (radians of the loop)
+const K = SURGE * T / (2 * Math.PI);
+// distance travelled by the van and by the camera car (both exactly 96 m per loop -> seamless)
+const vanDist = (t) => SPEED * t + K * (1 - Math.cos(2 * Math.PI * t / T));
+const camDist = (t) => SPEED * t + K * (Math.cos(-LAG) - Math.cos(2 * Math.PI * t / T - LAG));
+const vanSpeed = (t) => SPEED + SURGE * Math.sin(2 * Math.PI * t / T);
+const vanAccel = (t) => SURGE * (2 * Math.PI / T) * Math.cos(2 * Math.PI * t / T);
+// wheel radius chosen so the 5-lug hub returns to the same angle after 96 m
+const WHEEL_R = 96 * 5 / (2 * Math.PI * 225);
 const DASH_P = 12, DASH_L = 4, POST_P = 24;
 const HY = H * 0.46;      // horizon
 const CAM_H = 1.5, F = W * 0.95;
@@ -113,9 +123,11 @@ function draw(t) {
   strip(-3.55, -3.42, [214, 210, 196]);
   strip(3.42, 3.55, [214, 210, 196]);
   // centre dashes
-  const off = (t * SPEED) % DASH_P;
+  const cd = camDist(t);
+  const blur = (SPEED + SURGE) / 60;   // half a 30 fps frame of travel
+  const off = cd % DASH_P;
   for (let k = 0; k < 60; k++) {
-    const z0 = k * DASH_P - off + 1.5, z1 = z0 + DASH_L;
+    const z0 = k * DASH_P - off + 1.5 - blur, z1 = z0 + DASH_L + blur;
     if (z1 < 1.5 || z0 > 650) continue;
     const za = Math.max(1.5, z0);
     const p0 = proj(-0.07, z1), p1 = proj(0.07, z1), p2 = proj(0.07, za), p3 = proj(-0.07, za);
@@ -126,7 +138,7 @@ function draw(t) {
 
   // reflector posts
   for (let k = 0; k < 40; k++) {
-    const z = POST_P * k - (t * SPEED) % POST_P + 3;
+    const z = POST_P * k - cd % POST_P + 3;
     if (z < 2.2 || z > 620) continue;
     for (const side of [-6, 6]) {
       const [px, py] = proj(side, z);
@@ -139,61 +151,111 @@ function draw(t) {
     }
   }
 
-  // van (rear view), left lane
-  const vz = 11.5 + Math.sin(ph * TAU * 2) * 0.3;
-  const vlat = -1.85 + Math.sin(ph * TAU * 3) * 0.05;
-  const [vx, vy] = proj(vlat, vz);
-  const s = F / vz;
-  const vw = 1.9 * s, vh = 2.15 * s;
-  const sway = Math.sin(ph * TAU * 6) * 0.6;
-  // shadow
+  // ---------- van: a 3D box in the same camera as the road ----------
+  const P3 = (wx, wy, z) => [CX + F * (wx + curve * z * z - camX) / z, hy + F * (CAM_H - wy) / z];
+  const gap = 11 + vanDist(t) - camDist(t);          // metres from camera to the van's rear
+  const Z = gap, LEN = 5.0, HW = 0.95;
+  const lane = -1.85 + Math.sin(ph * TAU * 3) * 0.04;  // small steering corrections
+  const acc = vanAccel(t);
+  const bump = 0.010 * Math.sin(ph * TAU * 9) + 0.006 * Math.sin(ph * TAU * 14 + 1.3);
+  const squat = -0.012 * acc;                          // rear sinks a little under acceleration
+  const lift = 0.36 + bump + squat;
+  const roll = -curve * 36;                            // body leans out of the bend (about 1 degree at most)
+  const xL = lane - HW, xR = lane + HW, yB = lift, yT = 2.22 + bump + squat;
+  const rB = (wx, wy, z) => {                          // apply roll about the body's centre line
+    const dx = wx - lane, dy = wy - yB;
+    return P3(lane + dx * Math.cos(roll) - dy * Math.sin(roll), yB + dx * Math.sin(roll) + dy * Math.cos(roll), z);
+  };
+  const brake = Math.max(0, Math.min(1, (-acc - 0.25) / 0.8));
+
+  // long soft shadow: the low sun ahead throws it back toward the camera
   x.save();
-  x.fillStyle = 'rgba(10,20,14,0.45)';
-  x.beginPath(); x.ellipse(vx, vy + 0.02 * s, vw * 0.62, vh * 0.07, 0, 0, TAU); x.fill();
-  // wheels
-  x.fillStyle = '#121714';
-  x.fillRect(vx - vw * 0.47, vy - vh * 0.14, vw * 0.2, vh * 0.15);
-  x.fillRect(vx + vw * 0.27, vy - vh * 0.14, vw * 0.2, vh * 0.15);
-  const bx = vx - vw / 2, by = vy - vh + sway;
-  // body
-  const r = vw * 0.08;
-  x.beginPath(); x.roundRect(bx, by, vw, vh * 0.9, [r, r, r * 0.4, r * 0.4]);
-  const bg = x.createLinearGradient(bx, by, bx + vw, by);
-  bg.addColorStop(0, '#d9d4c6'); bg.addColorStop(0.5, '#ebe6da'); bg.addColorStop(1, '#c9c3b4');
-  x.fillStyle = bg; x.fill();
-  // roof highlight from sky
-  x.fillStyle = 'rgba(255,240,210,0.35)';
-  x.fillRect(bx + r, by + 1, vw - 2 * r, vh * 0.025);
-  // rear doors split + windows
-  x.fillStyle = '#1a2620';
-  x.beginPath(); x.roundRect(bx + vw * 0.08, by + vh * 0.1, vw * 0.39, vh * 0.24, r * 0.4); x.fill();
-  x.beginPath(); x.roundRect(bx + vw * 0.53, by + vh * 0.1, vw * 0.39, vh * 0.24, r * 0.4); x.fill();
-  x.fillStyle = 'rgba(200,180,140,0.25)';
-  x.fillRect(bx + vw * 0.1, by + vh * 0.12, vw * 0.12, vh * 0.2);
-  x.fillStyle = 'rgba(60,60,52,0.55)';
-  x.fillRect(bx + vw * 0.497, by + vh * 0.06, Math.max(1, vw * 0.006), vh * 0.74);
-  // brand stripe in forest
-  x.fillStyle = '#1d4a36';
-  x.fillRect(bx, by + vh * 0.5, vw, vh * 0.06);
-  // fleet number on the right rear door: matches "Van 04" on the phone
-  x.fillStyle = '#1d4a36';
-  x.font = `700 ${Math.round(vh * 0.11)}px "Arial", sans-serif`;
-  x.textAlign = 'center'; x.textBaseline = 'middle';
-  x.fillText('04', bx + vw * 0.725, by + vh * 0.43);
-  // bumper
-  x.fillStyle = '#2a2f2c';
-  x.fillRect(bx - vw * 0.01, by + vh * 0.8, vw * 1.02, vh * 0.1);
-  // yellow commercial plate
-  x.fillStyle = '#e2b83c';
-  x.fillRect(vx - vw * 0.15, by + vh * 0.66, vw * 0.3, vh * 0.09);
-  x.fillStyle = 'rgba(30,30,20,0.7)';
-  x.fillRect(vx - vw * 0.11, by + vh * 0.695, vw * 0.22, vh * 0.025);
-  // tail lights with glow
-  x.shadowColor = 'rgba(235,90,50,0.9)'; x.shadowBlur = vw * 0.12;
-  x.fillStyle = '#e0573a';
-  x.fillRect(bx + vw * 0.02, by + vh * 0.58, vw * 0.07, vh * 0.16);
-  x.fillRect(bx + vw * 0.91, by + vh * 0.58, vw * 0.07, vh * 0.16);
+  x.filter = `blur(${Math.max(2, F * 0.06 / Z)}px)`;
+  x.fillStyle = 'rgba(8,16,11,0.55)';
+  const sh = [P3(xL - 0.15, 0, Z - 2.2), P3(xR - 0.35, 0, Z - 2.2), P3(xR + 0.05, 0, Z + LEN), P3(xL - 0.05, 0, Z + LEN)];
+  x.beginPath(); sh.forEach((p, i) => i ? x.lineTo(...p) : x.moveTo(...p)); x.closePath(); x.fill();
   x.restore();
+
+  // tail-light reflections on the asphalt (stronger when braking)
+  x.save();
+  x.filter = 'blur(6px)';
+  for (const lx of [xL + 0.12, xR - 0.12]) {
+    const [rx, ry] = P3(lx, 0, Z - 0.6);
+    x.fillStyle = `rgba(214,86,52,${0.05 + 0.12 * brake})`;
+    x.beginPath(); x.ellipse(rx, ry, F * 0.08 / Z, F * 0.28 / Z, 0, 0, TAU); x.fill();
+  }
+  x.restore();
+
+  // rear wheels, seen under the bumper
+  x.fillStyle = '#0d1210';
+  for (const wx of [xL + 0.18, xR - 0.18]) {
+    const a1 = P3(wx - 0.13, 0.62, Z + 0.9), a2 = P3(wx + 0.13, 0, Z + 0.9);
+    x.beginPath(); x.roundRect(a1[0], a1[1], a2[0] - a1[0], a2[1] - a1[1], (a2[0] - a1[0]) * 0.35); x.fill();
+  }
+
+  // right side panel (we see it from behind-right): lit warm by the low sun
+  const side = [rB(xR, yB, Z), rB(xR, yB, Z + LEN), rB(xR, yT, Z + LEN), rB(xR, yT, Z)];
+  let sg2 = x.createLinearGradient(side[0][0], 0, side[1][0], 0);
+  sg2.addColorStop(0, '#d9cfb8'); sg2.addColorStop(1, '#c2b79d');
+  x.beginPath(); side.forEach((p, i) => i ? x.lineTo(...p) : x.moveTo(...p)); x.closePath();
+  x.fillStyle = sg2; x.fill();
+  const quad = (pts, fill) => { x.beginPath(); pts.forEach((p, i) => i ? x.lineTo(...p) : x.moveTo(...p)); x.closePath(); x.fillStyle = fill; x.fill(); };
+  quad([rB(xR, 1.02 + bump + squat, Z), rB(xR, 1.02 + bump + squat, Z + LEN), rB(xR, 1.16 + bump + squat, Z + LEN), rB(xR, 1.16 + bump + squat, Z)], '#1d4a36');
+  quad([rB(xR, 1.45 + bump, Z + 3.95), rB(xR, 1.45 + bump, Z + 4.75), rB(xR, 2.0 + bump, Z + 4.6), rB(xR, 2.0 + bump, Z + 3.95)], '#1a2620');
+  quad([rB(xR, yB, Z), rB(xR, yB, Z + LEN), rB(xR, yB + 0.12, Z + LEN), rB(xR, yB + 0.12, Z)], 'rgba(20,24,20,0.55)');
+
+  // side wheels: tyre, hub, and five lugs that turn with the distance travelled
+  const spin = vanDist(t) / WHEEL_R;
+  for (const wz of [Z + 0.9, Z + 4.05]) {
+    const c0 = P3(xR + 0.02, WHEEL_R, wz);
+    const ry = F * WHEEL_R / wz;
+    const rx = Math.abs(P3(xR + 0.02, WHEEL_R, wz + WHEEL_R)[0] - P3(xR + 0.02, WHEEL_R, wz - WHEEL_R)[0]) / 2;
+    x.fillStyle = '#1a201d'; x.beginPath(); x.ellipse(c0[0], c0[1], rx * 1.25 + 1, ry * 1.12, 0, Math.PI, TAU); x.fill(); // arch
+    x.fillStyle = '#0e1311'; x.beginPath(); x.ellipse(c0[0], c0[1], rx + 0.8, ry, 0, 0, TAU); x.fill();
+    x.fillStyle = '#6d6f68'; x.beginPath(); x.ellipse(c0[0], c0[1], rx * 0.56 + 0.4, ry * 0.56, 0, 0, TAU); x.fill();
+    x.fillStyle = '#2d302d';
+    for (let k = 0; k < 5; k++) {
+      const th = spin + k * TAU / 5;
+      const lp = P3(xR + 0.03, WHEEL_R + 0.13 * Math.sin(th), wz + 0.13 * Math.cos(th));
+      x.beginPath(); x.ellipse(lp[0], lp[1], Math.max(0.6, rx * 0.12), Math.max(0.8, ry * 0.1), 0, 0, TAU); x.fill();
+    }
+  }
+
+  // rear face: drawn in its own 0..100 space, mapped onto the projected face (handles scale, lean and roll)
+  const TL = rB(xL, yT, Z), TR = rB(xR, yT, Z), BL = rB(xL, yB, Z);
+  x.save();
+  x.setTransform((TR[0] - TL[0]) / 100, (TR[1] - TL[1]) / 100, (BL[0] - TL[0]) / 100, (BL[1] - TL[1]) / 100, TL[0], TL[1]);
+  const body = x.createLinearGradient(0, 0, 0, 100);
+  body.addColorStop(0, '#d8d2c3'); body.addColorStop(0.55, '#bdb6a6'); body.addColorStop(1, '#8f897b');
+  x.fillStyle = body; x.beginPath(); x.roundRect(0, 0, 100, 100, [7, 7, 2, 2]); x.fill();
+  x.fillStyle = 'rgba(255,226,170,0.55)'; x.fillRect(4, 0, 92, 1.6);           // warm rim light on the roof edge
+  x.fillStyle = 'rgba(255,226,170,0.35)'; x.fillRect(98.4, 4, 1.6, 70);       // and down the sunlit edge
+  x.fillStyle = '#18231d';
+  x.beginPath(); x.roundRect(7, 9, 39, 25, 2.5); x.fill();
+  x.beginPath(); x.roundRect(54, 9, 39, 25, 2.5); x.fill();
+  x.fillStyle = 'rgba(214,190,140,0.22)'; x.fillRect(9, 11, 11, 20);          // sky reflection in the glass
+  x.fillStyle = 'rgba(40,40,34,0.55)'; x.fillRect(49.6, 5, 0.8, 80);          // door split
+  x.fillStyle = '#1d4a36'; x.fillRect(0, 50, 100, 6.5);                         // fleet stripe
+  x.fillStyle = '#1d4a36'; x.font = '700 12px Arial, sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle';
+  x.fillText('04', 73, 43);
+  x.fillStyle = '#e2b83c'; x.fillRect(35, 66, 30, 9.5);                         // yellow commercial plate
+  x.fillStyle = 'rgba(30,30,20,0.75)'; x.fillRect(39, 69.6, 22, 2.4);
+  x.fillStyle = '#262b28'; x.fillRect(-1.5, 86, 103, 14);                       // bumper
+  x.fillStyle = 'rgba(0,0,0,0.25)'; x.fillRect(0, 80, 100, 6);                  // ambient occlusion above bumper
+  x.restore();
+
+  // tail lights, glowing in screen space; brighter while the van is slowing
+  const lamp = (u0, u1, v0, v1) => {
+    const pA = [TL[0] + (TR[0] - TL[0]) * u0 + (BL[0] - TL[0]) * v0, TL[1] + (TR[1] - TL[1]) * u0 + (BL[1] - TL[1]) * v0];
+    const w = (TR[0] - TL[0]) * (u1 - u0), h = (BL[1] - TL[1]) * (v1 - v0);
+    x.save();
+    x.shadowColor = `rgba(240,90,55,${0.55 + 0.45 * brake})`; x.shadowBlur = w * (1.6 + 2.2 * brake);
+    x.fillStyle = brake > 0.05 ? `rgb(${236},${Math.round(92 - 20 * brake)},${Math.round(62 - 20 * brake)})` : '#c9533a';
+    x.fillRect(pA[0], pA[1], w, h);
+    x.restore();
+  };
+  lamp(0.015, 0.085, 0.58, 0.76);
+  lamp(0.915, 0.985, 0.58, 0.76);
 
   // haze over horizon + vignette
   g = x.createLinearGradient(0, hy - 60, 0, hy + 80);

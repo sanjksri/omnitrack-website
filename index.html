@@ -11,9 +11,9 @@
     <meta property="og:image" content="https://easyomnitracker.in/feature_graphic.jpg">
     <link rel="icon" type="image/png" href="assets/mark.png">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;500;600&family=JetBrains+Mono:wght@500&family=Schibsted+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="preload" href="assets/fonts/mukta-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="assets/fonts/schibsted-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="assets/fonts.css">
 
     <link rel="stylesheet" href="styles.css">
     <script>document.documentElement.classList.add('js');</script>
@@ -96,7 +96,7 @@
                     <ul class="hero-facts">
                         <li><strong>₹50</strong> per Tracking-Month</li>
                         <li><strong data-bonus-short>Free month</strong> on sign-up</li>
-                        <li>Works on any smartphone</li>
+                        <li>Any smartphone</li>
                     </ul>
                 </div>
 
@@ -113,7 +113,7 @@
                         </button>
                     </div>
 
-                    <div class="hero-phone" data-sim data-mps="12" data-bend="96">
+                    <div class="hero-phone" data-sim data-mps="12" data-surge="1.6" data-loop="8" data-bend="96">
                         <div class="hp-notch" aria-hidden="true"></div>
                         <div class="hp-screen">
                             <div class="hp-bar" aria-hidden="true">
@@ -269,19 +269,19 @@
 
                 <div class="explorer" data-tabs>
                     <div class="explorer-tabs" role="tablist" aria-label="Console features">
-                        <button class="tab" role="tab" id="tab-live" aria-controls="panel-live" aria-selected="true">
+                        <button class="tab" type="button" role="tab" id="tab-live" aria-controls="panel-live" aria-selected="true">
                             <svg class="icon" aria-hidden="true"><use href="#i-map"/></svg>
                             <span><strong>Live map</strong><small>Every device, right now</small></span>
                         </button>
-                        <button class="tab" role="tab" id="tab-history" aria-controls="panel-history" aria-selected="false" tabindex="-1">
+                        <button class="tab" type="button" role="tab" id="tab-history" aria-controls="panel-history" aria-selected="false" tabindex="-1">
                             <svg class="icon" aria-hidden="true"><use href="#i-history"/></svg>
                             <span><strong>Route history</strong><small>Any day, split into trips</small></span>
                         </button>
-                        <button class="tab" role="tab" id="tab-reports" aria-controls="panel-reports" aria-selected="false" tabindex="-1">
+                        <button class="tab" type="button" role="tab" id="tab-reports" aria-controls="panel-reports" aria-selected="false" tabindex="-1">
                             <svg class="icon" aria-hidden="true"><use href="#i-report"/></svg>
                             <span><strong>Trip reports</strong><small>Distance, speed, idle time</small></span>
                         </button>
-                        <button class="tab" role="tab" id="tab-account" aria-controls="panel-account" aria-selected="false" tabindex="-1">
+                        <button class="tab" type="button" role="tab" id="tab-account" aria-controls="panel-account" aria-selected="false" tabindex="-1">
                             <svg class="icon" aria-hidden="true"><use href="#i-account"/></svg>
                             <span><strong>Account and data</strong><small>Gmail sign-in, 6 months kept</small></span>
                         </button>

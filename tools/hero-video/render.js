@@ -1,7 +1,7 @@
 const { chromium } = require('playwright');
 const fs = require('fs');
 const dir = __dirname;
-const n = +(process.argv[2] || 192), fps = 24;
+const n = +(process.argv[2] || 240), fps = +(process.argv[3] || 30);
 (async () => {
   const b = await chromium.launch();
   const p = await b.newPage({ viewport: { width: 1200, height: 1080 } });

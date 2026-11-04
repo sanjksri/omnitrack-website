@@ -1,6 +1,25 @@
 /* easyomnitracker — site styles
    Palette: warm stone neutrals, deep forest green, muted amber (live state). */
 
+/* Metric-matched fallbacks: text keeps its size and line positions while the web fonts load (no layout shift). */
+@font-face {
+    font-family: 'Mukta Fallback';
+    src: local('Arial'), local('ArialMT'), local('Liberation Sans'), local('Helvetica');
+    size-adjust: 93.41%;
+    ascent-override: 120.97%;
+    descent-override: 56.95%;
+    line-gap-override: 0%;
+}
+@font-face {
+    font-family: 'Schibsted Fallback';
+    src: local('Arial Bold'), local('Arial-BoldMT'), local('Liberation Sans Bold'), local('Helvetica Bold');
+    font-weight: 600 700;
+    size-adjust: 101.17%;
+    ascent-override: 96.53%;
+    descent-override: 25.48%;
+    line-gap-override: 0%;
+}
+
 :root {
     --stone-0: #fdfcf9;
     --stone-50: #f9f7f2;
@@ -42,8 +61,8 @@
     --map-casing: #d9d4c6;
     --map-label: #8c8778;
 
-    --font-display: 'Schibsted Grotesk', 'Mukta', system-ui, sans-serif;
-    --font-body: 'Mukta', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-display: 'Schibsted Grotesk', 'Schibsted Fallback', system-ui, sans-serif;
+    --font-body: 'Mukta', 'Mukta Fallback', system-ui, -apple-system, 'Segoe UI', sans-serif;
     --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
 
     --r-xs: 4px;
@@ -316,7 +335,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
     list-style: none;
     display: flex;
     flex-wrap: wrap;
-    gap: 8px 24px;
+    gap: 8px 20px;
     font-size: .9375rem;
     color: var(--ink-3);
     padding-top: 24px;
@@ -419,8 +438,8 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 }
 .hp-gps { display: inline-flex; align-items: center; gap: .4em; color: var(--forest-700); }
 .gps-dot { width: .6em; height: .6em; border-radius: 50%; background: var(--amber-500); }
-.hero-phone.is-running .gps-dot { animation: gps 1.4s ease-in-out infinite; }
-@keyframes gps { 0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(196, 138, 44, .5); } 50% { opacity: .35; box-shadow: 0 0 0 .3em rgba(196, 138, 44, 0); } }
+.hero-phone.is-running .gps-dot { animation: gps 2.4s ease-in-out infinite; }
+@keyframes gps { 0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(196, 138, 44, .28); } 60% { opacity: .6; box-shadow: 0 0 0 .22em rgba(196, 138, 44, 0); } }
 .hp-head {
     display: flex; justify-content: space-between; align-items: center;
     padding: .35em 1em .6em;
@@ -468,10 +487,10 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .van-roof { fill: var(--forest-600); }
 .van-glass { fill: #d5e6da; }
 .van-halo { fill: var(--amber-400); opacity: .28; transform-box: fill-box; transform-origin: center; }
-.hero-phone.is-running .van-halo { animation: halo 1.8s var(--ease-out) infinite; }
+.hero-phone.is-running .van-halo { animation: halo 2.4s var(--ease-out) infinite; }
 @keyframes halo {
-    0% { transform: scale(.6); opacity: .45; }
-    100% { transform: scale(1.5); opacity: 0; }
+    0% { transform: scale(.7); opacity: .3; }
+    100% { transform: scale(1.35); opacity: 0; }
 }
 
 .sim-tag {
@@ -981,7 +1000,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 
 /* Driver app */
 
-.driver-app { padding-top: 0; }
+.driver-app { padding-top: 0; padding-bottom: clamp(64px, 7vw, 96px); }
 .apk {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr) auto;
@@ -1085,7 +1104,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .legal-toc a:hover { color: var(--ink); }
 .legal-toc a[aria-current="true"] { color: var(--forest-700); border-left-color: var(--forest-600); font-weight: 500; }
 
-.legal-body { max-width: 70ch; }
+.legal-body { max-width: 42.5rem; }
 .legal-body h2 { font-size: 1.5rem; letter-spacing: -0.02em; margin: 48px 0 14px; scroll-margin-top: calc(var(--header-h) + 24px); }
 .legal-body h3 { font-size: 1.125rem; letter-spacing: -0.01em; margin: 28px 0 10px; }
 .legal-body p, .legal-body li { color: var(--ink-2); line-height: 1.75; }
@@ -1110,7 +1129,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 /* ---------- Responsive ---------- */
 
 @media (max-width: 1180px) and (min-width: 961px) {
-    .hero-phone { left: -12px; --phone-w: 190px; }
+    .hero-phone { left: -12px; --phone-w: 176px; }
     .hero-film { aspect-ratio: 1 / 1; }
     .hero-video { object-position: 0% 60%; }
 }
