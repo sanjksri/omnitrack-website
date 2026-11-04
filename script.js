@@ -106,7 +106,7 @@
         const mark = $('[data-jr-mark]', root);
         const last = steps.length - 1;
         const still = () => reduceMotion.matches;
-        let geo = null, reached = -1, current = -1, started = false, inView = false;
+        let geo = null, reached = -1, current = -1, started = false, inView = false, extended = false;
         const seqTimers = [];
         const played = new Set();
 
@@ -146,14 +146,15 @@
             } else if (i === 2) {
                 later(() => step.classList.add('is-checked'), 500);
                 press(btn, 1000);
-                later(() => root.classList.add('is-live'), 1450);
+                // Once tracking is live the route carries on past stop 3 (desktop only; see layout)
+                later(() => { root.classList.add('is-live'); extended = true; paint(); }, 1450);
             }
         };
 
         const offset = (k) => (k < 0 || !geo ? 0 : geo.horiz ? geo.c[k].x - geo.c[0].x : geo.c[k].y - geo.c[0].y);
         const paint = () => {
             if (!geo) return;
-            const p = geo.len ? offset(reached) / geo.len : 0;
+            const p = geo.len ? (extended ? 1 : offset(reached) / geo.len) : 0;
             fill.style.transform = geo.horiz ? `scaleX(${p})` : `scaleY(${p})`;
             const m = offset(Math.max(current, 0));
             mark.style.transform = geo.horiz ? `translate(${m}px, 0)` : `translate(0, ${m}px)`;
@@ -177,7 +178,9 @@
             const r = root.getBoundingClientRect();
             const c = nodes.map((n) => { const b = n.getBoundingClientRect(); return { x: b.left + b.width / 2 - r.left, y: b.top + b.height / 2 - r.top }; });
             const horiz = Math.abs(c[0].y - c[last].y) < 4;
-            const len = horiz ? c[last].x - c[0].x : c[last].y - c[0].y;
+            // Horizontal: the line runs on past stop 3 to the right edge of that step's column
+            const end = horiz ? steps[last].getBoundingClientRect().right - r.left : c[last].y;
+            const len = horiz ? end - c[0].x : c[last].y - c[0].y;
             geo = { horiz, c, len };
             track.dataset.axis = horiz ? 'x' : 'y';
             track.classList.add('is-instant');
@@ -230,6 +233,8 @@
             if (typed) { typed.textContent = word; typed.classList.remove('is-typing'); }
             setState(last, last);
             root.classList.add('is-live');
+            extended = true;
+            paint();
             steps[last].classList.add('is-checked');
         });
     }
