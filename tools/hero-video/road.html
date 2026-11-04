@@ -1,0 +1,203 @@
+<!doctype html><html><body style="margin:0;background:#000">
+<canvas id="c" width="1200" height="1080"></canvas>
+<script>
+const c = document.getElementById('c'), x = c.getContext('2d');
+const W = c.width, H = c.height;
+const T = 8;              // loop seconds
+const SPEED = 12;         // m/s -> 96 m per loop
+const DASH_P = 12, DASH_L = 4, POST_P = 24;
+const HY = H * 0.46;      // horizon
+const CAM_H = 1.5, F = W * 0.95;
+const CX = W * 0.6;       // road vanishing x
+const TAU = Math.PI * 2;
+
+function mix(a, b, t) { return a.map((v, i) => Math.round(v + (b[i] - v) * t)); }
+function rgb(a, al = 1) { return `rgba(${a[0]},${a[1]},${a[2]},${al})`; }
+const HAZE = [196, 178, 140];
+
+function hillLine(seed, amp, base, freq, drift) {
+  const pts = [];
+  for (let px = -20; px <= W + 20; px += 6) {
+    const u = (px + drift) / W;
+    let y = 0;
+    y += Math.sin(u * TAU * freq + seed) * 0.55;
+    y += Math.sin(u * TAU * freq * 2.3 + seed * 1.7) * 0.28;
+    y += Math.sin(u * TAU * freq * 5.1 + seed * 0.3) * 0.12;
+    pts.push([px, base - amp * (0.6 + y * 0.5)]);
+  }
+  return pts;
+}
+
+function draw(t) {
+  const ph = (t % T) / T;
+  const curve = 0.00055 * Math.sin(ph * TAU);           // road bend
+  const camX = -0.15 * Math.sin(ph * TAU);
+  const bob = Math.sin(ph * TAU * 4) * 1.2;
+  const hy = HY + bob;
+
+  const proj = (wx, z) => {
+    const lat = wx + curve * z * z - camX;
+    return [CX + F * lat / z, hy + F * CAM_H / z];
+  };
+
+  // sky
+  let g = x.createLinearGradient(0, 0, 0, hy);
+  g.addColorStop(0, '#0f261c');
+  g.addColorStop(0.45, '#25402f');
+  g.addColorStop(0.8, '#7d7a5a');
+  g.addColorStop(1, '#cdb487');
+  x.fillStyle = g; x.fillRect(0, 0, W, hy + 2);
+  // low sun glow
+  const sg = x.createRadialGradient(W * 0.78, hy - 10, 0, W * 0.78, hy - 10, W * 0.45);
+  sg.addColorStop(0, 'rgba(232,196,128,0.55)'); sg.addColorStop(0.35, 'rgba(216,165,79,0.18)'); sg.addColorStop(1, 'rgba(216,165,79,0)');
+  x.fillStyle = sg; x.fillRect(0, 0, W, hy + 2);
+
+  // hills (far to near)
+  const drift = Math.sin(ph * TAU) * 40;
+  const layers = [
+    { seed: 1.3, amp: 70, base: hy + 2, freq: 1.6, col: [120, 128, 100], d: drift * 0.3 },
+    { seed: 4.1, amp: 95, base: hy + 4, freq: 1.1, col: [74, 96, 76], d: drift * 0.6 },
+    { seed: 2.2, amp: 60, base: hy + 6, freq: 2.2, col: [44, 68, 52], d: drift },
+  ];
+  for (const L of layers) {
+    const p = hillLine(L.seed, L.amp, L.base, L.freq, L.d);
+    x.beginPath(); x.moveTo(-20, H);
+    p.forEach(([a, b]) => x.lineTo(a, b));
+    x.lineTo(W + 20, H); x.closePath();
+    x.fillStyle = rgb(L.col); x.fill();
+  }
+
+  // ground
+  g = x.createLinearGradient(0, hy, 0, H);
+  g.addColorStop(0, '#46593f'); g.addColorStop(0.18, '#2f4635'); g.addColorStop(1, '#16271d');
+  x.fillStyle = g; x.fillRect(0, hy + 4, W, H - hy);
+  // distant tree line along the horizon
+  x.fillStyle = 'rgba(36,56,42,0.95)';
+  for (let px = -10; px < W + 10; px += 7) {
+    const u = (px + drift * 1.2) / W;
+    const hgt = 6 + 5 * (Math.sin(u * 91.7) * 0.5 + 0.5) + 4 * (Math.sin(u * 23.3 + 1.1) * 0.5 + 0.5);
+    x.beginPath(); x.ellipse(px, hy + 6, 6, hgt, 0, Math.PI, TAU); x.fill();
+  }
+  x.fillRect(0, hy + 5, W, 4);
+  // field furrows: faint lines converging to the vanishing point
+  x.strokeStyle = 'rgba(12,24,16,0.18)'; x.lineWidth = 1.2;
+  for (let k = -14; k <= 14; k++) {
+    if (Math.abs(k) < 2) continue;
+    const a = proj(k * 6.5, 400), bb = proj(k * 6.5, 2.2);
+    x.beginPath(); x.moveTo(...a); x.lineTo(...bb); x.stroke();
+  }
+
+
+  // road as continuous strips (no seams); fog via vertical gradient
+  const zs = [];
+  for (let z = 700; z > 1.4; z *= 0.985) zs.push(z);
+  const fogGrad = (col) => {
+    const gr = x.createLinearGradient(0, hy, 0, H);
+    for (let k = 0; k <= 12; k++) {
+      const y = hy + 1 + (H - hy) * Math.pow(k / 12, 2.2);
+      const z = F * CAM_H / Math.max(0.5, y - hy);
+      const fog = 1 - Math.exp(-z / 260);
+      gr.addColorStop(Math.min(1, (y - hy) / (H - hy)), rgb(mix(col, HAZE, fog * 0.85)));
+    }
+    return gr;
+  };
+  const strip = (a, b, col) => {
+    x.beginPath();
+    zs.forEach((z, i) => { const p = proj(a, z); i ? x.lineTo(...p) : x.moveTo(...p); });
+    for (let i = zs.length - 1; i >= 0; i--) x.lineTo(...proj(b, zs[i]));
+    x.closePath(); x.fillStyle = fogGrad(col); x.fill();
+  };
+  strip(-5.4, 5.4, [84, 90, 76]);
+  strip(-3.7, 3.7, [42, 46, 44]);
+  for (const c0 of [-2.7, -1.0, 1.0, 2.7]) strip(c0 - 0.35, c0 + 0.35, [36, 40, 38]);
+  strip(-3.55, -3.42, [214, 210, 196]);
+  strip(3.42, 3.55, [214, 210, 196]);
+  // centre dashes
+  const off = (t * SPEED) % DASH_P;
+  for (let k = 0; k < 60; k++) {
+    const z0 = k * DASH_P - off + 1.5, z1 = z0 + DASH_L;
+    if (z1 < 1.5 || z0 > 650) continue;
+    const za = Math.max(1.5, z0);
+    const p0 = proj(-0.07, z1), p1 = proj(0.07, z1), p2 = proj(0.07, za), p3 = proj(-0.07, za);
+    const fog = 1 - Math.exp(-za / 260);
+    x.beginPath(); x.moveTo(...p0); x.lineTo(...p1); x.lineTo(...p2); x.lineTo(...p3); x.closePath();
+    x.fillStyle = rgb(mix([226, 206, 156], HAZE, fog * 0.85)); x.fill();
+  }
+
+  // reflector posts
+  for (let k = 0; k < 40; k++) {
+    const z = POST_P * k - (t * SPEED) % POST_P + 3;
+    if (z < 2.2 || z > 620) continue;
+    for (const side of [-6, 6]) {
+      const [px, py] = proj(side, z);
+      const h = F * 1.0 / z, w = Math.max(1, F * 0.11 / z);
+      const fog = 1 - Math.exp(-z / 260);
+      x.fillStyle = rgb(mix([226, 222, 210], HAZE, fog * 0.9));
+      x.fillRect(px - w / 2, py - h, w, h);
+      x.fillStyle = rgb(mix([216, 150, 60], HAZE, fog * 0.9));
+      x.fillRect(px - w / 2, py - h, w, h * 0.16);
+    }
+  }
+
+  // van (rear view), left lane
+  const vz = 15 + Math.sin(ph * TAU * 2) * 0.35;
+  const vlat = -1.85 + Math.sin(ph * TAU * 3) * 0.05;
+  const [vx, vy] = proj(vlat, vz);
+  const s = F / vz;
+  const vw = 1.9 * s, vh = 2.15 * s;
+  const sway = Math.sin(ph * TAU * 6) * 0.6;
+  // shadow
+  x.save();
+  x.fillStyle = 'rgba(10,20,14,0.45)';
+  x.beginPath(); x.ellipse(vx, vy + 0.02 * s, vw * 0.62, vh * 0.07, 0, 0, TAU); x.fill();
+  // wheels
+  x.fillStyle = '#121714';
+  x.fillRect(vx - vw * 0.47, vy - vh * 0.14, vw * 0.2, vh * 0.15);
+  x.fillRect(vx + vw * 0.27, vy - vh * 0.14, vw * 0.2, vh * 0.15);
+  const bx = vx - vw / 2, by = vy - vh + sway;
+  // body
+  const r = vw * 0.08;
+  x.beginPath(); x.roundRect(bx, by, vw, vh * 0.9, [r, r, r * 0.4, r * 0.4]);
+  const bg = x.createLinearGradient(bx, by, bx + vw, by);
+  bg.addColorStop(0, '#d9d4c6'); bg.addColorStop(0.5, '#ebe6da'); bg.addColorStop(1, '#c9c3b4');
+  x.fillStyle = bg; x.fill();
+  // roof highlight from sky
+  x.fillStyle = 'rgba(255,240,210,0.35)';
+  x.fillRect(bx + r, by + 1, vw - 2 * r, vh * 0.025);
+  // rear doors split + windows
+  x.fillStyle = '#1a2620';
+  x.beginPath(); x.roundRect(bx + vw * 0.08, by + vh * 0.1, vw * 0.39, vh * 0.24, r * 0.4); x.fill();
+  x.beginPath(); x.roundRect(bx + vw * 0.53, by + vh * 0.1, vw * 0.39, vh * 0.24, r * 0.4); x.fill();
+  x.fillStyle = 'rgba(200,180,140,0.25)';
+  x.fillRect(bx + vw * 0.1, by + vh * 0.12, vw * 0.12, vh * 0.2);
+  x.fillStyle = 'rgba(60,60,52,0.55)';
+  x.fillRect(bx + vw * 0.497, by + vh * 0.06, Math.max(1, vw * 0.006), vh * 0.74);
+  // brand stripe in forest
+  x.fillStyle = '#1d4a36';
+  x.fillRect(bx, by + vh * 0.5, vw, vh * 0.06);
+  // bumper
+  x.fillStyle = '#2a2f2c';
+  x.fillRect(bx - vw * 0.01, by + vh * 0.8, vw * 1.02, vh * 0.1);
+  // yellow commercial plate
+  x.fillStyle = '#e2b83c';
+  x.fillRect(vx - vw * 0.15, by + vh * 0.66, vw * 0.3, vh * 0.09);
+  x.fillStyle = 'rgba(30,30,20,0.7)';
+  x.fillRect(vx - vw * 0.11, by + vh * 0.695, vw * 0.22, vh * 0.025);
+  // tail lights with glow
+  x.shadowColor = 'rgba(235,90,50,0.9)'; x.shadowBlur = vw * 0.12;
+  x.fillStyle = '#e0573a';
+  x.fillRect(bx + vw * 0.02, by + vh * 0.58, vw * 0.07, vh * 0.16);
+  x.fillRect(bx + vw * 0.91, by + vh * 0.58, vw * 0.07, vh * 0.16);
+  x.restore();
+
+  // haze over horizon + vignette
+  g = x.createLinearGradient(0, hy - 60, 0, hy + 80);
+  g.addColorStop(0, 'rgba(205,180,135,0)'); g.addColorStop(0.5, 'rgba(205,180,135,0.18)'); g.addColorStop(1, 'rgba(205,180,135,0)');
+  x.fillStyle = g; x.fillRect(0, hy - 60, W, 140);
+  const vg = x.createRadialGradient(W * 0.55, H * 0.5, H * 0.35, W * 0.55, H * 0.5, H * 0.95);
+  vg.addColorStop(0, 'rgba(8,18,12,0)'); vg.addColorStop(1, 'rgba(8,18,12,0.5)');
+  x.fillStyle = vg; x.fillRect(0, 0, W, H);
+}
+window.draw = draw;
+draw(0);
+</script></body></html>

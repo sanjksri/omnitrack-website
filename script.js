@@ -265,24 +265,65 @@
         map.forEach((_, id) => { const el = document.getElementById(id); if (el) tocSpy.observe(el); });
     }
 
-    /* ---------- Hero: simulated trip ---------- */
-    const sim = $('[data-sim]');
-    if (sim) initSim(sim);
+    /* ---------- Hero: film + phone simulation, one motion control ---------- */
+    const hero = $('[data-hero]');
+    if (hero) initHero(hero);
 
-    function initSim(root) {
+    function initHero(stage) {
+        const video = $('[data-hero-video]', stage);
+        const toggleBtn = $('[data-motion-toggle]', stage);
+        const toggleLabel = $('[data-motion-label]', stage);
+        const phone = $('[data-sim]', stage);
+        const clockEl = $('[data-clock]', stage);
+        const sim = phone ? createSim(phone) : null;
+        const state = { visible: true, paused: false };
+
+        const tickClock = () => {
+            if (clockEl) clockEl.textContent = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false });
+        };
+        tickClock();
+        setInterval(tickClock, 15000);
+
+        const sync = () => {
+            const run = state.visible && !state.paused && !document.hidden;
+            if (sim) (run ? sim.start : sim.stop)();
+            if (video) {
+                if (run && !reduceMotion.matches) {
+                    const p = video.play();
+                    if (p && p.catch) p.catch(() => {});
+                } else {
+                    video.pause();
+                }
+            }
+        };
+
+        if (video && reduceMotion.matches) { video.removeAttribute('autoplay'); video.pause(); }
+
+        toggleBtn?.addEventListener('click', () => {
+            state.paused = !state.paused;
+            toggleBtn.setAttribute('aria-pressed', String(state.paused));
+            toggleLabel.textContent = state.paused ? 'Play animations' : 'Pause animations';
+            sync();
+        });
+        document.addEventListener('visibilitychange', sync);
+        reduceMotion.addEventListener?.('change', () => { sim?.stop(); sync(); });
+        if ('IntersectionObserver' in window) {
+            new IntersectionObserver(([entry]) => { state.visible = entry.isIntersecting; sync(); }, { threshold: 0.05 }).observe(stage);
+        }
+        sync();
+    }
+
+    function createSim(root) {
         const svgNS = 'http://www.w3.org/2000/svg';
-        const route = $('[data-route]', root);
+        const route = $('[data-route-line]', root);
         const van = $('[data-van]', root);
         const pingLayer = $('[data-pings]', root);
         const statusEl = $('[data-status]', root);
         const speedEl = $('[data-speed]', root);
         const distEl = $('[data-dist]', root);
         const lastEl = $('[data-last]', root);
-        const log = $('[data-log]', root);
-        const toggleBtn = $('[data-sim-toggle]', root);
-        const toggleLabel = $('[data-sim-label]', root);
 
-        const pts = [[64, 344], [64, 280], [184, 280], [184, 112], [472, 112], [472, 280], [568, 280], [568, 344]];
+        const pts = root.dataset.route.split(',').map((p) => p.trim().split(/\s+/).map(Number));
         const segs = [];
         let total = 0;
         for (let i = 1; i < pts.length; i++) {
@@ -292,71 +333,47 @@
             segs.push({ x0, y0, x1, y1, len, start: total, angle: Math.atan2(y1 - y0, x1 - x0) * 180 / Math.PI });
             total += len;
         }
-        const corners = segs.slice(1).map((s) => s.start);
-        const STOP_AT = segs[4].start; // Stop 1 at (472, 112)
-        const TRIP_KM = 6.4;
-        const MAX_SPEED = 120; // map units per second
-        const PING_EVERY = 1.4; // seconds of driving between pings
+        const corners = segs.slice(1).map((g) => g.start);
+        const stopIdx = parseInt(root.dataset.stop || '0', 10);
+        const STOP_AT = stopIdx > 0 ? segs[stopIdx].start : -1;
+        const TRIP_KM = parseFloat(root.dataset.km || '5');
+        const MAX_SPEED = total / 7.5;
+        const PING_EVERY = 1.4;
 
         route.style.strokeDasharray = `${total} ${total}`;
 
-        const S = {
-            d: 0, phase: 'drive', phaseT: 0, sincePing: 0, lastPingAt: performance.now(),
-            heading: segs[0].angle, kmh: 0, stopped: false, running: false, visible: true, paused: false,
-        };
+        const S = { d: 0, phase: 'drive', phaseT: 0, sincePing: 0, lastPingAt: performance.now(), heading: segs[0].angle, kmh: 0, running: false };
 
         const posAt = (d) => {
-            const s = segs.find((g) => d <= g.start + g.len) || segs[segs.length - 1];
-            const t = Math.max(0, Math.min(1, (d - s.start) / s.len));
-            return { x: s.x0 + (s.x1 - s.x0) * t, y: s.y0 + (s.y1 - s.y0) * t, angle: s.angle };
+            const g = segs.find((s) => d <= s.start + s.len) || segs[segs.length - 1];
+            const t = Math.max(0, Math.min(1, (d - g.start) / g.len));
+            return { x: g.x0 + (g.x1 - g.x0) * t, y: g.y0 + (g.y1 - g.y0) * t, angle: g.angle };
         };
-
-        const clock = () => new Date().toLocaleTimeString('en-GB', { hour12: false });
-        const coords = (x, y) => `${(26.9312 - y * 0.000052).toFixed(4)}° N, ${(75.7651 + x * 0.000052).toFixed(4)}° E`;
-
-        const addLog = (html) => {
-            const li = document.createElement('li');
-            li.className = 'is-new';
-            li.innerHTML = `<time>${clock()}</time>${html}`;
-            log.prepend(li);
-            while (log.children.length > 3) log.lastElementChild.remove();
-        };
-
-        const setStatus = (state, text) => {
-            statusEl.dataset.state = state;
-            statusEl.textContent = text;
-        };
+        const setStatus = (st, text) => { statusEl.dataset.state = st; statusEl.textContent = text; };
 
         const dropPing = (x, y) => {
             const ring = document.createElementNS(svgNS, 'circle');
             ring.setAttribute('class', 'ping-ring');
-            ring.setAttribute('cx', x); ring.setAttribute('cy', y); ring.setAttribute('r', 5);
+            ring.setAttribute('cx', x); ring.setAttribute('cy', y); ring.setAttribute('r', 4);
             const dot = document.createElementNS(svgNS, 'circle');
             dot.setAttribute('class', 'ping');
-            dot.setAttribute('cx', x); dot.setAttribute('cy', y); dot.setAttribute('r', 4);
+            dot.setAttribute('cx', x); dot.setAttribute('cy', y); dot.setAttribute('r', 3.2);
             pingLayer.append(ring, dot);
             if (!reduceMotion.matches && ring.animate) {
-                ring.animate([{ r: 5, opacity: 0.9 }, { r: 18, opacity: 0 }], { duration: 1100, easing: 'cubic-bezier(.16,1,.3,1)' })
+                ring.animate([{ r: 4, opacity: 0.9 }, { r: 14, opacity: 0 }], { duration: 1100, easing: 'cubic-bezier(.16,1,.3,1)' })
                     .finished.then(() => ring.remove()).catch(() => ring.remove());
             } else {
                 ring.remove();
             }
             const dots = pingLayer.querySelectorAll('.ping');
-            dots.forEach((p, i) => { p.style.opacity = String(Math.max(0.25, 1 - (dots.length - 1 - i) * 0.07)); });
+            dots.forEach((p, i) => { p.style.opacity = String(Math.max(0.25, 1 - (dots.length - 1 - i) * 0.08)); });
             S.lastPingAt = performance.now();
         };
 
-        const ping = () => {
-            const p = posAt(S.d);
-            dropPing(p.x, p.y);
-            addLog(`<span>${coords(p.x, p.y)}</span><span>${Math.round(S.kmh)} km/h</span>`);
-        };
-
         const resetTrip = () => {
-            S.d = 0; S.phase = 'drive'; S.phaseT = 0; S.sincePing = 0; S.heading = segs[0].angle; S.stopped = false;
+            Object.assign(S, { d: 0, phase: 'drive', phaseT: 0, sincePing: 0, heading: segs[0].angle });
             pingLayer.replaceChildren();
             setStatus('moving', 'Moving');
-            addLog('<span class="log-ev">Trip started from Depot</span>');
             dropPing(pts[0][0], pts[0][1]);
         };
 
@@ -373,71 +390,57 @@
         const step = (dt) => {
             S.phaseT += dt;
             if (S.phase === 'drive') {
-                const nextCorner = corners.find((c) => c > S.d);
-                const toCorner = nextCorner != null ? nextCorner - S.d : Infinity;
+                const next = corners.find((c) => c > S.d);
+                const toCorner = next != null ? next - S.d : Infinity;
                 const fromCorner = S.d - (corners.filter((c) => c <= S.d).pop() ?? -Infinity);
                 const toStop = (S.d < STOP_AT ? STOP_AT : total) - S.d;
                 const near = Math.min(toCorner, fromCorner, toStop * 0.8);
-                const factor = Math.max(0.28, Math.min(1, near / 46));
+                const factor = Math.max(0.3, Math.min(1, near / (total / 18)));
                 const accel = Math.min(1, S.phaseT / 1.2);
-                const v = MAX_SPEED * factor * (0.35 + 0.65 * accel);
-                S.kmh = 14 + 34 * factor * accel + Math.sin(S.d / 23) * 2;
+                S.kmh = 14 + 34 * factor * accel + Math.sin(S.d / 9) * 2;
                 const before = S.d;
-                S.d = Math.min(total, S.d + v * dt);
-                if (before < STOP_AT && S.d >= STOP_AT) {
-                    S.d = STOP_AT; S.phase = 'idle'; S.phaseT = 0; S.kmh = 0;
+                S.d = Math.min(total, S.d + MAX_SPEED * factor * (0.35 + 0.65 * accel) * dt);
+                if (STOP_AT > 0 && before < STOP_AT && S.d >= STOP_AT) {
+                    Object.assign(S, { d: STOP_AT, phase: 'idle', phaseT: 0, kmh: 0 });
                     setStatus('idle', 'Idle');
-                    addLog('<span class="log-ev">Stopped at Stop 1</span>');
-                    dropPing(pts[4][0], pts[4][1]);
+                    dropPing(pts[stopIdx][0], pts[stopIdx][1]);
                 } else if (S.d >= total) {
-                    S.phase = 'arrived'; S.phaseT = 0; S.kmh = 0;
+                    Object.assign(S, { phase: 'arrived', phaseT: 0, kmh: 0 });
                     setStatus('arrived', 'Arrived');
-                    addLog(`<span class="log-ev">Arrived at Drop · ${TRIP_KM} km</span>`);
                     dropPing(pts[pts.length - 1][0], pts[pts.length - 1][1]);
-                } else {
-                    S.sincePing += dt;
-                    if (S.sincePing >= PING_EVERY) { S.sincePing = 0; ping(); }
+                } else if ((S.sincePing += dt) >= PING_EVERY) {
+                    S.sincePing = 0;
+                    const p = posAt(S.d);
+                    dropPing(p.x, p.y);
                 }
             } else if (S.phase === 'idle') {
-                const secs = Math.floor(S.phaseT);
-                statusEl.textContent = `Idle · 0:${String(secs).padStart(2, '0')}`;
+                statusEl.textContent = `Idle · 0:${String(Math.floor(S.phaseT)).padStart(2, '0')}`;
                 if (S.phaseT > 3.2) {
-                    S.phase = 'drive'; S.phaseT = 0; S.sincePing = 0;
+                    Object.assign(S, { phase: 'drive', phaseT: 0, sincePing: 0 });
                     setStatus('moving', 'Moving');
-                    addLog('<span class="log-ev">Left Stop 1</span>');
                 }
             } else if (S.phase === 'arrived' && S.phaseT > 3.5) {
                 resetTrip();
             }
             const target = posAt(Math.min(total - 0.01, S.d + 0.01)).angle;
-            let diff = ((target - S.heading + 540) % 360) - 180;
+            const diff = ((target - S.heading + 540) % 360) - 180;
             S.heading += reduceMotion.matches ? diff : diff * Math.min(1, dt * 9);
         };
 
-        let raf = 0;
-        let last = 0;
-        let interval = 0;
-
+        let raf = 0, last = 0, interval = 0, stoppedAt = 0;
         const frame = (now) => {
             const dt = Math.min(0.05, (now - last) / 1000);
             last = now;
-            step(dt);
-            draw();
+            step(dt); draw();
             raf = requestAnimationFrame(frame);
         };
-
-        let stoppedAt = 0;
         const start = () => {
             if (S.running) return;
             S.running = true;
             if (stoppedAt) S.lastPingAt += performance.now() - stoppedAt;
             root.classList.add('is-running');
-            if (reduceMotion.matches) {
-                interval = setInterval(() => { step(PING_EVERY); draw(); }, 1400);
-            } else {
-                last = performance.now();
-                raf = requestAnimationFrame(frame);
-            }
+            if (reduceMotion.matches) interval = setInterval(() => { step(PING_EVERY); draw(); }, 1400);
+            else { last = performance.now(); raf = requestAnimationFrame(frame); }
         };
         const stop = () => {
             if (S.running) stoppedAt = performance.now();
@@ -446,25 +449,9 @@
             cancelAnimationFrame(raf);
             clearInterval(interval);
         };
-        const sync = () => {
-            const should = S.visible && !S.paused && !document.hidden;
-            if (should) start(); else stop();
-        };
-
-        toggleBtn.addEventListener('click', () => {
-            S.paused = !S.paused;
-            toggleBtn.setAttribute('aria-pressed', String(S.paused));
-            toggleLabel.textContent = S.paused ? 'Play animation' : 'Pause animation';
-            sync();
-        });
-        document.addEventListener('visibilitychange', sync);
-        reduceMotion.addEventListener?.('change', () => { stop(); sync(); });
-        if ('IntersectionObserver' in window) {
-            new IntersectionObserver(([entry]) => { S.visible = entry.isIntersecting; sync(); }, { threshold: 0.1 }).observe(root);
-        }
 
         resetTrip();
         draw();
-        sync();
+        return { start, stop };
     }
 })();

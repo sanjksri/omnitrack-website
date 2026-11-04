@@ -100,96 +100,79 @@
                     </ul>
                 </div>
 
-                <div class="hero-demo">
-                    <div class="console" data-sim>
-                        <div class="console-bar">
-                            <span class="console-title">
-                                <svg class="icon" aria-hidden="true"><use href="#i-map"/></svg>
-                                Live map
-                            </span>
-                            <span class="sim-tag" title="This is an animation, not real tracking data">Simulated trip</span>
-                            <button class="icon-btn" type="button" data-sim-toggle aria-pressed="false">
-                                <svg class="icon icon-pause" aria-hidden="true"><use href="#i-pause"/></svg>
-                                <svg class="icon icon-play" aria-hidden="true"><use href="#i-play"/></svg>
-                                <span class="sr-only" data-sim-label>Pause animation</span>
-                            </button>
-                        </div>
-                        <div class="map">
-                            <svg class="map-svg" viewBox="0 0 640 400" role="img" aria-labelledby="map-title">
-                                <title id="map-title">Simulated map: a van drives from the depot to a delivery stop, then on to the drop point, sending location pings along the way.</title>
-                                <rect width="640" height="400" fill="var(--map-land)"/>
-                                <g fill="var(--map-block)">
-                                    <rect x="80" y="20" width="88" height="76" rx="4"/>
-                                    <rect x="200" y="20" width="104" height="76" rx="4"/>
-                                    <rect x="336" y="20" width="120" height="76" rx="4"/>
-                                    <rect x="488" y="20" width="64" height="76" rx="4"/>
-                                    <rect x="584" y="20" width="60" height="76" rx="4"/>
-                                    <rect x="-4" y="20" width="52" height="76" rx="4"/>
-                                    <rect x="336" y="232" width="120" height="32" rx="4"/>
-                                    <rect x="200" y="232" width="104" height="32" rx="4"/>
-                                    <rect x="-4" y="296" width="52" height="32" rx="4"/>
-                                    <rect x="80" y="296" width="88" height="32" rx="4"/>
-                                    <rect x="200" y="296" width="104" height="32" rx="4"/>
-                                    <rect x="336" y="296" width="120" height="32" rx="4"/>
-                                    <rect x="80" y="360" width="88" height="44" rx="4"/>
-                                    <rect x="200" y="360" width="104" height="44" rx="4"/>
-                                    <rect x="336" y="360" width="120" height="44" rx="4"/>
-                                    <rect x="584" y="296" width="60" height="32" rx="4"/>
-                                    <rect x="584" y="360" width="60" height="44" rx="4"/>
-                                </g>
-                                <g fill="var(--map-park)">
-                                    <rect x="200" y="128" width="104" height="44" rx="6"/>
-                                    <rect x="488" y="296" width="64" height="32" rx="6"/>
-                                    <rect x="488" y="360" width="64" height="44" rx="6"/>
-                                </g>
-                                <path class="map-water" d="M-10 214 C 90 236, 160 168, 270 186 S 470 238, 650 178" fill="none" stroke="var(--map-water)" stroke-width="22" stroke-linecap="round"/>
-                                <g class="map-roads-minor" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round">
-                                    <path d="M64 104V400M320 0V400M568 0V400M0 344H640M0 40H640"/>
-                                </g>
-                                <g class="map-roads" fill="none" stroke-linecap="round">
-                                    <path d="M0 112H640M0 280H640M184 0V400M472 0V400" stroke="var(--map-casing)" stroke-width="15"/>
-                                    <path d="M0 112H640M0 280H640M184 0V400M472 0V400" stroke="#fff" stroke-width="12"/>
-                                </g>
-                                <g class="map-labels" font-size="10" fill="var(--map-label)">
-                                    <text x="210" y="154">Gandhi Park</text>
-                                    <text x="396" y="222" transform="rotate(-8 396 222)">River</text>
-                                    <text x="600" y="106" text-anchor="end">Ring Road</text>
-                                </g>
+                <div class="hero-stage" data-hero>
+                    <div class="hero-film">
+                        <video class="hero-video" autoplay muted loop playsinline disablepictureinpicture preload="auto" poster="assets/hero-highway-poster.jpg" aria-hidden="true" tabindex="-1" data-hero-video>
+                            <source src="assets/hero-highway.webm" type="video/webm">
+                            <source src="assets/hero-highway.mp4" type="video/mp4">
+                        </video>
+                        <button class="motion-toggle" type="button" data-motion-toggle aria-pressed="false">
+                            <svg class="icon icon-pause" aria-hidden="true"><use href="#i-pause"/></svg>
+                            <svg class="icon icon-play" aria-hidden="true"><use href="#i-play"/></svg>
+                            <span class="sr-only" data-motion-label>Pause animations</span>
+                        </button>
+                    </div>
 
-                                <path class="route-plan" d="M64 344V280H184V112H472V280H568V344" fill="none"/>
-                                <path class="route-done" data-route d="M64 344V280H184V112H472V280H568V344" fill="none"/>
-
-                                <g class="stops">
-                                    <g transform="translate(64 344)"><circle r="7" class="stop-dot"/><text x="12" y="16">Depot</text></g>
-                                    <g transform="translate(472 112)"><circle r="7" class="stop-dot"/><text x="12" y="-10">Stop 1</text></g>
-                                    <g transform="translate(568 344)"><circle r="7" class="stop-dot stop-end"/><text x="-12" y="22" text-anchor="end">Drop</text></g>
-                                </g>
-                                <g class="pings" data-pings></g>
-                                <g class="van" data-van transform="translate(64 344) rotate(-90)">
-                                    <circle class="van-halo" r="18"/>
-                                    <rect class="van-body" x="-14" y="-7.5" width="28" height="15" rx="3.5"/>
-                                    <rect class="van-roof" x="-10.5" y="-5" width="14" height="10" rx="1.5"/>
-                                    <rect class="van-glass" x="5.5" y="-5.5" width="5" height="11" rx="1.5"/>
-                                </g>
-                            </svg>
-                        </div>
-                        <div class="console-foot">
-                            <div class="telemetry" aria-hidden="true">
-                                <div class="tm-head">
-                                    <span class="tm-name">Van 04</span>
-                                    <span class="status" data-status data-state="moving">Moving</span>
-                                </div>
-                                <dl class="tm-grid">
-                                    <div><dt>Speed</dt><dd><span data-speed>0</span> <small>km/h</small></dd></div>
-                                    <div><dt>Trip</dt><dd><span data-dist>0.0</span> <small>km</small></dd></div>
-                                    <div><dt>Last ping</dt><dd data-last>now</dd></div>
-                                </dl>
+                    <div class="hero-phone" data-sim data-route="64 262,64 168,128 168,128 70,196 70,196 30" data-stop="3" data-km="6.4">
+                        <div class="hp-notch" aria-hidden="true"></div>
+                        <div class="hp-screen">
+                            <div class="hp-bar" aria-hidden="true">
+                                <span class="hp-time" data-clock>09:41</span>
+                                <span class="hp-gps"><i class="gps-dot"></i>GPS</span>
                             </div>
-
-                            <div class="ping-log" aria-hidden="true">
-                                <p class="ping-log-title">Location updates</p>
-                                <ol data-log></ol>
+                            <div class="hp-head">
+                                <span class="hp-name">Van 04</span>
+                                <span class="status" data-status data-state="moving">Moving</span>
                             </div>
+                            <div class="hp-map">
+                                <svg viewBox="0 0 240 290" role="img" aria-labelledby="hp-map-title">
+                                    <title id="hp-map-title">Simulated live map: a van drives from the depot past a delivery stop to the drop point.</title>
+                                    <rect width="240" height="290" fill="var(--map-land)"/>
+                                    <g fill="var(--map-block)">
+                                        <rect x="76" y="80" width="40" height="76" rx="3"/>
+                                        <rect x="140" y="80" width="44" height="40" rx="3"/>
+                                        <rect x="0" y="80" width="52" height="76" rx="3"/>
+                                        <rect x="140" y="180" width="44" height="70" rx="3"/>
+                                        <rect x="208" y="80" width="40" height="76" rx="3"/>
+                                        <rect x="76" y="180" width="40" height="70" rx="3"/>
+                                        <rect x="208" y="180" width="40" height="70" rx="3"/>
+                                        <rect x="0" y="0" width="52" height="58" rx="3"/>
+                                        <rect x="76" y="0" width="40" height="58" rx="3"/>
+                                        <rect x="0" y="274" width="52" height="20" rx="3"/>
+                                    </g>
+                                    <g fill="var(--map-park)">
+                                        <rect x="140" y="0" width="44" height="58" rx="5"/>
+                                        <rect x="208" y="0" width="40" height="22" rx="5"/>
+                                    </g>
+                                    <path d="M-10 136 C 60 150, 120 112, 250 128" fill="none" stroke="var(--map-water)" stroke-width="12" stroke-linecap="round"/>
+                                    <g fill="none" stroke-linecap="round">
+                                        <path d="M64 0V290M128 0V290M196 0V290M0 70H240M0 168H240M0 262H240" stroke="var(--map-casing)" stroke-width="11"/>
+                                        <path d="M64 0V290M128 0V290M196 0V290M0 70H240M0 168H240M0 262H240" stroke="#fff" stroke-width="8"/>
+                                    </g>
+                                    <path class="route-plan" d="M64 262V168H128V70H196V30" fill="none"/>
+                                    <path class="route-done" data-route-line d="M64 262V168H128V70H196V30" fill="none"/>
+                                    <g class="stops">
+                                        <g transform="translate(64 262)"><circle r="6" class="stop-dot"/></g>
+                                        <g transform="translate(128 70)"><circle r="6" class="stop-dot"/></g>
+                                        <g transform="translate(196 30)"><circle r="6" class="stop-dot stop-end"/></g>
+                                    </g>
+                                    <g class="pings" data-pings></g>
+                                    <g class="van" data-van transform="translate(64 262) rotate(-90)">
+                                        <circle class="van-halo" r="15"/>
+                                        <g transform="scale(.82)">
+                                            <rect class="van-body" x="-14" y="-7.5" width="28" height="15" rx="3.5"/>
+                                            <rect class="van-roof" x="-10.5" y="-5" width="14" height="10" rx="1.5"/>
+                                            <rect class="van-glass" x="5.5" y="-5.5" width="5" height="11" rx="1.5"/>
+                                        </g>
+                                    </g>
+                                </svg>
+                                <span class="sim-tag">Simulated trip</span>
+                            </div>
+                            <dl class="hp-stats" aria-hidden="true">
+                                <div><dt>Speed</dt><dd><span data-speed>0</span> <small>km/h</small></dd></div>
+                                <div><dt>Trip</dt><dd><span data-dist>0.0</span> <small>km</small></dd></div>
+                                <div><dt>Last ping</dt><dd data-last>now</dd></div>
+                            </dl>
                         </div>
                     </div>
                 </div>
