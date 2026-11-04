@@ -16,14 +16,15 @@ const vanAccel = (t) => SURGE * (2 * Math.PI / T) * Math.cos(2 * Math.PI * t / T
 // wheel radius chosen so the 5-lug hub returns to the same angle after 96 m
 const WHEEL_R = 96 * 5 / (2 * Math.PI * 225);
 const DASH_P = 12, DASH_L = 4, POST_P = 24;
-const HY = H * 0.46;      // horizon
+const HY = H * 0.44;      // horizon
 const CAM_H = 1.5, F = W * 0.95;
-const CX = W * 0.6;       // road vanishing x
+const CX = W * 0.64;      // road vanishing x (right of centre: the van sits clear of the phone)
 const TAU = Math.PI * 2;
 
 function mix(a, b, t) { return a.map((v, i) => Math.round(v + (b[i] - v) * t)); }
 function rgb(a, al = 1) { return `rgba(${a[0]},${a[1]},${a[2]},${al})`; }
-const HAZE = [196, 178, 140];
+const HAZE = [206, 186, 146];
+const SUN_X = W * 0.8;
 
 function hillLine(seed, amp, base, freq, drift) {
   const pts = [];
@@ -52,34 +53,47 @@ function draw(t) {
 
   // sky
   let g = x.createLinearGradient(0, 0, 0, hy);
-  g.addColorStop(0, '#0f261c');
-  g.addColorStop(0.45, '#25402f');
-  g.addColorStop(0.8, '#7d7a5a');
-  g.addColorStop(1, '#cdb487');
+  g.addColorStop(0, '#16302a');
+  g.addColorStop(0.42, '#3c5546');
+  g.addColorStop(0.74, '#9a9670');
+  g.addColorStop(0.93, '#dcc28e');
+  g.addColorStop(1, '#efd6a4');
   x.fillStyle = g; x.fillRect(0, 0, W, hy + 2);
   // low sun glow
-  const sg = x.createRadialGradient(W * 0.78, hy - 10, 0, W * 0.78, hy - 10, W * 0.45);
-  sg.addColorStop(0, 'rgba(232,196,128,0.55)'); sg.addColorStop(0.35, 'rgba(216,165,79,0.18)'); sg.addColorStop(1, 'rgba(216,165,79,0)');
+  const sg = x.createRadialGradient(SUN_X, hy - 14, 0, SUN_X, hy - 14, W * 0.5);
+  sg.addColorStop(0, 'rgba(255,230,178,0.8)'); sg.addColorStop(0.08, 'rgba(244,206,140,0.5)'); sg.addColorStop(0.4, 'rgba(216,165,79,0.16)'); sg.addColorStop(1, 'rgba(216,165,79,0)');
   x.fillStyle = sg; x.fillRect(0, 0, W, hy + 2);
+
+  // high cirrus, lit warm from below by the low sun; drifts on the loop so it never seams
+  x.save();
+  x.filter = 'blur(10px)';
+  const cdrift = Math.sin(ph * TAU) * 6;
+  for (const [cx0, cy0, rw, rh, al] of [[0.22, 0.12, 300, 9, 0.16], [0.62, 0.2, 380, 7, 0.2], [0.9, 0.3, 260, 6, 0.22], [0.4, 0.31, 200, 5, 0.14]]) {
+    x.fillStyle = `rgba(236,206,152,${al})`;
+    x.beginPath(); x.ellipse(W * cx0 + cdrift, hy - (0.44 - cy0) * H, rw, rh, -0.02, 0, TAU); x.fill();
+  }
+  x.restore();
 
   // hills (far to near)
   const drift = Math.sin(ph * TAU) * 40;
   const layers = [
-    { seed: 1.3, amp: 70, base: hy + 2, freq: 1.6, col: [120, 128, 100], d: drift * 0.3 },
-    { seed: 4.1, amp: 95, base: hy + 4, freq: 1.1, col: [74, 96, 76], d: drift * 0.6 },
-    { seed: 2.2, amp: 60, base: hy + 6, freq: 2.2, col: [44, 68, 52], d: drift },
+    { seed: 1.3, amp: 70, base: hy + 2, freq: 1.6, col: mix([108, 120, 96], HAZE, 0.5), d: drift * 0.3 },
+    { seed: 4.1, amp: 95, base: hy + 4, freq: 1.1, col: mix([70, 92, 72], HAZE, 0.22), d: drift * 0.6 },
+    { seed: 2.2, amp: 60, base: hy + 6, freq: 2.2, col: [40, 64, 48], d: drift },
   ];
   for (const L of layers) {
     const p = hillLine(L.seed, L.amp, L.base, L.freq, L.d);
     x.beginPath(); x.moveTo(-20, H);
     p.forEach(([a, b]) => x.lineTo(a, b));
     x.lineTo(W + 20, H); x.closePath();
-    x.fillStyle = rgb(L.col); x.fill();
+    const hg = x.createLinearGradient(0, L.base - L.amp * 1.2, 0, L.base + 4);
+    hg.addColorStop(0, rgb(L.col)); hg.addColorStop(1, rgb(mix(L.col, HAZE, 0.35)));
+    x.fillStyle = hg; x.fill();
   }
 
   // ground
   g = x.createLinearGradient(0, hy, 0, H);
-  g.addColorStop(0, '#46593f'); g.addColorStop(0.18, '#2f4635'); g.addColorStop(1, '#16271d');
+  g.addColorStop(0, '#77754f'); g.addColorStop(0.08, '#4f5c3e'); g.addColorStop(0.3, '#2d4433'); g.addColorStop(1, '#13231a');
   x.fillStyle = g; x.fillRect(0, hy + 4, W, H - hy);
   // distant tree line along the horizon
   x.fillStyle = 'rgba(36,56,42,0.95)';
@@ -117,11 +131,20 @@ function draw(t) {
     for (let i = zs.length - 1; i >= 0; i--) x.lineTo(...proj(b, zs[i]));
     x.closePath(); x.fillStyle = fogGrad(col); x.fill();
   };
-  strip(-5.4, 5.4, [84, 90, 76]);
-  strip(-3.7, 3.7, [42, 46, 44]);
-  for (const c0 of [-2.7, -1.0, 1.0, 2.7]) strip(c0 - 0.35, c0 + 0.35, [36, 40, 38]);
+  strip(-5.4, 5.4, [92, 94, 78]);
+  strip(-3.7, 3.7, [48, 51, 48]);
+  for (const c0 of [-2.7, -1.0, 1.0, 2.7]) strip(c0 - 0.35, c0 + 0.35, [40, 43, 41]);
   strip(-3.55, -3.42, [214, 210, 196]);
   strip(3.42, 3.55, [214, 210, 196]);
+  // low sun glinting off the asphalt toward the vanishing point
+  x.save();
+  x.globalCompositeOperation = 'screen';
+  const vp = proj(0, 600);
+  const sheen = x.createRadialGradient(vp[0], vp[1], 0, vp[0], vp[1] + 40, 360);
+  sheen.addColorStop(0, 'rgba(240,206,146,0.42)'); sheen.addColorStop(0.35, 'rgba(200,160,100,0.12)'); sheen.addColorStop(1, 'rgba(200,160,100,0)');
+  x.fillStyle = sheen; x.fillRect(0, hy, W, H - hy);
+  x.restore();
+
   // centre dashes
   const cd = camDist(t);
   const blur = (SPEED + SURGE) / 60;   // half a 30 fps frame of travel
@@ -175,6 +198,13 @@ function draw(t) {
   const sh = [P3(xL - 0.15, 0, Z - 2.2), P3(xR - 0.35, 0, Z - 2.2), P3(xR + 0.05, 0, Z + LEN), P3(xL - 0.05, 0, Z + LEN)];
   x.beginPath(); sh.forEach((p, i) => i ? x.lineTo(...p) : x.moveTo(...p)); x.closePath(); x.fill();
   x.restore();
+  // contact shadow: ambient occlusion right under the body, so it sits on the road
+  x.save();
+  x.filter = `blur(${Math.max(1.5, F * 0.025 / Z)}px)`;
+  x.fillStyle = 'rgba(4,8,6,0.78)';
+  const ao = [P3(xL - 0.04, 0, Z + 0.15), P3(xR + 0.06, 0, Z + 0.15), P3(xR + 0.06, 0, Z + LEN - 0.3), P3(xL - 0.04, 0, Z + LEN - 0.3)];
+  x.beginPath(); ao.forEach((p, i) => i ? x.lineTo(...p) : x.moveTo(...p)); x.closePath(); x.fill();
+  x.restore();
 
   // tail-light reflections on the asphalt (stronger when braking)
   x.save();
@@ -226,10 +256,10 @@ function draw(t) {
   x.save();
   x.setTransform((TR[0] - TL[0]) / 100, (TR[1] - TL[1]) / 100, (BL[0] - TL[0]) / 100, (BL[1] - TL[1]) / 100, TL[0], TL[1]);
   const body = x.createLinearGradient(0, 0, 0, 100);
-  body.addColorStop(0, '#d8d2c3'); body.addColorStop(0.55, '#bdb6a6'); body.addColorStop(1, '#8f897b');
+  body.addColorStop(0, '#c9c2b1'); body.addColorStop(0.5, '#a9a291'); body.addColorStop(1, '#6f6a5e');   // backlit: the sun is ahead
   x.fillStyle = body; x.beginPath(); x.roundRect(0, 0, 100, 100, [7, 7, 2, 2]); x.fill();
-  x.fillStyle = 'rgba(255,226,170,0.55)'; x.fillRect(4, 0, 92, 1.6);           // warm rim light on the roof edge
-  x.fillStyle = 'rgba(255,226,170,0.35)'; x.fillRect(98.4, 4, 1.6, 70);       // and down the sunlit edge
+  x.fillStyle = 'rgba(255,226,170,0.8)'; x.fillRect(4, 0, 92, 1.8);           // warm rim light on the roof edge
+  x.fillStyle = 'rgba(255,226,170,0.5)'; x.fillRect(98.2, 4, 1.8, 74);       // and down the sunlit edge
   x.fillStyle = '#18231d';
   x.beginPath(); x.roundRect(7, 9, 39, 25, 2.5); x.fill();
   x.beginPath(); x.roundRect(54, 9, 39, 25, 2.5); x.fill();
@@ -261,8 +291,22 @@ function draw(t) {
   g = x.createLinearGradient(0, hy - 60, 0, hy + 80);
   g.addColorStop(0, 'rgba(205,180,135,0)'); g.addColorStop(0.5, 'rgba(205,180,135,0.18)'); g.addColorStop(1, 'rgba(205,180,135,0)');
   x.fillStyle = g; x.fillRect(0, hy - 60, W, 140);
-  const vg = x.createRadialGradient(W * 0.55, H * 0.5, H * 0.35, W * 0.55, H * 0.5, H * 0.95);
-  vg.addColorStop(0, 'rgba(8,18,12,0)'); vg.addColorStop(1, 'rgba(8,18,12,0.5)');
+  // bloom around the sun, over everything (it softly washes the van's roof edge too)
+  x.save();
+  x.globalCompositeOperation = 'screen';
+  const bl = x.createRadialGradient(SUN_X, hy - 10, 0, SUN_X, hy - 10, 260);
+  bl.addColorStop(0, 'rgba(255,224,170,0.5)'); bl.addColorStop(0.25, 'rgba(240,196,126,0.16)'); bl.addColorStop(1, 'rgba(240,196,126,0)');
+  x.fillStyle = bl; x.fillRect(0, 0, W, H);
+  x.restore();
+  // split-tone grade: warm highlights up top, cool forest shadows below
+  x.save();
+  x.globalCompositeOperation = 'soft-light';
+  const st = x.createLinearGradient(0, 0, 0, H);
+  st.addColorStop(0, 'rgba(236,196,130,0.35)'); st.addColorStop(0.45, 'rgba(236,196,130,0.18)'); st.addColorStop(0.7, 'rgba(20,52,40,0.25)'); st.addColorStop(1, 'rgba(10,34,26,0.45)');
+  x.fillStyle = st; x.fillRect(0, 0, W, H);
+  x.restore();
+  const vg = x.createRadialGradient(W * 0.6, H * 0.45, H * 0.3, W * 0.6, H * 0.45, H * 0.95);
+  vg.addColorStop(0, 'rgba(8,18,12,0)'); vg.addColorStop(0.7, 'rgba(8,18,12,0.22)'); vg.addColorStop(1, 'rgba(8,18,12,0.55)');
   x.fillStyle = vg; x.fillRect(0, 0, W, H);
 }
 window.draw = draw;

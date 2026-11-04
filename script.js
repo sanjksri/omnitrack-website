@@ -16,19 +16,31 @@
 
     const toggle = $('[data-menu-toggle]');
     const menu = $('#nav-menu');
+    const scrim = $('[data-nav-scrim]');
     if (toggle && menu) {
+        const isOpen = () => toggle.getAttribute('aria-expanded') === 'true';
         const setOpen = (open) => {
             toggle.setAttribute('aria-expanded', String(open));
             menu.classList.toggle('is-open', open);
+            if (header) header.classList.toggle('menu-open', open);
+            if (scrim) scrim.classList.toggle('is-on', open);
+            document.documentElement.classList.toggle('menu-locked', open);
         };
-        toggle.addEventListener('click', () => setOpen(toggle.getAttribute('aria-expanded') !== 'true'));
+        toggle.addEventListener('click', () => setOpen(!isOpen()));
         menu.addEventListener('click', (e) => { if (e.target.closest('a')) setOpen(false); });
+        if (scrim) scrim.addEventListener('click', () => setOpen(false));
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') { setOpen(false); toggle.focus(); }
+            if (e.key === 'Escape' && isOpen()) { setOpen(false); toggle.focus(); }
         });
         document.addEventListener('click', (e) => {
-            if (toggle.getAttribute('aria-expanded') === 'true' && !e.target.closest('.site-header')) setOpen(false);
+            if (isOpen() && !e.target.closest('.site-header')) setOpen(false);
         });
+        // Tabbing past the last item in the sheet closes it rather than leaving it open behind focus.
+        if (header) {
+            header.addEventListener('focusout', (e) => {
+                if (isOpen() && e.relatedTarget && !header.contains(e.relatedTarget)) setOpen(false);
+            });
+        }
         window.matchMedia('(min-width: 861px)').addEventListener('change', (e) => { if (e.matches) setOpen(false); });
     }
 
@@ -343,6 +355,8 @@
         const speedEl = $('[data-speed]', root);
         const distEl = $('[data-dist]', root);
         const lastEl = $('[data-last]', root);
+        const gpsDot = $('.gps-dot', root);
+        const halo = $('.van-halo', root);
 
         // The corridor matches the film: the road meanders on the same 8 s rhythm
         // (one bend per 96 m at the film's 12 m/s), and the map pans 1 unit per metre.
@@ -371,6 +385,23 @@
             return 'M' + out.join(' L');
         };
 
+        // One GPS fix = one beat: the status-bar dot blinks, the marker's halo rings out
+        // and a ping lands on the trail, all on the same film frame.
+        const pulse = () => {
+            if (reduceMotion.matches || !S.running) return;
+            if (gpsDot && gpsDot.animate) {
+                gpsDot.animate([
+                    { opacity: 1, boxShadow: '0 0 0 0 rgba(196, 138, 44, .5)' },
+                    { opacity: 0.45, boxShadow: '0 0 0 .34em rgba(196, 138, 44, 0)', offset: 0.45 },
+                    { opacity: 1, boxShadow: '0 0 0 0 rgba(196, 138, 44, 0)' },
+                ], { duration: 1100, easing: 'ease-out' });
+            }
+            if (halo && halo.animate) {
+                halo.animate([{ transform: 'scale(.6)', opacity: 0.5 }, { transform: 'scale(1.5)', opacity: 0 }],
+                    { duration: 1300, easing: 'cubic-bezier(.16,1,.3,1)' });
+            }
+        };
+
         const dropPing = (s) => {
             const x = roadX(s), y = -s;
             const ring = document.createElementNS(svgNS, 'circle');
@@ -394,6 +425,7 @@
                 else p.style.opacity = String(Math.max(0.25, 1 - age / 260));
             });
             S.lastPingAt = performance.now();
+            pulse();
         };
 
         // Advance by the film's playhead when it is playing; by wall time otherwise.
