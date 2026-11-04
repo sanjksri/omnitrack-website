@@ -334,56 +334,56 @@
 
     function createSim(root, getFilm) {
         const svgNS = 'http://www.w3.org/2000/svg';
-        const route = $('[data-route-line]', root);
+        const world = $('[data-world]', root);
+        const tiles = $$('[data-tile]', root);
+        const trail = $('[data-trail]', root);
+        const plan = $('[data-plan]', root);
         const van = $('[data-van]', root);
         const pingLayer = $('[data-pings]', root);
         const speedEl = $('[data-speed]', root);
         const distEl = $('[data-dist]', root);
         const lastEl = $('[data-last]', root);
 
-        const pts = root.dataset.route.split(',').map((p) => p.trim().split(/\s+/).map(Number));
-        const segs = [];
-        let total = 0;
-        for (let i = 1; i < pts.length; i++) {
-            const [x0, y0] = pts[i - 1];
-            const [x1, y1] = pts[i];
-            const len = Math.hypot(x1 - x0, y1 - y0);
-            segs.push({ x0, y0, x1, y1, len, start: total, angle: Math.atan2(y1 - y0, x1 - x0) * 180 / Math.PI });
-            total += len;
-        }
-        const LOOP = parseFloat(root.dataset.loop || '8');            // film loop length, seconds
-        const TRIP = LOOP * parseInt(root.dataset.loops || '3', 10);  // one map trip = whole film loops
-        const TRIP_KM = parseFloat(root.dataset.km || '5');
-        const KMH = parseFloat(root.dataset.kmh || '43');            // matches the film's road speed
+        // The corridor matches the film: the road meanders on the same 8 s rhythm
+        // (one bend per 96 m at the film's 12 m/s), and the map pans 1 unit per metre.
+        const SPEED = parseFloat(root.dataset.mps || '12');   // metres per second
+        const BEND = parseFloat(root.dataset.bend || '96');     // metres per bend cycle
+        const AMP = 3.2, CX = 120, TILE = 480, VAN_Y = 210;
         const PING_EVERY = 1.6;
+        const roadX = (s) => CX + AMP * Math.sin(2 * Math.PI * s / BEND);
+        const headingAt = (s) => -90 + Math.atan((AMP * 2 * Math.PI / BEND) * Math.cos(2 * Math.PI * s / BEND)) * 180 / Math.PI;
 
-        route.style.strokeDasharray = `${total} ${total}`;
+        const S = { s: 0, lastPingT: 0, t: 0, lastPingAt: performance.now(), tileK: null, lastVT: null, running: false };
 
-        const S = { elapsed: 0, trip: -1, pingN: -1, lastPingAt: performance.now(), heading: segs[0].angle, lastVT: null, running: false };
-
-        const posAt = (d) => {
-            const g = segs.find((s) => d <= s.start + s.len) || segs[segs.length - 1];
-            const t = Math.max(0, Math.min(1, (d - g.start) / g.len));
-            return { x: g.x0 + (g.x1 - g.x0) * t, y: g.y0 + (g.y1 - g.y0) * t, angle: g.angle };
+        const linePts = (from, to) => {
+            const out = [];
+            for (let s = from; s <= to; s += 4) out.push(`${roadX(s).toFixed(1)} ${(-s).toFixed(1)}`);
+            out.push(`${roadX(to).toFixed(1)} ${(-to).toFixed(1)}`);
+            return 'M' + out.join(' L');
         };
 
-        const dropPing = (x, y) => {
+        const dropPing = (s) => {
+            const x = roadX(s), y = -s;
             const ring = document.createElementNS(svgNS, 'circle');
             ring.setAttribute('class', 'ping-ring');
             ring.setAttribute('cx', x); ring.setAttribute('cy', y); ring.setAttribute('r', 4);
             const dot = document.createElementNS(svgNS, 'circle');
             dot.setAttribute('class', 'ping');
             dot.setAttribute('cx', x); dot.setAttribute('cy', y); dot.setAttribute('r', 3.2);
+            dot.dataset.s = String(s);
             pingLayer.append(ring, dot);
-            const drop = () => ring.parentNode && ring.parentNode.removeChild(ring);
+            const drop = (el) => el.parentNode && el.parentNode.removeChild(el);
             if (!reduceMotion.matches && ring.animate) {
                 ring.animate([{ r: 4, opacity: 0.9 }, { r: 14, opacity: 0 }], { duration: 1100, easing: 'cubic-bezier(.16,1,.3,1)' })
-                    .finished.then(drop, drop);
+                    .finished.then(() => drop(ring), () => drop(ring));
             } else {
-                drop();
+                drop(ring);
             }
-            const dots = pingLayer.querySelectorAll('.ping');
-            dots.forEach((p, i) => { p.style.opacity = String(Math.max(0.25, 1 - (dots.length - 1 - i) * 0.07)); });
+            $$('.ping', pingLayer).forEach((p) => {
+                const age = s - parseFloat(p.dataset.s);
+                if (age > 320) drop(p);
+                else p.style.opacity = String(Math.max(0.25, 1 - age / 260));
+            });
             S.lastPingAt = performance.now();
         };
 
@@ -394,37 +394,33 @@
             const vt = film.currentTime;
             if (S.lastVT == null) { S.lastVT = vt; return 0; }
             let dv = vt - S.lastVT;
-            if (dv < -LOOP / 2) dv += film.duration || LOOP;   // the loop wrapped
+            if (dv < -2) dv += film.duration || 8;   // the loop wrapped
             S.lastVT = vt;
             return Math.max(0, Math.min(dv, 0.25));
         };
 
-        const update = (dt) => {
-            S.elapsed += dt;
-            const trip = Math.floor(S.elapsed / TRIP);
-            const tt = S.elapsed - trip * TRIP;
-            const d = (tt / TRIP) * total;
-            if (trip !== S.trip) {
-                S.trip = trip; S.pingN = 0;
-                pingLayer.replaceChildren();
-                S.heading = segs[0].angle;
-                dropPing(pts[0][0], pts[0][1]);
+        const draw = () => {
+            const k = Math.floor(S.s / TILE);
+            if (k !== S.tileK) {
+                S.tileK = k;
+                tiles.forEach((t, i) => t.setAttribute('transform', `translate(0 ${-(k + i - 1) * TILE})`));
             }
-            const n = Math.floor(tt / PING_EVERY);
-            if (n > S.pingN) { S.pingN = n; const q = posAt(d); dropPing(q.x, q.y); }
-
-            const p = posAt(d);
-            const target = posAt(Math.min(total - 0.01, d + 0.01)).angle;
-            const diff = ((target - S.heading + 540) % 360) - 180;
-            S.heading += reduceMotion.matches ? diff : diff * Math.min(1, dt * 10);
-            const kmh = KMH + Math.sin((tt % LOOP) / LOOP * Math.PI * 2) * 2;
-
-            van.setAttribute('transform', `translate(${p.x.toFixed(2)} ${p.y.toFixed(2)}) rotate(${S.heading.toFixed(1)})`);
-            route.style.strokeDashoffset = String(total - d);
-            speedEl.textContent = String(Math.round(kmh));
-            distEl.textContent = (d / total * TRIP_KM).toFixed(1);
+            world.setAttribute('transform', `translate(0 ${(VAN_Y + S.s).toFixed(2)})`);
+            trail.setAttribute('d', linePts(Math.max(0, S.s - 260), S.s));
+            plan.setAttribute('d', linePts(S.s, S.s + 240));
+            van.setAttribute('transform', `translate(${roadX(S.s).toFixed(2)} ${VAN_Y}) rotate(${headingAt(S.s).toFixed(1)})`);
+            speedEl.textContent = String(Math.round(SPEED * 3.6));
+            const km = S.s / 1000;
+            distEl.textContent = km < 10 ? km.toFixed(2) : km.toFixed(1);
             const ago = Math.max(0, Math.round((performance.now() - S.lastPingAt) / 1000));
             lastEl.textContent = ago < 1 ? 'now' : `${ago}s ago`;
+        };
+
+        const update = (dt) => {
+            S.t += dt;
+            S.s += SPEED * dt;
+            if (S.t - S.lastPingT >= PING_EVERY) { S.lastPingT = S.t; dropPing(S.s); }
+            draw();
         };
 
         let raf = 0, last = 0, interval = 0, stoppedAt = 0;
@@ -450,7 +446,8 @@
             clearInterval(interval);
         };
 
-        update(0);
+        dropPing(0);
+        draw();
         return { start, stop };
     }
 })();
