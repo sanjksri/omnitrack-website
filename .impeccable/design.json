@@ -1,0 +1,904 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-04T08:28:17Z",
+  "title": "Design System: easyomnitracker",
+  "extensions": {
+    "colorMeta": {
+      "forest-950": {
+        "role": "primary",
+        "displayName": "Deep Night",
+        "canonical": "#0b1d15",
+        "oklch": "oklch(21.2% 0.029 163.4)",
+        "tonalRamp": [
+          "#0b1d15",
+          "#163628",
+          "#1d4a36",
+          "#255f45",
+          "#2f7455",
+          "#8fb39d",
+          "#e1ebe2",
+          "#eef4ee"
+        ]
+      },
+      "forest-900": {
+        "role": "primary",
+        "displayName": "Night Canopy",
+        "canonical": "#10291e",
+        "oklch": "oklch(25.7% 0.038 163.1)",
+        "tonalRamp": [
+          "#0b1d15",
+          "#163628",
+          "#1d4a36",
+          "#255f45",
+          "#2f7455",
+          "#8fb39d",
+          "#e1ebe2",
+          "#eef4ee"
+        ]
+      },
+      "forest-800": {
+        "role": "primary",
+        "displayName": "Deep Forest",
+        "canonical": "#163628",
+        "oklch": "oklch(30.4% 0.046 163.0)",
+        "tonalRamp": [
+          "#0b1d15",
+          "#163628",
+          "#1d4a36",
+          "#255f45",
+          "#2f7455",
+          "#8fb39d",
+          "#e1ebe2",
+          "#eef4ee"
+        ]
+      },
+      "forest-700": {
+        "role": "primary",
+        "displayName": "Ledger Green",
+        "canonical": "#1d4a36",
+        "oklch": "oklch(37.1% 0.061 162.0)",
+        "tonalRamp": [
+          "#0b1d15",
+          "#163628",
+          "#1d4a36",
+          "#255f45",
+          "#2f7455",
+          "#8fb39d",
+          "#e1ebe2",
+          "#eef4ee"
+        ]
+      },
+      "forest-600": {
+        "role": "primary",
+        "displayName": "Field Green",
+        "canonical": "#255f45",
+        "oklch": "oklch(43.9% 0.075 161.5)",
+        "tonalRamp": [
+          "#0b1d15",
+          "#163628",
+          "#1d4a36",
+          "#255f45",
+          "#2f7455",
+          "#8fb39d",
+          "#e1ebe2",
+          "#eef4ee"
+        ]
+      },
+      "forest-500": {
+        "role": "primary",
+        "displayName": "Moss",
+        "canonical": "#2f7455",
+        "oklch": "oklch(50.6% 0.086 161.4)",
+        "tonalRamp": [
+          "#0b1d15",
+          "#163628",
+          "#1d4a36",
+          "#255f45",
+          "#2f7455",
+          "#8fb39d",
+          "#e1ebe2",
+          "#eef4ee"
+        ]
+      },
+      "forest-300": {
+        "role": "primary",
+        "displayName": "Sage",
+        "canonical": "#8fb39d",
+        "oklch": "oklch(73.4% 0.050 158.1)",
+        "tonalRamp": [
+          "#0b1d15",
+          "#163628",
+          "#1d4a36",
+          "#255f45",
+          "#2f7455",
+          "#8fb39d",
+          "#e1ebe2",
+          "#eef4ee"
+        ]
+      },
+      "forest-200": {
+        "role": "primary",
+        "displayName": "Pale Sage",
+        "canonical": "#c4d8c9",
+        "oklch": "oklch(86.3% 0.030 153.3)",
+        "tonalRamp": [
+          "#0b1d15",
+          "#163628",
+          "#1d4a36",
+          "#255f45",
+          "#2f7455",
+          "#8fb39d",
+          "#e1ebe2",
+          "#eef4ee"
+        ]
+      },
+      "forest-100": {
+        "role": "primary",
+        "displayName": "Sage Hairline",
+        "canonical": "#e1ebe2",
+        "oklch": "oklch(93.0% 0.016 148.4)",
+        "tonalRamp": [
+          "#0b1d15",
+          "#163628",
+          "#1d4a36",
+          "#255f45",
+          "#2f7455",
+          "#8fb39d",
+          "#e1ebe2",
+          "#eef4ee"
+        ]
+      },
+      "forest-50": {
+        "role": "primary",
+        "displayName": "Sage Wash",
+        "canonical": "#eef4ee",
+        "oklch": "oklch(96.1% 0.010 145.5)",
+        "tonalRamp": [
+          "#0b1d15",
+          "#163628",
+          "#1d4a36",
+          "#255f45",
+          "#2f7455",
+          "#8fb39d",
+          "#e1ebe2",
+          "#eef4ee"
+        ]
+      },
+      "amber-800": {
+        "role": "secondary",
+        "displayName": "Amber Ink",
+        "canonical": "#774d12",
+        "oklch": "oklch(45.7% 0.090 69.9)",
+        "tonalRamp": [
+          "#774d12",
+          "#8f5e16",
+          "#a8701e",
+          "#c48a2c",
+          "#d8a54f",
+          "#ecd3a1",
+          "#f6e8cb",
+          "#fbf4e5"
+        ]
+      },
+      "amber-600": {
+        "role": "secondary",
+        "displayName": "Focus Amber",
+        "canonical": "#a8701e",
+        "oklch": "oklch(59.1% 0.116 71.1)",
+        "tonalRamp": [
+          "#774d12",
+          "#8f5e16",
+          "#a8701e",
+          "#c48a2c",
+          "#d8a54f",
+          "#ecd3a1",
+          "#f6e8cb",
+          "#fbf4e5"
+        ]
+      },
+      "amber-500": {
+        "role": "secondary",
+        "displayName": "Signal Amber",
+        "canonical": "#c48a2c",
+        "oklch": "oklch(67.5% 0.127 74.8)",
+        "tonalRamp": [
+          "#774d12",
+          "#8f5e16",
+          "#a8701e",
+          "#c48a2c",
+          "#d8a54f",
+          "#ecd3a1",
+          "#f6e8cb",
+          "#fbf4e5"
+        ]
+      },
+      "amber-400": {
+        "role": "secondary",
+        "displayName": "Halo Amber",
+        "canonical": "#d8a54f",
+        "oklch": "oklch(75.3% 0.119 78.2)",
+        "tonalRamp": [
+          "#774d12",
+          "#8f5e16",
+          "#a8701e",
+          "#c48a2c",
+          "#d8a54f",
+          "#ecd3a1",
+          "#f6e8cb",
+          "#fbf4e5"
+        ]
+      },
+      "amber-200": {
+        "role": "secondary",
+        "displayName": "Amber Edge",
+        "canonical": "#ecd3a1",
+        "oklch": "oklch(87.6% 0.071 84.4)",
+        "tonalRamp": [
+          "#774d12",
+          "#8f5e16",
+          "#a8701e",
+          "#c48a2c",
+          "#d8a54f",
+          "#ecd3a1",
+          "#f6e8cb",
+          "#fbf4e5"
+        ]
+      },
+      "amber-100": {
+        "role": "secondary",
+        "displayName": "Idle Wash",
+        "canonical": "#f6e8cb",
+        "oklch": "oklch(93.5% 0.041 85.3)",
+        "tonalRamp": [
+          "#774d12",
+          "#8f5e16",
+          "#a8701e",
+          "#c48a2c",
+          "#d8a54f",
+          "#ecd3a1",
+          "#f6e8cb",
+          "#fbf4e5"
+        ]
+      },
+      "amber-50": {
+        "role": "secondary",
+        "displayName": "Amber Wash",
+        "canonical": "#fbf4e5",
+        "oklch": "oklch(96.9% 0.021 85.9)",
+        "tonalRamp": [
+          "#774d12",
+          "#8f5e16",
+          "#a8701e",
+          "#c48a2c",
+          "#d8a54f",
+          "#ecd3a1",
+          "#f6e8cb",
+          "#fbf4e5"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Green-Black Ink",
+        "canonical": "#14211a",
+        "oklch": "oklch(23.3% 0.023 160.4)",
+        "tonalRamp": [
+          "#14211a",
+          "#3c4942",
+          "#5a665f",
+          "#b3ab99",
+          "#d8d1c1",
+          "#e8e3d7",
+          "#f3f0e8",
+          "#fdfcf9"
+        ]
+      },
+      "ink-2": {
+        "role": "neutral",
+        "displayName": "Slate Moss",
+        "canonical": "#3c4942",
+        "oklch": "oklch(39.2% 0.020 161.8)",
+        "tonalRamp": [
+          "#14211a",
+          "#3c4942",
+          "#5a665f",
+          "#b3ab99",
+          "#d8d1c1",
+          "#e8e3d7",
+          "#f3f0e8",
+          "#fdfcf9"
+        ]
+      },
+      "ink-3": {
+        "role": "neutral",
+        "displayName": "Lichen Grey",
+        "canonical": "#5a665f",
+        "oklch": "oklch(49.8% 0.018 160.1)",
+        "tonalRamp": [
+          "#14211a",
+          "#3c4942",
+          "#5a665f",
+          "#b3ab99",
+          "#d8d1c1",
+          "#e8e3d7",
+          "#f3f0e8",
+          "#fdfcf9"
+        ]
+      },
+      "stone-0": {
+        "role": "neutral",
+        "displayName": "Paper",
+        "canonical": "#fdfcf9",
+        "oklch": "oklch(99.1% 0.004 91.4)",
+        "tonalRamp": [
+          "#14211a",
+          "#3c4942",
+          "#5a665f",
+          "#b3ab99",
+          "#d8d1c1",
+          "#e8e3d7",
+          "#f3f0e8",
+          "#fdfcf9"
+        ]
+      },
+      "stone-50": {
+        "role": "neutral",
+        "displayName": "Page Stone",
+        "canonical": "#f9f7f2",
+        "oklch": "oklch(97.6% 0.007 88.6)",
+        "tonalRamp": [
+          "#14211a",
+          "#3c4942",
+          "#5a665f",
+          "#b3ab99",
+          "#d8d1c1",
+          "#e8e3d7",
+          "#f3f0e8",
+          "#fdfcf9"
+        ]
+      },
+      "stone-100": {
+        "role": "neutral",
+        "displayName": "Linen",
+        "canonical": "#f3f0e8",
+        "oklch": "oklch(95.5% 0.011 89.7)",
+        "tonalRamp": [
+          "#14211a",
+          "#3c4942",
+          "#5a665f",
+          "#b3ab99",
+          "#d8d1c1",
+          "#e8e3d7",
+          "#f3f0e8",
+          "#fdfcf9"
+        ]
+      },
+      "stone-200": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "#e8e3d7",
+        "oklch": "oklch(91.6% 0.017 88.0)",
+        "tonalRamp": [
+          "#14211a",
+          "#3c4942",
+          "#5a665f",
+          "#b3ab99",
+          "#d8d1c1",
+          "#e8e3d7",
+          "#f3f0e8",
+          "#fdfcf9"
+        ]
+      },
+      "stone-300": {
+        "role": "neutral",
+        "displayName": "Rule",
+        "canonical": "#d8d1c1",
+        "oklch": "oklch(86.2% 0.023 87.2)",
+        "tonalRamp": [
+          "#14211a",
+          "#3c4942",
+          "#5a665f",
+          "#b3ab99",
+          "#d8d1c1",
+          "#e8e3d7",
+          "#f3f0e8",
+          "#fdfcf9"
+        ]
+      },
+      "stone-400": {
+        "role": "neutral",
+        "displayName": "Pebble",
+        "canonical": "#b3ab99",
+        "oklch": "oklch(74.3% 0.027 86.9)",
+        "tonalRamp": [
+          "#14211a",
+          "#3c4942",
+          "#5a665f",
+          "#b3ab99",
+          "#d8d1c1",
+          "#e8e3d7",
+          "#f3f0e8",
+          "#fdfcf9"
+        ]
+      },
+      "white": {
+        "role": "neutral",
+        "displayName": "Sheet White",
+        "canonical": "#ffffff",
+        "oklch": "oklch(100.0% 0.000 89.9)",
+        "tonalRamp": [
+          "#14211a",
+          "#3c4942",
+          "#5a665f",
+          "#b3ab99",
+          "#d8d1c1",
+          "#e8e3d7",
+          "#f3f0e8",
+          "#fdfcf9"
+        ]
+      },
+      "paused": {
+        "role": "neutral",
+        "displayName": "Paused Grey",
+        "canonical": "#8a8f8b",
+        "oklch": "oklch(64.5% 0.008 151.8)",
+        "tonalRamp": [
+          "#0a0c0a",
+          "#232624",
+          "#404340",
+          "#5e625f",
+          "#7f8480",
+          "#a2a6a3",
+          "#c7cac7",
+          "#ecefed"
+        ]
+      },
+      "footer-text": {
+        "role": "neutral",
+        "displayName": "Footer Mist",
+        "canonical": "#b9c7bd",
+        "oklch": "oklch(81.6% 0.021 154.8)",
+        "tonalRamp": [
+          "#080c09",
+          "#202722",
+          "#3c453e",
+          "#59655c",
+          "#7a867d",
+          "#9ea8a1",
+          "#c3ccc5",
+          "#e9f1eb"
+        ]
+      },
+      "map-land": {
+        "role": "neutral",
+        "displayName": "Map Land",
+        "canonical": "#eceae1",
+        "oklch": "oklch(93.6% 0.012 96.4)",
+        "tonalRamp": [
+          "#0c0b08",
+          "#262521",
+          "#43423c",
+          "#63615a",
+          "#84827b",
+          "#a7a59e",
+          "#cac9c4",
+          "#efeeea"
+        ]
+      },
+      "map-block": {
+        "role": "neutral",
+        "displayName": "Map Block",
+        "canonical": "#e2dfd3",
+        "oklch": "oklch(90.3% 0.016 95.2)",
+        "tonalRamp": [
+          "#0c0b08",
+          "#27251f",
+          "#44423a",
+          "#646158",
+          "#858278",
+          "#a7a59c",
+          "#cbc9c2",
+          "#f0eee9"
+        ]
+      },
+      "map-park": {
+        "role": "neutral",
+        "displayName": "Map Park",
+        "canonical": "#d3e2d4",
+        "oklch": "oklch(89.8% 0.025 147.3)",
+        "tonalRamp": [
+          "#080d08",
+          "#202721",
+          "#3b453c",
+          "#59655a",
+          "#7a867b",
+          "#9da99e",
+          "#c3ccc3",
+          "#e9f1ea"
+        ]
+      },
+      "map-water": {
+        "role": "neutral",
+        "displayName": "Map River",
+        "canonical": "#c8d9d8",
+        "oklch": "oklch(87.2% 0.018 192.6)",
+        "tonalRamp": [
+          "#070c0c",
+          "#1f2726",
+          "#3a4544",
+          "#576464",
+          "#778685",
+          "#9ba8a7",
+          "#c1cccb",
+          "#e8f0f0"
+        ]
+      },
+      "map-casing": {
+        "role": "neutral",
+        "displayName": "Map Casing",
+        "canonical": "#d9d4c6",
+        "oklch": "oklch(87.0% 0.020 90.6)",
+        "tonalRamp": [
+          "#0d0b07",
+          "#27251e",
+          "#454239",
+          "#656156",
+          "#868276",
+          "#a9a59a",
+          "#ccc9c0",
+          "#f1eee7"
+        ]
+      },
+      "map-label": {
+        "role": "neutral",
+        "displayName": "Map Label",
+        "canonical": "#8c8778",
+        "oklch": "oklch(62.3% 0.023 91.7)",
+        "tonalRamp": [
+          "#0d0b06",
+          "#28251d",
+          "#454237",
+          "#656154",
+          "#878274",
+          "#a9a599",
+          "#ccc9bf",
+          "#f1eee6"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Hero headline only; the second sentence may drop to forest-600."
+      },
+      "display-figure": {
+        "displayName": "Display Figure",
+        "purpose": "The headline price in forest-800; calculator total uses the face at 2rem."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Section and band heads."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Feature panel, step and calculator heads."
+      },
+      "title-sm": {
+        "displayName": "Title Small",
+        "purpose": "FAQ questions, in the display face."
+      },
+      "lede": {
+        "displayName": "Lede",
+        "purpose": "One sentence under a section head, max 36em."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Running copy; 1rem under 640px; legal text at line-height 1.75 within 70ch."
+      },
+      "body-sm": {
+        "displayName": "Body Small",
+        "purpose": "Nav, captions, terms, footer, metadata."
+      },
+      "button": {
+        "displayName": "Button",
+        "purpose": "Button and strong link labels."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Status pills, table heads, micro-titles. Sentence case, never uppercase."
+      },
+      "mono": {
+        "displayName": "Mono",
+        "purpose": "Telemetry readouts, Tracking IDs, coordinates, counts, line-item figures only."
+      },
+      "mono-sm": {
+        "displayName": "Mono Small",
+        "purpose": "Ping log, timeline axis, retention bars."
+      }
+    },
+    "shadows": [
+      {
+        "name": "shadow-1",
+        "displayName": "Rest",
+        "value": "0 1px 2px rgba(20, 33, 26, .06), 0 1px 1px rgba(20, 33, 26, .03)",
+        "purpose": "Secondary buttons, selected tab, table frame, APK card, chat bubble."
+      },
+      {
+        "name": "shadow-2",
+        "displayName": "Lift",
+        "value": "0 1px 2px rgba(20, 33, 26, .05), 0 10px 28px -10px rgba(20, 33, 26, .16)",
+        "purpose": "Feature panel frame and price card."
+      },
+      {
+        "name": "shadow-3",
+        "displayName": "Float",
+        "value": "0 2px 6px rgba(20, 33, 26, .06), 0 28px 60px -20px rgba(20, 33, 26, .28)",
+        "purpose": "The hero console only."
+      },
+      {
+        "name": "btn-primary",
+        "displayName": "Primary press",
+        "value": "0 1px 0 rgba(255,255,255,.08) inset, 0 1px 2px rgba(11, 29, 21, .25)",
+        "purpose": "Primary buttons at rest."
+      },
+      {
+        "name": "btn-primary-hover",
+        "displayName": "Primary press hover",
+        "value": "0 1px 0 rgba(255,255,255,.08) inset, 0 8px 20px -8px rgba(11, 29, 21, .5)",
+        "purpose": "Primary buttons on hover."
+      },
+      {
+        "name": "phone",
+        "displayName": "Device drop",
+        "value": "0 30px 60px -24px rgba(0, 0, 0, .6)",
+        "purpose": "The consent phone mock on the forest band."
+      },
+      {
+        "name": "menu-sheet",
+        "displayName": "Menu sheet",
+        "value": "0 24px 40px -24px rgba(20, 33, 26, .25)",
+        "purpose": "Mobile nav drop-down sheet."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(.16, 1, .3, 1)",
+        "purpose": "The house ease for every transform, entrance, draw and ping ring."
+      },
+      {
+        "name": "duration-color",
+        "value": "150ms-200ms ease",
+        "purpose": "Colour, background and border changes on hover."
+      },
+      {
+        "name": "duration-nudge",
+        "value": "250ms",
+        "purpose": "Button lift, icon nudges, press scale."
+      },
+      {
+        "name": "faq-open",
+        "value": "350ms",
+        "purpose": "Answer fades down 4px; plus icon rotates 45deg over 300ms."
+      },
+      {
+        "name": "panel-enter",
+        "value": "500ms, 10px rise, 50-80ms stagger",
+        "purpose": "Feature tab panel entrance and inner rows."
+      },
+      {
+        "name": "fade-in",
+        "value": "700ms, 16px rise",
+        "purpose": "Subtle scroll reveal on explorer, tables, price cards, calculator, terms, APK block, phone, FAQ list."
+      },
+      {
+        "name": "step-line",
+        "value": "900ms scaleX, 250ms stagger",
+        "purpose": "2px forest-600 line drawing across each setup step."
+      },
+      {
+        "name": "count-up",
+        "value": "900ms expo-out",
+        "purpose": "Report figures count up when the Reports tab opens."
+      },
+      {
+        "name": "total-tween",
+        "value": "320ms cubic-out",
+        "purpose": "Calculator total tweens between values."
+      },
+      {
+        "name": "ping-interval",
+        "value": "1.4s of driving",
+        "purpose": "Hero sim drops a GPS ping; ring expands 5 to 18 over 1100ms."
+      },
+      {
+        "name": "van-halo",
+        "value": "1.8s loop",
+        "purpose": "Amber halo pulse under the moving van, only while running."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "discrete steps",
+        "purpose": "Under prefers-reduced-motion the sim steps every 1.4s, typing and count-ups resolve instantly, fades lose their travel."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "lg",
+        "value": "1080px"
+      },
+      {
+        "name": "md",
+        "value": "960px"
+      },
+      {
+        "name": "nav",
+        "value": "860px"
+      },
+      {
+        "name": "sm",
+        "value": "640px"
+      }
+    ],
+    "icons": {
+      "source": "inline SVG sprite at the top of each page",
+      "viewBox": "0 0 24 24",
+      "strokeWidth": 1.75,
+      "strokeLinecap": "round",
+      "strokeLinejoin": "round",
+      "fill": "none",
+      "color": "currentColor",
+      "iconFont": false
+    }
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The only call to action colour: forest-800 slab, white Mukta 600, arrow nudges on hover.",
+      "html": "<a class=\"ds-btn-primary\" href=\"#\">Start free <svg class=\"ds-icon\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M5 12h14M13 6l6 6-6 6\"/></svg></a>",
+      "css": ".ds-icon { width: 1.1em; height: 1.1em; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform .25s cubic-bezier(.16,1,.3,1); } .ds-btn-primary { display: inline-flex; align-items: center; gap: .55em; min-height: 44px; padding: 10px 20px; border-radius: var(--r-s); background: var(--forest-800); color: #fff; font-family: var(--font-body); font-weight: 600; font-size: 1rem; line-height: 1.2; text-decoration: none; border: 1px solid transparent; box-shadow: 0 1px 0 rgba(255,255,255,.08) inset, 0 1px 2px rgba(11,29,21,.25); transition: background-color .18s ease, box-shadow .25s cubic-bezier(.16,1,.3,1), transform .25s cubic-bezier(.16,1,.3,1); } .ds-btn-primary:hover { background: var(--forest-700); box-shadow: 0 1px 0 rgba(255,255,255,.08) inset, 0 8px 20px -8px rgba(11,29,21,.5); } .ds-btn-primary:hover .ds-icon { transform: translateX(2px); } .ds-btn-primary:active { transform: translateY(1px) scale(.985); } .ds-btn-primary:focus-visible { outline: 2px solid var(--amber-600); outline-offset: 3px; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Paper button with a stone-300 rule, used for the APK download beside a primary.",
+      "html": "<a class=\"ds-btn-secondary\" href=\"#\"><svg class=\"ds-icon\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M12 4v11M7 10l5 5 5-5M5 20h14\"/></svg> Driver app (Android)</a>",
+      "css": ".ds-icon { width: 1.1em; height: 1.1em; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform .25s cubic-bezier(.16,1,.3,1); } .ds-btn-secondary { display: inline-flex; align-items: center; gap: .55em; min-height: 44px; padding: 10px 20px; border-radius: var(--r-s); background: var(--stone-0); color: var(--ink); font-family: var(--font-body); font-weight: 600; font-size: 1rem; line-height: 1.2; text-decoration: none; border: 1px solid var(--stone-300); box-shadow: var(--shadow-1); transition: background-color .18s ease, border-color .18s ease, transform .25s cubic-bezier(.16,1,.3,1); } .ds-btn-secondary:hover { border-color: var(--forest-300); background: #fff; } .ds-btn-secondary:hover .ds-icon { transform: translateY(2px); } .ds-btn-secondary:active { transform: translateY(1px) scale(.985); } .ds-btn-secondary:focus-visible { outline: 2px solid var(--amber-600); outline-offset: 3px; }"
+    },
+    {
+      "name": "Text Link",
+      "kind": "custom",
+      "refersTo": "text-link",
+      "description": "Forest-700 link with a pale sage underline that darkens on hover; arrow slides 3px.",
+      "html": "<a class=\"ds-text-link\" href=\"#\">Read the privacy policy <svg class=\"ds-icon\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M5 12h14M13 6l6 6-6 6\"/></svg></a>",
+      "css": ".ds-icon { width: 1.1em; height: 1.1em; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform .25s cubic-bezier(.16,1,.3,1); } .ds-text-link { display: inline-flex; align-items: center; gap: .4em; color: var(--forest-700); font-family: var(--font-body); font-weight: 600; text-decoration: underline; text-decoration-color: var(--forest-200); text-decoration-thickness: 1.5px; text-underline-offset: 4px; transition: text-decoration-color .2s ease; } .ds-text-link:hover { text-decoration-color: currentColor; } .ds-text-link:hover .ds-icon { transform: translateX(3px); } .ds-text-link:focus-visible { outline: 2px solid var(--amber-600); outline-offset: 3px; border-radius: 4px; }"
+    },
+    {
+      "name": "Navigation",
+      "kind": "nav",
+      "refersTo": "nav-link",
+      "description": "Wordmark, quiet Mukta 500 links with stone-100 hover fills, forest-700 current item, small primary action.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-brand\" href=\"#\">easyomnitracker</a><ul class=\"ds-nav-links\"><li><a href=\"#\">How it works</a></li><li><a href=\"#\" aria-current=\"true\">Console</a></li><li><a href=\"#\">Pricing</a></li><li><a href=\"#\">FAQ</a></li></ul><a class=\"ds-nav-cta\" href=\"#\">Launch app</a></nav>",
+      "css": ".ds-nav { display: flex; align-items: center; gap: 32px; height: 68px; padding: 0 24px; background: rgba(249,247,242,.8); border-bottom: 1px solid var(--stone-200); font-family: var(--font-body); } .ds-brand { font-family: var(--font-display); font-weight: 700; font-size: 1.1875rem; letter-spacing: -0.03em; color: var(--ink); text-decoration: none; } .ds-nav-links { display: flex; gap: 4px; list-style: none; margin: 0 auto 0 0; padding: 0; } .ds-nav-links a { display: block; padding: 8px 12px; border-radius: var(--r-s); font-size: .9688rem; font-weight: 500; color: var(--ink-2); text-decoration: none; transition: color .15s ease, background-color .15s ease; } .ds-nav-links a:hover { color: var(--ink); background: var(--stone-100); } .ds-nav-links a[aria-current] { color: var(--forest-700); } .ds-nav-links a:focus-visible, .ds-nav-cta:focus-visible { outline: 2px solid var(--amber-600); outline-offset: 3px; } .ds-nav-cta { display: inline-flex; align-items: center; min-height: 38px; padding: 8px 16px; border-radius: var(--r-s); background: var(--forest-800); color: #fff; font-weight: 600; font-size: .9375rem; text-decoration: none; transition: background-color .18s ease; } .ds-nav-cta:hover { background: var(--forest-700); }"
+    },
+    {
+      "name": "Filter Chips",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "White pills with a stone-300 rule; the selected chip fills forest-800.",
+      "html": "<div class=\"ds-chip-row\"><button class=\"ds-chip ds-chip-on\" type=\"button\">All devices</button><button class=\"ds-chip\" type=\"button\">Moving</button><button class=\"ds-chip\" type=\"button\">Idle</button></div>",
+      "css": ".ds-chip-row { display: flex; flex-wrap: wrap; gap: 8px; } .ds-chip { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 999px; background: #fff; border: 1px solid var(--stone-300); font-family: var(--font-body); font-size: .8125rem; font-weight: 500; color: var(--ink-2); cursor: pointer; transition: border-color .15s ease, color .15s ease; } .ds-chip:hover { border-color: var(--forest-300); color: var(--ink); } .ds-chip:focus-visible { outline: 2px solid var(--amber-600); outline-offset: 3px; } .ds-chip-on, .ds-chip-on:hover { background: var(--forest-800); border-color: var(--forest-800); color: #fff; }"
+    },
+    {
+      "name": "Live State Pills",
+      "kind": "chip",
+      "refersTo": "status-idle",
+      "description": "Status pills with a leading dot in currentColor plus the amber Simulated tag; the only place amber appears in UI chrome.",
+      "html": "<div class=\"ds-states\"><span class=\"ds-sim-tag\">Simulated trip</span><span class=\"ds-status\" data-state=\"moving\">Moving</span><span class=\"ds-status\" data-state=\"idle\">Idle · 0:02</span><span class=\"ds-status\" data-state=\"arrived\">Arrived</span></div>",
+      "css": ".ds-states { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; font-family: var(--font-body); } .ds-sim-tag { font-size: .8125rem; font-weight: 600; color: var(--amber-800); background: var(--amber-50); border: 1px solid var(--amber-200); padding: 3px 8px; border-radius: 999px; white-space: nowrap; } .ds-status { display: inline-flex; align-items: center; gap: 6px; font-size: .75rem; font-weight: 600; padding: 2px 8px 2px 7px; border-radius: 999px; color: var(--forest-700); background: var(--forest-50); transition: color .3s ease, background-color .3s ease; } .ds-status::before { content: \"\"; width: 6px; height: 6px; border-radius: 50%; background: currentColor; } .ds-status[data-state=\"moving\"]::before { animation: ds-blink 1.6s ease-in-out infinite; } .ds-status[data-state=\"idle\"] { color: var(--amber-800); background: var(--amber-100); } .ds-status[data-state=\"arrived\"] { color: var(--ink-2); background: var(--stone-100); } @keyframes ds-blink { 50% { opacity: .35; } } @media (prefers-reduced-motion: reduce) { .ds-status::before { animation: none !important; } }"
+    },
+    {
+      "name": "Stepper",
+      "kind": "input",
+      "refersTo": "stepper",
+      "description": "The calculator input: two 44px forest-700 icon buttons around a mono count.",
+      "html": "<div class=\"ds-stepper\" role=\"group\" aria-label=\"Vehicles or phones\"><button type=\"button\" aria-label=\"Fewer\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M5 12h14\"/></svg></button><output>9</output><button type=\"button\" aria-label=\"More\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M12 5v14M5 12h14\"/></svg></button></div>",
+      "css": ".ds-stepper { display: inline-flex; align-items: center; background: #fff; border: 1px solid var(--stone-300); border-radius: var(--r-s); } .ds-stepper button { width: 44px; height: 44px; display: grid; place-items: center; background: none; border: 0; color: var(--forest-700); cursor: pointer; transition: background-color .15s ease; } .ds-stepper button:first-child { border-radius: var(--r-s) 0 0 var(--r-s); } .ds-stepper button:last-child { border-radius: 0 var(--r-s) var(--r-s) 0; } .ds-stepper button:hover { background: var(--forest-50); } .ds-stepper button:focus-visible { outline: 2px solid var(--amber-600); outline-offset: 3px; } .ds-stepper button:disabled { color: var(--stone-400); background: transparent; cursor: not-allowed; } .ds-stepper svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; } .ds-stepper output { min-width: 48px; text-align: center; font-family: var(--font-mono); font-weight: 500; font-variant-numeric: tabular-nums; line-height: 44px; border-inline: 1px solid var(--stone-200); color: var(--ink); }"
+    },
+    {
+      "name": "Price Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Paper card, 20px radius, Lift shadow, Display Figure price in forest-800, sage check list.",
+      "html": "<div class=\"ds-card\"><div class=\"ds-price\"><span class=\"ds-price-now\">₹50</span><span class=\"ds-price-unit\">per Tracking-Month</span></div><p class=\"ds-note\">Inclusive of GST. No hidden fees.</p><ul class=\"ds-points\"><li><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"m5 12.5 4.5 4.5L19 7.5\"/></svg>Live map, route history and trip reports</li><li><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"m5 12.5 4.5 4.5L19 7.5\"/></svg>6 months of history and CSV export</li></ul></div>",
+      "css": ".ds-card { background: var(--stone-0); border: 1px solid var(--stone-200); border-radius: var(--r-xl); box-shadow: var(--shadow-2); padding: clamp(24px, 3.5vw, 40px); font-family: var(--font-body); color: var(--ink); max-width: 420px; } .ds-price { display: flex; align-items: center; gap: 16px; margin-bottom: 8px; } .ds-price-now { font-family: var(--font-display); font-weight: 700; font-size: clamp(3.5rem, 6vw, 4.75rem); line-height: 1; letter-spacing: -0.04em; color: var(--forest-800); } .ds-price-unit { color: var(--ink-2); font-weight: 500; } .ds-note { color: var(--ink-3); font-size: .9375rem; margin: 0 0 24px; } .ds-points { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; } .ds-points li { display: flex; gap: 12px; align-items: flex-start; } .ds-points svg { flex: none; width: 18px; height: 18px; margin-top: 3px; fill: none; stroke: var(--forest-600); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }"
+    },
+    {
+      "name": "Telemetry Card",
+      "kind": "custom",
+      "refersTo": "console",
+      "description": "Signature: the console footer readout. Label type over mono figures with small units, beside a mono ping log whose event rows turn amber-800.",
+      "html": "<div class=\"ds-console\"><div class=\"ds-tm\"><div class=\"ds-tm-head\"><span>Van 04</span><span class=\"ds-tm-status\">Moving</span></div><dl><div><dt>Speed</dt><dd>46 <small>km/h</small></dd></div><div><dt>Trip</dt><dd>1.6 <small>km</small></dd></div><div><dt>Last ping</dt><dd>now</dd></div></dl></div><ol class=\"ds-log\"><li><time>08:19:56</time><span>26.9190° N, 75.7747° E</span></li><li class=\"ds-log-ev\">Stopped at Stop 1</li><li><time>08:19:53</time><span>26.9166° N, 75.7685° E</span></li></ol></div>",
+      "css": ".ds-console { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); background: var(--stone-0); border: 1px solid var(--stone-200); border-radius: var(--r-l); box-shadow: var(--shadow-3); overflow: hidden; font-family: var(--font-body); color: var(--ink); max-width: 620px; } .ds-tm { padding: 14px 16px; border-right: 1px solid var(--stone-200); } .ds-tm-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-weight: 600; font-size: .9375rem; } .ds-tm-status { display: inline-flex; align-items: center; gap: 6px; font-size: .75rem; padding: 2px 8px 2px 7px; border-radius: 999px; color: var(--forest-700); background: var(--forest-50); } .ds-tm-status::before { content: \"\"; width: 6px; height: 6px; border-radius: 50%; background: currentColor; } .ds-tm dl { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 0; } .ds-tm dt { font-size: .6875rem; color: var(--ink-3); font-weight: 500; } .ds-tm dd { margin: 0; font-family: var(--font-mono); font-size: .9375rem; font-weight: 500; font-variant-numeric: tabular-nums; white-space: nowrap; } .ds-tm dd small { font-size: .6875rem; color: var(--ink-3); } .ds-log { list-style: none; margin: 0; padding: 12px 16px 8px; } .ds-log li { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 12px; padding: 4px 0; border-top: 1px solid var(--stone-100); font-family: var(--font-mono); font-size: .6875rem; font-variant-numeric: tabular-nums; color: var(--ink-2); } .ds-log li:first-child { border-top: 0; } .ds-log time { color: var(--ink-3); } .ds-log .ds-log-ev { display: block; color: var(--amber-800); font-family: var(--font-body); font-weight: 600; font-size: .75rem; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Trip, Not the Tracker",
+    "overview": "The system exists to show a vehicle moving, not to sell the idea of tracking. Every surface is a calm, warm workspace (stone paper, white sheets, hairline borders) on which one thing is allowed to be alive: the trip. A van crosses a drawn city map, amber pings fall behind it, a log fills with timestamped coordinates, and a status pill turns amber when it stops. Everything else stays still, legible and plainly typed, so that the live state reads instantly against it.\n\nThe mood is grounded, practical and trustworthy rather than technical. Deep forest green carries authority (type, primary actions, the consent band) without the cold blue of fleet-software dashboards; warm stone neutrals keep it approachable for a non-technical owner; muted amber is a signal colour, not a brand colour. Density is moderate: generous section rhythm, but product panels are real, compact UI with real-looking figures, each labelled as simulated or sample. The site rejects the dark neon-map SaaS hero and the grid of icon cards; proof is working UI, never decoration.\n\nThe build is static HTML, CSS and JS with no build step and no dependencies beyond three Google Fonts. Tokens live as CSS custom properties on `:root` in `styles.css`; icons live in an inline SVG sprite at the top of each page.",
+    "keyCharacteristics": [
+      "Warm stone ground, white panels, 1px warm hairlines; shadows are soft and green-tinted.",
+      "Forest green for type emphasis, primary actions and the one full-bleed consent field.",
+      "Amber appears only where something is live or idle (plus focus and selection). Paused is neutral grey.",
+      "Grotesk display, humanist body, monospace only for telemetry and figures.",
+      "One focal animation (the hero trip); every other motion explains a change of state.",
+      "Every simulated or sample visual says so on its face."
+    ],
+    "rules": [
+      {
+        "name": "The Amber Means Live Rule",
+        "body": "Amber marks something happening now: the route trail, the van halo, GPS pings, the Idle status, the \"Simulated trip\" chip and new-log flashes. Its only other uses are the keyboard focus ring and text selection. It never fills a button, colours a link or heading, or decorates a section.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Forest Field Rule",
+        "body": "The consent band (forest-900) is the page's single full-bleed dark field, and it sits directly above the forest-950 footer. Every other section is stone or paper; alternate grounds with stone-0 sections bounded by stone-200 hairlines, not with more dark bands.",
+        "section": "colors"
+      },
+      {
+        "name": "The Forest Acts Rule",
+        "body": "Every primary action is forest-800 with white text. There is no second accent for CTAs.",
+        "section": "colors"
+      },
+      {
+        "name": "The Mono Is Telemetry Rule",
+        "body": "JetBrains Mono appears only where a machine would print it: speeds, distances, coordinates, timestamps, Tracking IDs, passcodes, counts and line-item figures. Headings, prose, labels and buttons are never mono. Tabular report tables stay in Mukta with tabular numerals.",
+        "section": "typography"
+      },
+      {
+        "name": "The Tracking Floor Rule",
+        "body": "Display letter-spacing tightens with size, from -0.015em (FAQ question) to -0.038em (hero), and never goes past -0.04em, which only the price figure uses.",
+        "section": "typography"
+      },
+      {
+        "name": "The Sentence Case Rule",
+        "body": "No uppercase labels, no letterspaced eyebrows, no kickers above headings. A section head is a headline and one plain sentence.",
+        "section": "typography"
+      },
+      {
+        "name": "The Hairline First Rule",
+        "body": "Separate with a 1px stone-200 border before reaching for a shadow; a shadow never stands in for a missing border.",
+        "section": "elevation"
+      },
+      {
+        "name": "The One Float Rule",
+        "body": "The Float shadow belongs to the hero console, the page's focal object. Nothing else is lifted that far.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** fill every primary action with forest-800 and white Mukta 600 text; hover to forest-700.",
+      "**Do** keep amber for live and idle state only (route trail, van halo, GPS pings, Idle status, the \"Simulated trip\" chip); paused is grey, plus the amber-600 focus ring and amber-200 selection.",
+      "**Do** label every simulated or sample visual on its face: \"Simulated trip\", \"Sample data\", \"Sample report\".",
+      "**Do** set telemetry, coordinates, IDs, counts and line-item figures in JetBrains Mono 500 with tabular numerals, and everything else in Mukta or Schibsted Grotesk.",
+      "**Do** separate surfaces with 1px stone-200 hairlines first, and tint any shadow with the ink green rgba(20, 33, 26, …).",
+      "**Do** draw icons from the inline SVG sprite: 24px viewBox, 1.75 stroke, round caps and joins, currentColor.",
+      "**Do** ease motion with cubic-bezier(.16, 1, .3, 1) and keep supporting motion to explaining a change of state: a line drawing in, a value counting or tweening, a panel entering, an accordion opening.",
+      "**Do** pause continuous animation when it is offscreen, when the tab is hidden and from its own visible control, and step it discretely under prefers-reduced-motion.",
+      "**Do** keep the consent band as the page's single full-bleed forest-900 field, directly above the forest-950 footer.",
+      "**Do** ship content that is complete without JavaScript; motion only decorates an already-visible state."
+    ],
+    "donts": [
+      "**Don't** use amber on buttons, links, headings, icons at rest, or as a decorative accent.",
+      "**Don't** add a second focal animation; the hero trip is the only continuous motion on a page.",
+      "**Don't** use mono for headings, prose, labels or buttons.",
+      "**Don't** track display type tighter than -0.04em.",
+      "**Don't** use uppercase or letterspaced labels, eyebrows or kickers above headings.",
+      "**Don't** use pure black, cold greys or blue-tinted shadows; ink is green-black (#14211a) and neutrals are warm stone.",
+      "**Don't** use an icon font, raster icons, or mixed stroke styles.",
+      "**Don't** give the Float shadow to anything other than the hero console.",
+      "**Don't** introduce a build step, a framework or a script dependency; the site is static HTML, CSS and JS on GitHub Pages with Google Fonts as its only external asset."
+    ]
+  }
+}
