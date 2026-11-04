@@ -571,36 +571,82 @@
         </section>
 
         <!-- Privacy band -->
-        <section class="band band-forest" id="privacy">
-            <div class="container band-grid">
-                <div class="band-copy">
+        <section class="band band-forest trust" id="privacy">
+            <div class="container trust-grid">
+                <div class="trust-copy">
                     <h2>Tracking only happens with the driver's consent</h2>
-                    <p>Nobody can be tracked without knowing. The driver has to tick a consent box before tracking starts, and can pause or stop it at any time.</p>
+                    <p class="trust-lede">Nobody can be tracked without knowing. The driver has to tick a consent box before tracking starts, and can pause or stop it at any time.</p>
                     <ul class="trust-list">
-                        <li><svg class="icon" aria-hidden="true"><use href="#i-user-off"/></svg><div><strong>No personal details collected</strong><span>No names, phone numbers or ID documents. Drivers sign in with a Tracking ID and passcode only.</span></div></li>
-                        <li><svg class="icon" aria-hidden="true"><use href="#i-key"/></svg><div><strong>Revoke access in one step</strong><span>If a driver leaves, change the passcode for that Tracking ID and the old passcode stops working.</span></div></li>
-                        <li><svg class="icon" aria-hidden="true"><use href="#i-lock"/></svg><div><strong>Encrypted and never sold</strong><span>Locations travel over HTTPS. We don't sell or share them with anyone.</span></div></li>
+                        <li><span class="trust-ico"><svg class="icon" aria-hidden="true"><use href="#i-user-off"/></svg></span><div><strong>No personal details collected</strong><span>No names, phone numbers or ID documents. Drivers sign in with a Tracking ID and passcode only.</span></div></li>
+                        <li><span class="trust-ico"><svg class="icon" aria-hidden="true"><use href="#i-key"/></svg></span><div><strong>Revoke access in one step</strong><span>If a driver leaves, change the passcode for that Tracking ID and the old passcode stops working.</span></div></li>
+                        <li><span class="trust-ico"><svg class="icon" aria-hidden="true"><use href="#i-lock"/></svg></span><div><strong>Encrypted and never sold</strong><span>Locations travel over HTTPS. We don't sell or share them with anyone.</span></div></li>
+                        <li><span class="trust-ico"><svg class="icon" aria-hidden="true"><use href="#i-history"/></svg></span><div><strong>Kept for 6 months, then cleared</strong><span>Location history is kept for 6 months, then cleared automatically. Download anything you want to keep as CSV before then.</span></div></li>
                     </ul>
                     <a class="text-link text-link-light" href="/privacy.html">Read the privacy policy<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
                 </div>
-                <div class="band-visual">
-                    <div class="phone" data-phone data-running="true">
-                        <div class="phone-notch"></div>
-                        <div class="phone-screen">
-                            <div class="ph-status"><span class="ph-dot"></span><span data-phone-status>Status: Running</span></div>
-                            <div class="ph-card">
-                                <span class="ph-k">Tracking ID</span>
-                                <span class="ph-v mono">100015</span>
+
+                <div class="trust-demo" data-trust>
+                    <ol class="trust-steps">
+                        <li><button type="button" class="tstep" data-goto="consent" aria-pressed="false"><span class="tstep-n">1</span><span class="tstep-t"><strong>Driver gives consent</strong><small>Tracking can't start until the box is ticked.</small></span></button></li>
+                        <li><button type="button" class="tstep" data-goto="running" aria-pressed="true"><span class="tstep-n">2</span><span class="tstep-t"><strong>Location is shared</strong><small>A notification stays visible the whole time.</small></span></button></li>
+                        <li><button type="button" class="tstep" data-goto="paused" aria-pressed="false"><span class="tstep-n">3</span><span class="tstep-t"><strong>Driver pauses</strong><small>Nothing is shared while paused.</small></span></button></li>
+                        <li><button type="button" class="tstep" data-goto="revoked" aria-pressed="false"><span class="tstep-n">4</span><span class="tstep-t"><strong>You change the passcode</strong><small>The old passcode stops working.</small></span></button></li>
+                    </ol>
+
+                    <div class="tphone-wrap">
+                        <div class="tphone" data-phone data-view="running" role="group" aria-label="Driver's phone (illustration)">
+                            <div class="tp-screen">
+                                <div class="tp-bar" aria-hidden="true">
+                                    <span>09:41</span>
+                                    <span class="tp-island"></span>
+                                    <span class="tp-sys"><svg class="tp-loc" viewBox="0 0 24 24"><path d="M12 2.5 19.5 21 12 17 4.5 21z"/></svg><i class="tp-batt"></i></span>
+                                </div>
+                                <div class="tp-notif" aria-hidden="true">
+                                    <img src="assets/mark.png" alt="" width="14" height="17">
+                                    <span><strong>easyomnitracker</strong><small>Sharing your location · Tracking ID 100015</small></span>
+                                </div>
+                                <div class="tp-app">
+                                    <div class="tp-head">
+                                        <span class="tp-brand"><img src="assets/mark.png" alt="" width="12" height="14">easyomnitracker</span>
+                                        <span class="tp-status" data-phone-status aria-live="polite"><span class="sr-only">Status: </span>Running</span>
+                                    </div>
+
+                                    <div class="tp-view tp-consent" data-view-panel="consent" hidden>
+                                        <div class="tp-fields">
+                                            <span><small>Tracking ID</small><b class="mono">100015</b></span>
+                                            <span><small>Passcode</small><b class="mono">••••</b></span>
+                                        </div>
+                                        <label class="tp-check"><input type="checkbox" data-consent><span class="tp-box"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg></span>I give my consent to track my location</label>
+                                        <button class="tp-btn" type="button" data-start disabled>Start tracking</button>
+                                        <p class="tp-note">Tracking starts only after the box is ticked and Start is tapped.</p>
+                                    </div>
+
+                                    <div class="tp-view tp-live" data-view-panel="running">
+                                        <div class="tp-map" aria-hidden="true">
+                                            <svg viewBox="200 190 200 120" preserveAspectRatio="xMidYMid slice"><use href="#town-map" width="640" height="400"/><circle class="tp-ring" cx="300" cy="252" r="9"/><circle class="tp-acc" cx="300" cy="252" r="16"/><circle class="tp-me" cx="300" cy="252" r="5"/></svg>
+                                        </div>
+                                        <div class="tp-cards">
+                                            <span><small>Tracking ID</small><b class="mono">100015</b></span>
+                                            <span><small>Last location</small><b class="mono">26.9124, 75.7873</b></span>
+                                        </div>
+                                        <p class="tp-note" data-phone-note>Your location is shared while tracking is on. A notification stays visible the whole time.</p>
+                                        <button class="tp-btn tp-btn-quiet" type="button" data-phone-toggle aria-pressed="false">Pause tracking</button>
+                                    </div>
+
+                                    <div class="tp-view tp-revoked" data-view-panel="revoked" hidden>
+                                        <span class="tp-lock"><svg class="icon" aria-hidden="true"><use href="#i-lock"/></svg></span>
+                                        <strong class="tp-rev-title">This passcode no longer works</strong>
+                                        <p class="tp-note">The passcode for Tracking ID 100015 was changed, so this phone can no longer send locations.</p>
+                                        <div class="tp-fields tp-fields-err">
+                                            <span><small>Tracking ID</small><b class="mono">100015</b></span>
+                                            <span><small>Passcode</small><b class="mono">••••</b><em class="tp-err">Not accepted</em></span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="ph-card">
-                                <span class="ph-k">Last location</span>
-                                <span class="ph-v mono">26.9124, 75.7873</span>
-                            </div>
-                            <p class="ph-note" data-phone-note>Your location is shared while tracking is on. A notification stays visible the whole time.</p>
-                            <button class="ph-btn" type="button" data-phone-toggle aria-pressed="false">Pause tracking</button>
                         </div>
+                        <p class="phone-caption">Illustration of the driver's screen. Tap the steps, or the buttons on the phone.</p>
                     </div>
-                    <p class="phone-caption">Try it: the driver is always in control.</p>
                 </div>
             </div>
         </section>

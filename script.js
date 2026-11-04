@@ -718,22 +718,56 @@
         render();
     }
 
-    /* ---------- Driver phone toggle ---------- */
-    const phone = $('[data-phone]');
-    if (phone) {
-        const btn = $('[data-phone-toggle]', phone);
-        const status = $('[data-phone-status]', phone);
-        const note = $('[data-phone-note]', phone);
-        btn.addEventListener('click', () => {
-            const running = phone.dataset.running !== 'true';
-            phone.dataset.running = String(running);
-            btn.setAttribute('aria-pressed', String(!running));
-            btn.textContent = running ? 'Pause tracking' : 'Start tracking';
-            status.textContent = running ? 'Status: Running' : 'Status: Paused';
-            note.textContent = running
-                ? 'Your location is shared while tracking is on. A notification stays visible the whole time.'
-                : 'Tracking is paused. Your location is not being shared.';
-        });
+    /* ---------- Privacy: the driver's phone, consent to revoked ---------- */
+    const trust = $('[data-trust]');
+    if (trust) initTrust(trust);
+
+    function initTrust(root) {
+        const phone = $('[data-phone]', root);
+        const status = $('[data-phone-status]', root);
+        const note = $('[data-phone-note]', root);
+        const toggle = $('[data-phone-toggle]', root);
+        const consent = $('[data-consent]', root);
+        const start = $('[data-start]', root);
+        const panels = $$('[data-view-panel]', root);
+        const steps = $$('[data-goto]', root);
+        const STATUS = { consent: 'Not started', running: 'Running', paused: 'Paused', revoked: 'Access ended' };
+        let touched = false;
+
+        const show = (view) => {
+            phone.dataset.view = view;
+            phone.dataset.running = String(view === 'running');
+            const panel = view === 'paused' ? 'running' : view;
+            panels.forEach((p) => { p.hidden = p.dataset.viewPanel !== panel; });
+            status.innerHTML = `<span class="sr-only">Status: </span>${STATUS[view]}`;
+            steps.forEach((s) => s.setAttribute('aria-pressed', String(s.dataset.goto === view)));
+            if (view === 'running' || view === 'paused') {
+                const running = view === 'running';
+                toggle.setAttribute('aria-pressed', String(!running));
+                toggle.textContent = running ? 'Pause tracking' : 'Start tracking';
+                note.textContent = running
+                    ? 'Your location is shared while tracking is on. A notification stays visible the whole time.'
+                    : 'Tracking is paused. Your location is not being shared.';
+            }
+            if (view === 'consent') { consent.checked = false; start.disabled = true; }
+        };
+
+        consent.addEventListener('change', () => { touched = true; start.disabled = !consent.checked; });
+        start.addEventListener('click', () => { touched = true; if (consent.checked) show('running'); });
+        toggle.addEventListener('click', () => { touched = true; show(phone.dataset.view === 'running' ? 'paused' : 'running'); });
+        steps.forEach((s) => s.addEventListener('click', () => { touched = true; show(s.dataset.goto); }));
+
+        // Once, as the section arrives: the driver ticks the box and taps Start. After that it is the visitor's.
+        if (reduceMotion.matches || !('IntersectionObserver' in window)) return;
+        show('consent');
+        const io = new IntersectionObserver(([entry]) => {
+            if (!entry.isIntersecting) return;
+            io.disconnect();
+            setTimeout(() => { if (touched) return; consent.checked = true; start.disabled = false; }, 900);
+            setTimeout(() => { if (touched) return; start.classList.add('is-pressed'); }, 1700);
+            setTimeout(() => { start.classList.remove('is-pressed'); if (!touched) show('running'); }, 1880);
+        }, { threshold: 0.45 });
+        io.observe(phone);
     }
 
     /* ---------- Privacy page: table of contents spy ---------- */
