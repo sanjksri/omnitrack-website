@@ -1,161 +1,159 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-IN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Privacy Policy | easyomnitracker.in</title>
     <meta name="description" content="Privacy Policy for Easy Omni Tracker (com.easyomnitracker.app). Learn how we collect, use, and protect your location data.">
-    
-    <!-- Fonts -->
+    <meta name="theme-color" content="#163628">
+    <link rel="icon" type="image/png" href="assets/mark.png">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Styles -->
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@500&family=Schibsted+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="styles.css">
-    <style>
-        .legal-container {
-            max-width: 900px;
-            margin: 120px auto 60px;
-            padding: 40px;
-        }
-        .legal-header {
-            margin-bottom: 32px;
-            padding-bottom: 24px;
-            border-bottom: 1px solid var(--border);
-        }
-        .legal-header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 8px;
-        }
-        .legal-content h2 {
-            font-size: 1.5rem;
-            margin-top: 32px;
-            margin-bottom: 16px;
-            color: var(--accent-primary);
-        }
-        .legal-content h3 {
-            font-size: 1.2rem;
-            margin-top: 20px;
-            margin-bottom: 12px;
-            color: var(--text-main);
-        }
-        .legal-content p, .legal-content ul {
-            color: var(--text-muted);
-            line-height: 1.8;
-            margin-bottom: 16px;
-        }
-        .legal-content ul {
-            padding-left: 24px;
-        }
-        .legal-content li {
-            margin-bottom: 8px;
-        }
-        .highlight-box {
-            background: rgba(59, 130, 246, 0.1);
-            border-left: 4px solid var(--accent-primary);
-            padding: 16px 20px;
-            border-radius: 8px;
-            margin: 20px 0;
-            color: var(--text-main);
-        }
-    </style>
+    <script>document.documentElement.classList.add('js');</script>
 </head>
 <body>
-    <!-- Background Animation -->
-    <div class="bg-gradient"></div>
-    <div class="grid-overlay"></div>
+    <svg class="sprite" aria-hidden="true" focusable="false">
+        <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></symbol>
+        <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+        <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+        <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 5 6v5.5c0 4.2 2.9 7.9 7 9.5 4.1-1.6 7-5.3 7-9.5V6l-7-3z"/><path d="m9 12 2 2 4-4"/></symbol>
+    </svg>
 
-    <!-- Navigation -->
-    <nav class="navbar glass-panel">
-        <div class="nav-container">
-            <div class="logo">
-                <a href="/"><img src="logo.png" alt="easyomnitracker logo" style="height: 40px; width: auto;" /></a>
-            </div>
-            <ul class="nav-links">
-                <li><a href="/#features">Features</a></li>
-                <li><a href="/#how-it-works">How It Works</a></li>
-                <li><a href="/#pricing">Pricing</a></li>
-                <li><a href="/privacy.html" class="active" style="color: var(--accent-primary);">Privacy Policy</a></li>
-            </ul>
-            <a href="https://app.easyomnitracker.in/" class="btn btn-primary" target="_blank">Launch App</a>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header" data-header>
+        <div class="container nav">
+            <a class="brand" href="/" aria-label="easyomnitracker home">
+                <img src="assets/mark.png" alt="" width="27" height="32">
+                <span class="brand-word">easyomnitracker</span>
+            </a>
+            <nav class="nav-menu" id="nav-menu" aria-label="Main">
+                <ul class="nav-links">
+                    <li><a href="/#how-it-works">How it works</a></li>
+                    <li><a href="/#features">Console</a></li>
+                    <li><a href="/#pricing">Pricing</a></li>
+                    <li><a href="/#faq">FAQ</a></li>
+                    <li><a href="/privacy.html" aria-current="page">Privacy policy</a></li>
+                </ul>
+                <div class="nav-actions">
+                    <a class="nav-apk" href="/device-tracking-app.apk?v=1.0.3-b6" download>
+                        <svg class="icon" aria-hidden="true"><use href="#i-download"/></svg>Driver app
+                    </a>
+                    <a class="btn btn-primary btn-sm" href="https://app.easyomnitracker.in/" target="_blank" rel="noopener">Launch app</a>
+                </div>
+            </nav>
+            <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav-menu" data-menu-toggle>
+                <svg class="icon icon-open" aria-hidden="true"><use href="#i-menu"/></svg>
+                <svg class="icon icon-close" aria-hidden="true"><use href="#i-close"/></svg>
+                <span class="sr-only">Menu</span>
+            </button>
         </div>
-    </nav>
+    </header>
 
-    <!-- Main Content -->
-    <main class="legal-container glass-panel">
-        <div class="legal-header">
-            <h1>Privacy Policy</h1>
-            <p style="color: var(--text-muted);"><strong>Application:</strong> Easy Omni Tracker / OmniTrack Driver (<code>com.easyomnitracker.app</code>)</p>
-            <p style="color: var(--text-muted);"><strong>Effective Date:</strong> July 22, 2026</p>
-        </div>
+    <main id="main" class="legal">
+        <div class="container legal-grid">
+            <nav class="legal-toc" aria-label="On this page" data-toc>
+                <p>On this page</p>
+                <ol>
+                    <li><a href="#introduction">1. Introduction</a></li>
+                    <li><a href="#information-collected">2. Information collected</a></li>
+                    <li><a href="#how-used">3. How information is used</a></li>
+                    <li><a href="#user-control">4. User control and privacy</a></li>
+                    <li><a href="#sharing-security">5. Data sharing and security</a></li>
+                    <li><a href="#deletion">6. Data deletion requests</a></li>
+                    <li><a href="#contact">7. Contact us</a></li>
+                </ol>
+            </nav>
 
-        <div class="legal-content">
-            <div class="highlight-box">
-                <strong>Notice regarding Location Tracking:</strong> Easy Omni Tracker is a utility app for real-time location tracking. Location data is processed only when active tracking is explicitly started by the user. Tracking can be paused or stopped by the driver at any time directly within the application.
-            </div>
+            <article class="legal-body">
+                <header class="legal-head">
+                    <h1>Privacy Policy</h1>
+                    <div class="legal-meta">
+                        <p><strong>Application:</strong> Easy Omni Tracker / OmniTrack Driver (<code>com.easyomnitracker.app</code>)</p>
+                        <p><strong>Effective date:</strong> July 22, 2026</p>
+                    </div>
+                </header>
 
-            <h2>1. Introduction</h2>
-            <p>Welcome to <strong>easyomnitracker.in</strong> ("we", "our", or "us"). We respect your privacy and are committed to protecting user data. This Privacy Policy explains how our mobile application <strong>Easy Omni Tracker / OmniTrack Driver</strong> (Package Name: <code>com.easyomnitracker.app</code>) handles data.</p>
+                <div class="notice">
+                    <svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg>
+                    <p><strong>Notice regarding location tracking:</strong> Easy Omni Tracker is a utility app for real-time location tracking. Location data is processed only when active tracking is explicitly started by the user. Tracking can be paused or stopped by the driver at any time directly within the application.</p>
+                </div>
 
-            <h2>2. Information Collected</h2>
+                <h2 id="introduction">1. Introduction</h2>
+                <p>Welcome to <strong>easyomnitracker.in</strong> ("we", "our", or "us"). We respect your privacy and are committed to protecting user data. This Privacy Policy explains how our mobile application <strong>Easy Omni Tracker / OmniTrack Driver</strong> (Package Name: <code>com.easyomnitracker.app</code>) handles data.</p>
 
-            <h3>A. Location Data (Foreground & Background)</h3>
-            <ul>
-                <li><strong>GPS Location & Timestamp:</strong> The app collects precise location coordinates (latitude, longitude) and timestamps during active tracking sessions.</li>
-                <li><strong>Background Processing:</strong> When enabled by the driver, location data is updated in the background (even when the app is minimized) to maintain active tracking updates for the manager. A persistent status notification is always displayed while tracking is active.</li>
-            </ul>
+                <h2 id="information-collected">2. Information collected</h2>
 
-            <h3>B. Device Data</h3>
-            <ul>
-                <li>The app <strong>does NOT collect</strong> sensitive device identifiers (such as hardware serial numbers or Android IDs), OS version logs, or personal device files.</li>
-            </ul>
+                <h3>A. Location data (foreground and background)</h3>
+                <ul>
+                    <li><strong>GPS location and timestamp:</strong> The app collects precise location coordinates (latitude, longitude) and timestamps during active tracking sessions.</li>
+                    <li><strong>Background processing:</strong> When enabled by the driver, location data is updated in the background (even when the app is minimized) to maintain active tracking updates for the manager. A persistent status notification is always displayed while tracking is active.</li>
+                </ul>
 
-            <h3>C. Personal Information & Account Data</h3>
-            <ul>
-                <li>The mobile app <strong>does NOT collect any personal information from drivers</strong> (no driver name, email address, phone number, or personal profile data is collected or required in the mobile app).</li>
-                <li>Drivers authenticate simply using a <strong>Tracking ID and Passcode provided by their manager</strong>.</li>
-            </ul>
+                <h3>B. Device data</h3>
+                <ul>
+                    <li>The app <strong>does NOT collect</strong> sensitive device identifiers (such as hardware serial numbers or Android IDs), OS version logs, or personal device files.</li>
+                </ul>
 
-            <h2>3. How Information is Used</h2>
-            <p>Collected location updates are used solely for real-time tracking visualization on the manager dashboard and route history display.</p>
+                <h3>C. Personal information and account data</h3>
+                <ul>
+                    <li>The mobile app <strong>does NOT collect any personal information from drivers</strong> (no driver name, email address, phone number, or personal profile data is collected or required in the mobile app).</li>
+                    <li>Drivers authenticate simply using a <strong>Tracking ID and Passcode provided by their manager</strong>.</li>
+                </ul>
 
-            <h2>4. User Control & Privacy</h2>
-            <ul>
-                <li><strong>Driver Control:</strong> The driver has complete control to start, pause, or terminate location tracking at any time using the main toggle inside the app.</li>
-                <li><strong>Foreground Notification:</strong> A visible system notification displays whenever tracking is active.</li>
-            </ul>
+                <h2 id="how-used">3. How information is used</h2>
+                <p>Collected location updates are used solely for real-time tracking visualization on the manager dashboard and route history display.</p>
 
-            <h2>5. Data Sharing & Security</h2>
-            <ul>
-                <li>We <strong>do not sell or share</strong> location data with any third parties or advertisers.</li>
-                <li>All location transmissions between the mobile app and server are securely encrypted using standard HTTPS/TLS protocols.</li>
-            </ul>
+                <h2 id="user-control">4. User control and privacy</h2>
+                <ul>
+                    <li><strong>Driver control:</strong> The driver has complete control to start, pause, or terminate location tracking at any time using the main toggle inside the app.</li>
+                    <li><strong>Foreground notification:</strong> A visible system notification displays whenever tracking is active.</li>
+                </ul>
 
-            <h2>6. Data Deletion Requests</h2>
-            <p>If you wish to request deletion of any stored tracking logs or account data, please email us at <a href="mailto:easyomnitracker@gmail.com" style="color: var(--accent-primary);">easyomnitracker@gmail.com</a>. Requests are processed within 7 business days.</p>
+                <h2 id="sharing-security">5. Data sharing and security</h2>
+                <ul>
+                    <li>We <strong>do not sell or share</strong> location data with any third parties or advertisers.</li>
+                    <li>All location transmissions between the mobile app and server are securely encrypted using standard HTTPS/TLS protocols.</li>
+                </ul>
 
-            <h2>7. Contact Us</h2>
-            <p>For questions or support regarding this Privacy Policy, contact us at:</p>
-            <ul>
-                <li><strong>Email:</strong> <a href="mailto:easyomnitracker@gmail.com" style="color: var(--accent-primary);">easyomnitracker@gmail.com</a></li>
-                <li><strong>Website:</strong> <a href="https://easyomnitracker.in" style="color: var(--accent-primary);">https://easyomnitracker.in</a></li>
-            </ul>
+                <h2 id="deletion">6. Data deletion requests</h2>
+                <p>If you wish to request deletion of any stored tracking logs or account data, please email us at <a href="mailto:easyomnitracker@gmail.com">easyomnitracker@gmail.com</a>. Requests are processed within 7 business days.</p>
+
+                <h2 id="contact">7. Contact us</h2>
+                <p>For questions or support regarding this Privacy Policy, contact us at:</p>
+                <ul>
+                    <li><strong>Email:</strong> <a href="mailto:easyomnitracker@gmail.com">easyomnitracker@gmail.com</a></li>
+                    <li><strong>Website:</strong> <a href="https://easyomnitracker.in">https://easyomnitracker.in</a></li>
+                </ul>
+            </article>
         </div>
     </main>
 
-    <!-- Footer -->
-    <footer>
-        <div class="footer-content">
-            <div class="footer-logo">
-                <img src="logo.png" alt="easyomnitracker logo" style="height: 40px; width: auto; background: white; padding: 5px; border-radius: 4px;" />
+    <footer class="site-footer">
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <a class="brand" href="/" aria-label="easyomnitracker home">
+                    <img src="assets/mark.png" alt="" width="27" height="32">
+                    <span class="brand-word">easyomnitracker</span>
+                </a>
+                <p>Location tracking simplified.</p>
             </div>
-            <p>Contact us: <a href="mailto:easyomnitracker@gmail.com" style="color: var(--accent-primary);">easyomnitracker@gmail.com</a></p>
-            <p>&copy; 2026 easyomnitracker.in All rights reserved. | <a href="/privacy.html" style="color: var(--text-muted); text-decoration: underline;">Privacy Policy</a></p>
+            <nav class="footer-links" aria-label="Footer">
+                <a href="/#how-it-works">How it works</a>
+                <a href="/#features">Console</a>
+                <a href="/#pricing">Pricing</a>
+                <a href="/#faq">FAQ</a>
+                <a href="/privacy.html">Privacy policy</a>
+                <a href="/device-tracking-app.apk?v=1.0.3-b6" download>Driver app (APK)</a>
+            </nav>
+            <p class="footer-legal">© 2026 easyomnitracker.in · <a href="mailto:easyomnitracker@gmail.com">easyomnitracker@gmail.com</a></p>
         </div>
     </footer>
+
+    <script src="script.js" defer></script>
 </body>
 </html>
