@@ -864,8 +864,8 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 }
 .ph-btn:hover { background: #fff; }
 .ph-btn:active { transform: scale(.98); }
-.phone[data-running="false"] .ph-btn { background: var(--amber-400); color: var(--forest-950); }
-.phone[data-running="false"] .ph-btn:hover { background: var(--amber-200); }
+.phone[data-running="false"] .ph-btn { background: var(--forest-500); color: #fff; }
+.phone[data-running="false"] .ph-btn:hover { background: var(--forest-600); }
 .phone-caption { color: var(--forest-200); font-size: .9375rem; }
 
 /* Pricing */
