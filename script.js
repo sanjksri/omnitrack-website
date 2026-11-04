@@ -78,9 +78,8 @@
     }
 
     /* ---------- Scroll reveals ---------- */
-    const fadeTargets = $$('.table-wrap, .price-card, .calc, .terms, .apk, .phone, .faq-list');
+    const fadeTargets = $$('.table-wrap, .price-sheet, .terms, .apk, .phone, .faq-list');
     fadeTargets.forEach((el) => el.setAttribute('data-fade', ''));
-    $$('.price-grid > *').forEach((el, i) => el.style.setProperty('--d', `${i * 0.08}s`));
 
     const io = 'IntersectionObserver' in window ? new IntersectionObserver((entries, obs) => {
         entries.forEach((entry) => {
@@ -622,19 +621,27 @@
         const out = (k) => $(`[data-out="${k}"]`, calc);
         const disc = $('[data-disc]', calc);
         const hint = $('[data-hint]', calc);
-        let shownTotal = null;
+        const bulk = $('[data-bulk]', calc);
+        const live = $('[data-calc-live]', calc);
+        const meter = $$('[data-meter] i', calc);
+        meter.forEach((m, i) => m.style.setProperty('--k', i));
+        const clamp = (k, n) => Math.min(limits[k][1], Math.max(limits[k][0], n));
+        const shown = {};
+        let liveTimer = 0;
 
-        const tweenTotal = (to) => {
-            const el = out('total');
-            const from = shownTotal == null ? to : shownTotal;
-            shownTotal = to;
-            if (reduceMotion.matches || from === to) { el.textContent = inr(to); return; }
+        // Figures glide to their new value instead of jumping; the arithmetic itself is unchanged
+        const tween = (key, to, fmt) => {
+            const el = out(key);
+            const from = shown[key] == null ? to : shown[key];
+            shown[key] = to;
+            if (reduceMotion.matches || from === to) { el.textContent = fmt(to); return; }
             const start = performance.now();
             const step = (now) => {
-                const t = Math.min(1, (now - start) / 320);
+                if (shown[key] !== to) return;
+                const t = Math.min(1, (now - start) / 360);
                 const e = 1 - Math.pow(1 - t, 3);
-                el.textContent = inr(from + (to - from) * e);
-                if (t < 1 && shownTotal === to) requestAnimationFrame(step);
+                el.textContent = fmt(t === 1 ? to : Math.round(from + (to - from) * e));
+                if (t < 1) requestAnimationFrame(step);
             };
             requestAnimationFrame(step);
         };
@@ -643,31 +650,70 @@
             const tm = state.ids * state.months;
             const sub = tm * PRICE;
             const off = tm >= 10 ? Math.round(sub * 0.1) : 0;
-            out('ids').textContent = state.ids;
-            out('months').textContent = state.months;
-            out('tm').textContent = tm;
-            out('sub').textContent = inr(sub);
-            out('disc').textContent = off ? '−' + inr(off) : '−₹0';
+            const total = sub - off;
+            $$('[data-field]', calc).forEach((input) => {
+                if (document.activeElement !== input) input.value = state[input.dataset.field];
+            });
+            out('f-ids').textContent = `${state.ids} Tracking ID${state.ids === 1 ? '' : 's'}`;
+            out('f-months').textContent = `${state.months} month${state.months === 1 ? '' : 's'}`;
+            tween('tm', tm, String);
+            tween('sub', sub, inr);
+            tween('disc', off, (v) => (v ? '−' + inr(v) : '−₹0'));
+            tween('total', total, inr);
+            tween('each', total / tm, inr);
             disc.classList.toggle('is-on', off > 0);
             disc.classList.toggle('is-off', off === 0);
+            bulk.classList.toggle('is-on', off > 0);
+            meter.forEach((m, i) => m.classList.toggle('is-on', i < Math.min(tm, 10)));
             hint.classList.toggle('is-good', off > 0);
             hint.textContent = off > 0
                 ? `10% bulk discount applied: ${tm} Tracking-Months in one purchase.`
                 : `Add ${10 - tm} more Tracking-Month${10 - tm === 1 ? '' : 's'} to this purchase to get 10% off.`;
-            tweenTotal(sub - off);
             $$('[data-step]', calc).forEach((b) => {
                 const k = b.dataset.step;
                 const dir = +b.dataset.dir;
                 b.disabled = dir < 0 ? state[k] <= limits[k][0] : state[k] >= limits[k][1];
             });
+            // One settled announcement for screen readers, not every frame of the count
+            clearTimeout(liveTimer);
+            liveTimer = setTimeout(() => {
+                live.textContent = `Total ${inr(total)} for ${tm} Tracking-Month${tm === 1 ? '' : 's'}. ${hint.textContent}`;
+            }, 500);
         };
 
         calc.addEventListener('click', (e) => {
             const b = e.target.closest('[data-step]');
             if (!b || b.disabled) return;
             const k = b.dataset.step;
-            state[k] = Math.min(limits[k][1], Math.max(limits[k][0], state[k] + +b.dataset.dir));
+            state[k] = clamp(k, state[k] + +b.dataset.dir);
             render();
+        });
+
+        // The counts can also be typed; anything outside the limits settles to the nearest allowed value
+        $$('[data-field]', calc).forEach((input) => {
+            const k = input.dataset.field;
+            const commit = () => {
+                const n = parseInt(input.value, 10);
+                if (!Number.isNaN(n)) state[k] = clamp(k, n);
+                input.value = state[k];
+                render();
+            };
+            input.addEventListener('input', () => {
+                const digits = input.value.replace(/\D/g, '');
+                if (digits !== input.value) input.value = digits;
+                const n = parseInt(digits, 10);
+                if (!Number.isNaN(n) && n >= limits[k][0] && n <= limits[k][1]) { state[k] = n; render(); }
+            });
+            input.addEventListener('change', commit);
+            input.addEventListener('blur', commit);
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') { commit(); return; }
+                if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
+                e.preventDefault();
+                state[k] = clamp(k, state[k] + (e.key === 'ArrowUp' ? 1 : -1));
+                input.value = state[k];
+                render();
+            });
         });
         render();
     }

@@ -41,6 +41,8 @@
         <symbol id="i-phone" viewBox="0 0 24 24"><rect x="7" y="3" width="10" height="18" rx="2"/><path d="M11 18h2"/></symbol>
         <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3.5 6.5 8.5 6.5 8.5-6.5"/></symbol>
         <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></symbol>
+        <symbol id="i-gift" viewBox="0 0 24 24"><rect x="4.5" y="11" width="15" height="9" rx="1.5"/><rect x="3" y="7.5" width="18" height="3.5" rx="1"/><path d="M12 7.5V20M12 7.5c-1.2-2.6-4.6-3.6-5.2-1.8-.5 1.6 2.2 1.8 5.2 1.8zM12 7.5c1.2-2.6 4.6-3.6 5.2-1.8.5 1.6-2.2 1.8-5.2 1.8z"/></symbol>
+        <symbol id="i-percent" viewBox="0 0 24 24"><path d="M18 6 6 18"/><circle cx="7.5" cy="7.5" r="2.5"/><circle cx="16.5" cy="16.5" r="2.5"/></symbol>
         <symbol id="i-send" viewBox="0 0 24 24"><path d="M21 3 10 14M21 3l-7 18-4-7-7-4 18-7z"/></symbol>
         <symbol id="town-map" viewBox="0 0 640 400">
             <rect width="640" height="400" fill="var(--map-land)"/>
@@ -611,67 +613,89 @@
                     <p>One Tracking-Month is one Tracking ID used during one calendar month, with no per-seat charges, contracts or hardware rental.</p>
                 </div>
 
-                <div class="price-grid">
-                    <div class="price-card">
-                        <div class="price-line">
-                            <span class="price-now">₹50</span>
-                            <span class="price-unit">per Tracking-Month<br><span class="price-was">₹100</span> <span class="price-off">50% off, limited time</span></span>
-                        </div>
-                        <p class="price-note">Inclusive of GST. No hidden fees.</p>
+                <div class="price-sheet">
+                    <div class="price-main">
+                        <p class="price-figure">
+                            <span class="price-now"><span class="price-cur">₹</span>50</span>
+                            <span class="price-unit"><strong>per Tracking-Month</strong>Inclusive of GST. No hidden fees.</span>
+                        </p>
+                        <p class="price-offer"><span class="price-was"><span class="sr-only">Regular price </span>₹100</span><span class="price-tag">50% off, limited time</span></p>
+
                         <ul class="price-points">
                             <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Live map, route history and trip reports</li>
                             <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>6 months of history and CSV export</li>
                             <li><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Browser tracking and the Android app</li>
                         </ul>
-                        <a class="btn btn-primary btn-lg btn-block" href="https://app.easyomnitracker.in/" target="_blank" rel="noopener">Start free<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
-                        <p class="price-bonus" data-bonus-long>Join before the 15th of the month for 1 free Tracking-Month, or after the 15th for 2.</p>
+
+                        <div class="price-cta">
+                            <a class="btn btn-primary btn-lg btn-block" href="https://app.easyomnitracker.in/" target="_blank" rel="noopener">Start free<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+                            <div class="price-perk">
+                                <span class="price-perk-ico"><svg class="icon" aria-hidden="true"><use href="#i-gift"/></svg></span>
+                                <p class="price-bonus" data-bonus-long>Join before the 15th of the month for 1 free Tracking-Month, or after the 15th for 2.</p>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="calc" data-calc>
                         <h3>Estimate your cost</h3>
                         <div class="calc-row">
-                            <span class="calc-label" id="lbl-ids">Vehicles or phones</span>
+                            <label class="calc-label" id="lbl-ids" for="calc-ids">Vehicles or phones<small>One Tracking ID each, 1 to 100</small></label>
                             <div class="stepper" role="group" aria-labelledby="lbl-ids">
                                 <button type="button" data-step="ids" data-dir="-1" aria-label="Fewer vehicles"><svg class="icon" aria-hidden="true"><use href="#i-minus"/></svg></button>
-                                <output data-out="ids" aria-live="polite">3</output>
+                                <input id="calc-ids" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="3" autocomplete="off" value="3" data-out="ids" data-field="ids">
                                 <button type="button" data-step="ids" data-dir="1" aria-label="More vehicles"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></button>
                             </div>
                         </div>
                         <div class="calc-row">
-                            <span class="calc-label" id="lbl-months">Months, one purchase</span>
+                            <label class="calc-label" id="lbl-months" for="calc-months">Months, one purchase<small>1 to 12</small></label>
                             <div class="stepper" role="group" aria-labelledby="lbl-months">
                                 <button type="button" data-step="months" data-dir="-1" aria-label="Fewer months"><svg class="icon" aria-hidden="true"><use href="#i-minus"/></svg></button>
-                                <output data-out="months" aria-live="polite">3</output>
+                                <input id="calc-months" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="2" autocomplete="off" value="3" data-out="months" data-field="months">
                                 <button type="button" data-step="months" data-dir="1" aria-label="More months"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></button>
                             </div>
                         </div>
+
+                        <div class="calc-bulk" data-bulk>
+                            <div class="calc-bulk-head">
+                                <span class="calc-bulk-ico"><svg class="icon" aria-hidden="true"><use href="#i-percent"/></svg></span>
+                                <p class="calc-hint" data-hint>Add 1 more Tracking-Month to this purchase to get 10% off.</p>
+                            </div>
+                            <div class="calc-meter" aria-hidden="true" data-meter><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+                        </div>
+
                         <dl class="calc-sum">
-                            <div><dt><span data-out="tm">9</span> Tracking-Months × ₹50</dt><dd data-out="sub">₹450</dd></div>
-                            <div class="calc-disc" data-disc><dt>Bulk discount (10+ in one purchase)</dt><dd data-out="disc">−₹0</dd></div>
-                            <div class="calc-total"><dt>Total</dt><dd data-out="total">₹450</dd></div>
+                            <div><dt><span data-out="tm">9</span> Tracking-Months × ₹50<small><span data-out="f-ids">3 Tracking IDs</span> × <span data-out="f-months">3 months</span></small></dt><dd data-out="sub">₹450</dd></div>
+                            <div class="calc-disc" data-disc><dt>Bulk discount, 10%</dt><dd data-out="disc">−₹0</dd></div>
+                            <div class="calc-total"><dt>Total<small>Works out to <span data-out="each">₹50</span> per Tracking-Month</small></dt><dd data-out="total">₹450</dd></div>
                         </dl>
-                        <p class="calc-hint" data-hint>Add 1 more Tracking-Month to get 10% off this purchase.</p>
+                        <p class="sr-only" aria-live="polite" data-calc-live></p>
                     </div>
                 </div>
 
-                <dl class="terms">
-                    <div>
-                        <dt>Bulk discount</dt>
-                        <dd>Buy 10 or more Tracking-Months in a single purchase and get 10% off that order. Separate smaller purchases don't add up: buying 9, then more later, doesn't qualify.</dd>
+                <div class="terms">
+                    <div class="terms-head">
+                        <h3 class="terms-title">Pricing terms</h3>
+                        <p>Every rule behind the price, written out in full.</p>
                     </div>
-                    <div>
-                        <dt>When a month counts</dt>
-                        <dd>A Tracking ID counts as used for the month as soon as a single location from it reaches our database that month.</dd>
+                    <div class="terms-list">
+                        <details>
+                            <summary><span class="terms-q"><strong>Bulk discount</strong><span>10% off 10 or more Tracking-Months bought together</span></span><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></summary>
+                            <div class="terms-body"><p>Buy 10 or more Tracking-Months in a single purchase and get 10% off that order. Separate smaller purchases don't add up: buying 9, then more later, doesn't qualify.</p></div>
+                        </details>
+                        <details>
+                            <summary><span class="terms-q"><strong>When a month counts</strong><span>One location received in a month counts that ID</span></span><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></summary>
+                            <div class="terms-body"><p>A Tracking ID counts as used for the month as soon as a single location from it reaches our database that month.</p></div>
+                        </details>
+                        <details>
+                            <summary><span class="terms-q"><strong>Refunds</strong><span>Not refundable; wrong deductions are credited back</span></span><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></summary>
+                            <div class="terms-body"><p>Payments are not refundable. If a Tracking-Month is deducted wrongly because of a technical glitch, we credit the Tracking-Month back.</p></div>
+                        </details>
+                        <details>
+                            <summary><span class="terms-q"><strong>Refer and earn</strong><span>30% of referral payments, up to ₹1,500 each</span></span><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></summary>
+                            <div class="terms-body"><p>Earn 30% of every payment your referrals make, up to ₹1,500 per referral. If they spend ₹4,000 you get ₹1,200; another ₹4,000 later earns ₹300 more. Paid by the 5th of the following month. Gmail accounts only.</p></div>
+                        </details>
                     </div>
-                    <div>
-                        <dt>Refunds</dt>
-                        <dd>Payments are not refundable. If a Tracking-Month is deducted wrongly because of a technical glitch, we credit the Tracking-Month back.</dd>
-                    </div>
-                    <div>
-                        <dt>Refer and earn</dt>
-                        <dd>Earn 30% of every payment your referrals make, up to ₹1,500 per referral. If they spend ₹4,000 you get ₹1,200; another ₹4,000 later earns ₹300 more. Paid by the 5th of the following month. Gmail accounts only.</dd>
-                    </div>
-                </dl>
+                </div>
             </div>
         </section>
 

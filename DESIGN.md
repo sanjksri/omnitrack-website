@@ -324,7 +324,7 @@ A warm, low-chroma palette: stone neutrals and a green-black ink as the ground, 
 
 ### Hierarchy
 - **Display** (700, clamp(2.5rem, 3.9vw, 3.5rem), 1.02, -0.038em): the hero headline only. Its second sentence may drop to forest-600 as a softer line.
-- **Display Figure** (700, clamp(3.5rem, 6vw, 4.75rem), 1, -0.04em): the headline price, in forest-800. The calculator total uses the same face at 2rem, -0.03em.
+- **Display Figure** (700, clamp(4.5rem, 8vw, 6rem), 0.84, -0.05em, tabular figures): the headline price, in forest-800, with the rupee sign at half size in forest-600 riding the cap height. The calculator total uses the same face at clamp(2.25rem, 3.4vw, 2.75rem), -0.035em.
 - **Headline** (700, clamp(2rem, 3.4vw, 2.875rem), 1.08, -0.032em): section heads and band heads. The closing band head scales up to clamp(2.25rem, 4.4vw, 3.5rem) in forest-800.
 - **Title** (700, clamp(1.375rem, 2vw, 1.75rem), 1.08, -0.025em): feature panel heads; step heads (1.3125rem) and the calculator head (1.375rem) sit at the low end of this role.
 - **Title Small** (600, 1.1875rem, 1.3, -0.015em): FAQ questions, set in the display face.
@@ -391,8 +391,8 @@ Confident, compact, ink-heavy: a dark green slab with white type.
 - **Status pill:** label type with a 6px leading dot in currentColor. Moving is forest-700 on forest-50 (the dot blinks gently); Idle is amber-800 on amber-100 and counts seconds; Arrived is ink-2 on stone-100. Colour transitions over 0.3s.
 
 ### Cards / Containers
-- **Corner Style:** 20px for cards (price card, calculator, APK block, feature frame); 14px for the console, wells and notices.
-- **Background:** paper (stone-0) for raised cards; forest-50 with a forest-100 border for the calculator and the privacy notice; stone-100 for inset wells that hold product UI; white for sheets nested inside a well.
+- **Corner Style:** 20px for cards (price sheet, APK block, feature frame); 14px for the console, wells and notices.
+- **Background:** paper (stone-0) for raised cards; forest-50 with a forest-100 border for the calculator (docked inside the price sheet) and the privacy notice; stone-100 for inset wells that hold product UI; white for sheets nested inside a well.
 - **Shadow Strategy:** Rest for inline cards, Lift for the price card and feature frame, Phone for the hero phone only (see Elevation & Depth).
 - **Border:** 1px stone-200 on every container.
 - **Internal Padding:** fluid clamp(24px, 3.5vw, 40px) for cards; 18px for wells; 14px for nested sheets.
@@ -402,6 +402,14 @@ Confident, compact, ink-heavy: a dark green slab with white type.
 - **Field (illustrative):** white, 1px stone-300, 6px radius, 8px 10px, a 0.6875rem ink-3 label above Mukta 600 value; a 1.5px forest-600 caret blinks while text types in.
 - **Checkbox (illustrative):** 18px, 4px radius, 1.5px stone-400 border; checked fills forest-600 with a white tick that scales in.
 - **Focus:** the global amber-600 outline.
+
+### Pricing
+One price sheet (stone-0, 20px radius, stone-200 hairline, Lift shadow) split into the price and a docked estimate; below 960px the estimate stacks under the price.
+
+- **Price:** ₹50 is the section's single focal point (Display Figure), "per Tracking-Month" in ink 600 with "Inclusive of GST. No hidden fees." beneath, then the struck ₹100 (with a screen-reader "Regular price") and a forest-50 "50% off, limited time" pill. A hairline separates the three inclusions (forest check icons), then the full-width primary "Start free".
+- **Sign-up bonus:** a quiet ticket under the button: stone-50 ground, stone-200 hairline, 10px radius, a gift icon in a forest-50 circle, and the date-aware bonus sentence (1 free Tracking-Month before the 15th, 2 after) written by script.js.
+- **Estimate:** the forest-50 panel with forest-100 hairlines. Two rows (vehicles or phones 1 to 100, months in one purchase 1 to 12) each with a label, a range hint and a stepper whose middle is a typeable mono field: digits only, out-of-range values settle to the nearest limit, arrow keys step, buttons disable at the limits. A white bulk card shows ten 6px segments filling forest-300 as Tracking-Months approach 10 (22ms stagger) and the hint sentence; at 10 or more the segments and the percent badge turn forest-600 and the hint reads that 10% is applied. The summary lists the Tracking-Months × ₹50 with the "IDs × months" working beneath, the bulk discount (muted until it applies), and the total in the display face with "works out to ₹50 (or ₹45) per Tracking-Month". Every figure eases to its new value (0.36s ease-out, integer steps, exact on landing); screen readers hear one settled summary instead. The arithmetic is the original: ₹50 × IDs × months, 10% off (rounded) at 10 or more Tracking-Months in one purchase.
+- **Terms:** a 4 : 8 block, "Pricing terms" with a one-line promise on the left and a hairline accordion on the right (bulk discount, when a month counts, refunds, refer and earn). Each closed row shows the rule's name and a one-line summary so nothing is hidden behind a click; the full wording opens below with the FAQ's plus-to-cross icon.
 
 ### Navigation
 - **Header:** a two-line brand lockup: the mark beside the lowercase wordmark in Schibsted Grotesk 700 (1.1875rem, -0.03em) over the tagline "Location tracking simplified" in Mukta 500 ink-3 (0.75rem); the mark lifts 2px on hover. Nav links are Mukta 500 ink-2 on 44px-tall targets, 26px apart (20px under 1080px). The indicator is a 2px forest-600 underline with round ends that draws in from the left on hover (0.4s ease-out) and leaves to the right; the section in view (scroll-spy) or current page keeps it and turns forest-700. Text weight never changes between states, so nothing shifts. A 20px stone-300 hairline separates the links from the actions: a quiet "Driver app" download link (its underline in stone-400, icon nudging down on hover; hidden under 1080px, where the hero carries the same download) and the forest-800 "Launch app" primary with an external-link arrow that nudges up-right on hover and a screen-reader note that it opens a new tab.
