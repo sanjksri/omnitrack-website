@@ -78,7 +78,7 @@
     }
 
     /* ---------- Scroll reveals ---------- */
-    const fadeTargets = $$('.explorer, .table-wrap, .price-card, .calc, .terms, .apk, .phone, .faq-list');
+    const fadeTargets = $$('.table-wrap, .price-card, .calc, .terms, .apk, .phone, .faq-list');
     fadeTargets.forEach((el) => el.setAttribute('data-fade', ''));
     $$('.price-grid > *').forEach((el, i) => el.style.setProperty('--d', `${i * 0.08}s`));
 
@@ -94,29 +94,145 @@
     const reveal = (el) => { if (io) io.observe(el); else el.classList.add('is-in'); };
     fadeTargets.forEach(reveal);
 
-    /* ---------- How it works: step vignettes ---------- */
-    $$('[data-steps] .step').forEach((step, i) => {
-        step.style.setProperty('--d', `${i * 0.25}s`);
-        step.addEventListener('reveal', () => {
-            const typed = $('.vg-typed', step);
-            if (typed && !reduceMotion.matches) {
-                const word = typed.dataset.type || typed.textContent;
-                typed.textContent = '';
+    /* ---------- How it works: three stops on one route ---------- */
+    const journey = $('[data-journey]');
+    if (journey) initJourney(journey);
+
+    function initJourney(root) {
+        const steps = $$('[data-jr-step]', root);
+        const nodes = steps.map((s) => $('[data-jr-node]', s));
+        const track = $('.jr-track', root);
+        const fill = $('[data-jr-fill]', root);
+        const mark = $('[data-jr-mark]', root);
+        const last = steps.length - 1;
+        const still = () => reduceMotion.matches;
+        let geo = null, reached = -1, current = -1, started = false, inView = false;
+        const seqTimers = [];
+        const played = new Set();
+
+        // Before the route reaches stop 1, the device name field is still empty
+        const typed = $('.vg-typed', root);
+        const word = typed ? (typed.dataset.type || typed.textContent) : '';
+        if (typed && !still()) typed.textContent = '';
+
+        const later = (fn, ms) => (still() ? fn() : setTimeout(fn, ms));
+        const press = (el, ms) => {
+            if (!el || still()) return;
+            setTimeout(() => { el.classList.add('is-pressed'); setTimeout(() => el.classList.remove('is-pressed'), 180); }, ms);
+        };
+
+        // What happens inside each illustration when the route reaches it (once)
+        const play = (i) => {
+            if (played.has(i)) return;
+            played.add(i);
+            const step = steps[i];
+            step.classList.add('is-played');
+            const btn = $('[data-jr-press]', step);
+            if (i === 0 && typed) {
+                if (still()) { typed.textContent = word; return; }
+                const field = typed.closest('.jr-field');
+                field.classList.add('is-focused');
                 typed.classList.add('is-typing');
                 let n = 0;
                 const tick = () => {
                     typed.textContent = word.slice(0, ++n);
                     if (n < word.length) setTimeout(tick, 110);
-                    else setTimeout(() => typed.classList.remove('is-typing'), 600);
+                    else setTimeout(() => { typed.classList.remove('is-typing'); field.classList.remove('is-focused'); }, 150);
                 };
-                setTimeout(tick, 350);
+                setTimeout(tick, 300);
+                press(btn, 1100);
+            } else if (i === 1) {
+                press(btn, 250);
+            } else if (i === 2) {
+                later(() => step.classList.add('is-checked'), 500);
+                press(btn, 1000);
+                later(() => root.classList.add('is-live'), 1450);
             }
-            if (step.querySelector('.vg-consent')) {
-                setTimeout(() => step.classList.add('is-checked'), reduceMotion.matches ? 0 : 800);
-            }
-        }, { once: true });
-        reveal(step);
-    });
+        };
+
+        const offset = (k) => (k < 0 || !geo ? 0 : geo.horiz ? geo.c[k].x - geo.c[0].x : geo.c[k].y - geo.c[0].y);
+        const paint = () => {
+            if (!geo) return;
+            const p = geo.len ? offset(reached) / geo.len : 0;
+            fill.style.transform = geo.horiz ? `scaleX(${p})` : `scaleY(${p})`;
+            const m = offset(Math.max(current, 0));
+            mark.style.transform = geo.horiz ? `translate(${m}px, 0)` : `translate(0, ${m}px)`;
+            track.classList.toggle('is-moving', reached >= 0);
+            track.classList.toggle('at-end', current === last);
+        };
+
+        const setState = (r, cur) => {
+            reached = Math.max(reached, r);
+            current = cur;
+            steps.forEach((s, i) => {
+                s.classList.toggle('is-reached', i <= reached);
+                s.classList.toggle('is-current', i === current);
+            });
+            for (let i = 0; i <= reached; i++) play(i);
+            paint();
+        };
+
+        // Lay the route through the centres of the three stops (horizontal on desktop, vertical below)
+        const layout = () => {
+            const r = root.getBoundingClientRect();
+            const c = nodes.map((n) => { const b = n.getBoundingClientRect(); return { x: b.left + b.width / 2 - r.left, y: b.top + b.height / 2 - r.top }; });
+            const horiz = Math.abs(c[0].y - c[last].y) < 4;
+            const len = horiz ? c[last].x - c[0].x : c[last].y - c[0].y;
+            geo = { horiz, c, len };
+            track.dataset.axis = horiz ? 'x' : 'y';
+            track.classList.add('is-instant');
+            Object.assign(track.style, horiz
+                ? { left: `${c[0].x}px`, top: `${c[0].y - 1}px`, width: `${len}px`, height: '2px' }
+                : { left: `${c[0].x - 1}px`, top: `${c[0].y}px`, width: '2px', height: `${len}px` });
+            track.classList.add('is-ready');
+            paint();
+            void track.offsetWidth;
+            track.classList.remove('is-instant');
+            if (inView && horiz) runSequence();
+        };
+
+        // Desktop: the stops play in order once the section is in view.
+        const runSequence = () => {
+            if (started) return;
+            started = true;
+            if (still()) { setState(last, last); return; }
+            steps.forEach((_, i) => seqTimers.push(setTimeout(() => setState(i, i), 250 + i * 1800)));
+        };
+        // Vertical layouts: a stop becomes current as it scrolls past 60% of the viewport.
+        let ticking = false;
+        const onScroll = () => {
+            if (ticking) return;
+            ticking = true;
+            requestAnimationFrame(() => {
+                ticking = false;
+                if (!geo || geo.horiz) return;
+                const line = window.innerHeight * 0.6;
+                let cur = -1;
+                nodes.forEach((n, i) => { if (n.getBoundingClientRect().top < line) cur = i; });
+                if (cur < 0 && reached < 0) return;
+                setState(Math.max(cur, 0), Math.max(cur, 0));
+            });
+        };
+
+        layout();
+        if ('ResizeObserver' in window) new ResizeObserver(() => layout()).observe(root);
+        if (still() || !('IntersectionObserver' in window)) { started = true; setState(last, last); return; }
+        new IntersectionObserver(([entry]) => {
+            inView = entry.isIntersecting;
+            window.removeEventListener('scroll', onScroll);
+            if (!inView) return;
+            if (geo.horiz) runSequence();
+            else { window.addEventListener('scroll', onScroll, { passive: true }); onScroll(); }
+        }, { threshold: 0.2 }).observe(root);
+        if (reduceMotion.addEventListener) reduceMotion.addEventListener('change', () => {
+            if (!still()) return;
+            seqTimers.forEach(clearTimeout);
+            if (typed) { typed.textContent = word; typed.classList.remove('is-typing'); }
+            setState(last, last);
+            root.classList.add('is-live');
+            steps[last].classList.add('is-checked');
+        });
+    }
 
     /* ---------- Count-up numbers ---------- */
     const countUp = (root) => {

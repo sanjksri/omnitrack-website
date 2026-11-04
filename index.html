@@ -252,52 +252,81 @@
                     <p>There's nothing to install in the vehicle and drivers don't need an account: you create a Tracking ID, share it, and the driver starts tracking from their own phone.</p>
                 </div>
 
-                <ol class="steps" data-steps>
-                    <li class="step" data-reveal>
-                        <div class="vignette vg-console" aria-hidden="true">
-                            <div class="vg-label">Your console</div>
-                            <div class="vg-field"><span class="vg-field-label">Device name</span><span class="vg-typed" data-type="Van 04">Van 04</span></div>
-                            <div class="vg-result">
-                                <div><span class="vg-k">Tracking ID</span><span class="vg-v mono">100015</span></div>
-                                <div><span class="vg-k">Passcode</span><span class="vg-v mono">4827</span></div>
+                <div class="journey" data-journey>
+                    <div class="jr-track" aria-hidden="true"><span class="jr-fill" data-jr-fill></span><span class="jr-mark" data-jr-mark></span></div>
+                    <ol class="jr-steps">
+                        <li class="jr-step" data-jr-step>
+                            <div class="jr-stage jr-reg" aria-hidden="true">
+                                <div class="jr-win">
+                                    <div class="jr-win-bar">
+                                        <img src="assets/mark.png" alt="" width="11" height="13"><span>Console</span>
+                                        <span class="jr-gmail"><svg class="icon"><use href="#i-mail"/></svg>Signed in with Gmail</span>
+                                    </div>
+                                    <div class="jr-win-body">
+                                        <span class="jr-form-title">Add a device</span>
+                                        <span class="jr-field"><span class="jr-field-k">Device name</span><span class="vg-typed" data-type="Van 04">Van 04</span></span>
+                                        <span class="jr-btn" data-jr-press>Add device</span>
+                                        <span class="vg-result jr-result">
+                                            <span><span class="vg-k">Tracking ID</span><span class="vg-v mono">100015</span></span>
+                                            <span><span class="vg-k">Passcode</span><span class="vg-v mono">4827</span></span>
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="step-text">
-                            <span class="step-num">1</span>
-                            <h3>Register the device</h3>
-                            <p>Sign in with your Gmail ID and add a vehicle or a staff phone. You get a unique Tracking ID and a 4-digit passcode for it.</p>
-                        </div>
-                    </li>
-                    <li class="step" data-reveal>
-                        <div class="vignette vg-share" aria-hidden="true">
-                            <div class="vg-label">Message to driver</div>
-                            <div class="vg-bubble">
-                                <p>Please start tracking for today's route.</p>
-                                <p class="mono">ID 100015 · Passcode 4827</p>
-                                <span class="vg-link">Open driver link</span>
-                                <span class="vg-sent"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Sent</span>
+                            <span class="jr-node" data-jr-node aria-hidden="true"></span>
+                            <div class="jr-text">
+                                <h3><span class="jr-n">1</span>Register the device</h3>
+                                <p>Sign in with your Gmail ID and add a vehicle or a staff phone. You get a unique Tracking ID and a 4&#8209;digit passcode for it.</p>
                             </div>
-                        </div>
-                        <div class="step-text">
-                            <span class="step-num">2</span>
-                            <h3>Share it with the driver</h3>
-                            <p>Send the driver link, Tracking ID and passcode on WhatsApp, SMS or any way you like. The system never asks for the driver's name or phone number.</p>
-                        </div>
-                    </li>
-                    <li class="step" data-reveal>
-                        <div class="vignette vg-driver" aria-hidden="true">
-                            <div class="vg-label">Driver's phone</div>
-                            <label class="vg-consent"><span class="vg-box"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg></span>I give my consent to track my location</label>
-                            <span class="vg-btn">Start tracking</span>
-                            <span class="vg-status"><i></i>Status: Running</span>
-                        </div>
-                        <div class="step-text">
-                            <span class="step-num">3</span>
-                            <h3>Driver opts in, you see them live</h3>
-                            <p>The driver opens the link, enters the ID and passcode, ticks the consent box and taps Start. Their location appears on your map.</p>
-                        </div>
-                    </li>
-                </ol>
+                        </li>
+                        <li class="jr-step" data-jr-step>
+                            <div class="jr-stage jr-share" aria-hidden="true">
+                                <div class="jr-chat">
+                                    <div class="jr-chat-head">
+                                        <span class="jr-avatar"><svg class="icon"><use href="#i-phone"/></svg></span>
+                                        <span><strong>Driver</strong><small>Van 04</small></span>
+                                    </div>
+                                    <div class="jr-chat-body">
+                                        <div class="jr-bubble">
+                                            <p>Please start tracking for today's route.</p>
+                                            <p class="mono">ID 100015 · Passcode 4827</p>
+                                            <span class="vg-link">Open driver link</span>
+                                            <span class="jr-sent"><svg class="icon"><use href="#i-check"/></svg>Sent</span>
+                                        </div>
+                                    </div>
+                                    <div class="jr-compose"><span>Message</span><span class="jr-send" data-jr-press><svg class="icon"><use href="#i-send"/></svg></span></div>
+                                </div>
+                                <div class="jr-channels"><span>WhatsApp</span><span>SMS</span><span>Any app</span></div>
+                            </div>
+                            <span class="jr-node" data-jr-node aria-hidden="true"></span>
+                            <div class="jr-text">
+                                <h3><span class="jr-n">2</span>Share the tracking link</h3>
+                                <p>Send the driver link, Tracking ID and passcode on WhatsApp, SMS or any way you like. The system never asks for the driver's name or phone number.</p>
+                            </div>
+                        </li>
+                        <li class="jr-step" data-jr-step>
+                            <div class="jr-stage jr-driver" aria-hidden="true">
+                                <div class="jr-phone">
+                                    <div class="jr-screen">
+                                        <span class="jr-ph-title"><img src="assets/mark.png" alt="" width="11" height="13">easyomnitracker</span>
+                                        <span class="jr-ph-fields">
+                                            <span><span class="jr-field-k">Tracking ID</span><span class="mono">100015</span></span>
+                                            <span><span class="jr-field-k">Passcode</span><span class="mono">••••</span></span>
+                                        </span>
+                                        <span class="vg-consent"><span class="vg-box"><svg class="icon"><use href="#i-check"/></svg></span>I give my consent to track my location</span>
+                                        <span class="jr-ph-btn" data-jr-press>Start tracking</span>
+                                        <span class="vg-status"><i></i>Status: Running</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="jr-node jr-node-live" data-jr-node aria-hidden="true"></span>
+                            <div class="jr-text">
+                                <h3><span class="jr-n">3</span>Driver consents, you see them live</h3>
+                                <p>The driver opens the link, enters the ID and passcode, ticks the consent box and taps Start. Their location appears on your map.</p>
+                            </div>
+                        </li>
+                    </ol>
+                </div>
             </div>
         </section>
 
