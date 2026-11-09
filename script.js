@@ -236,13 +236,15 @@
             });
         };
 
-        layout();
+        // ResizeObserver fires once after the first layout; an eager layout() here forced a full-page reflow before first paint
         if ('ResizeObserver' in window) new ResizeObserver(() => layout()).observe(root);
+        else layout();
         if (still() || !('IntersectionObserver' in window)) { started = true; setState(last, last); return; }
         new IntersectionObserver(([entry]) => {
             inView = entry.isIntersecting;
             window.removeEventListener('scroll', onScroll);
             if (!inView) return;
+            if (!geo) layout();
             if (geo.horiz) runSequence();
             else { window.addEventListener('scroll', onScroll, { passive: true }); onScroll(); }
         }, { threshold: 0.2 }).observe(root);
